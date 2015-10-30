@@ -6,3 +6,7 @@
 .idea/gradle.xml
 gradle
 .idea/libraries
+build
+.idea/uiDesigner.xml
+.idea/inspectionProfiles
+.idea/codeStyleSettings.xml
