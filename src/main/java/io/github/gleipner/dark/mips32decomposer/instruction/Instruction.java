@@ -20,6 +20,12 @@ public abstract class Instruction {
         PushbackInputStream pb = new PushbackInputStream(is);
         byte opCode = (byte) pb.read();
         pb.unread(opCode);
+
+        /**
+         * Get the OpCode corresponding to the numerical value read
+         * from the stream and supply the associated constructor with
+         * the stream as it was passed to us.
+         */
         return OpCode.getOpcode(opCode).constructor.apply(pb);
     }
 
