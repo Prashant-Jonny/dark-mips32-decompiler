@@ -3,7 +3,7 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 import java.util.Arrays;
 
 
-public class DecomposedRepresentation {
+public final class DecomposedRepresentation {
     private final int[] decomposition;
 
     private DecomposedRepresentation(int[] decomposition) {

@@ -3,7 +3,7 @@ package io.github.gleipner.dark.mips32decomposer.instruction;
 /**
  * A named wrapper class representing an opcode.
  */
-public class OpCode {
+public final class OpCode {
     private final int opcode;
 
     private OpCode(int instruction) {
