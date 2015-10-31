@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class JInstructionTest {
+public class JTypeInstructionTest {
     @Test
     public void hasCorrectFormat() throws IOException {
         InputStream is = new ByteArrayInputStream(new byte[] {OpCode.J.value});
