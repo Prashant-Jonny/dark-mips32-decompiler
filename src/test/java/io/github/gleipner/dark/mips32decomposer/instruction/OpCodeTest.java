@@ -1,6 +1,5 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.Decomposer;
 import org.junit.Test;
 
 import static io.github.gleipner.dark.mips32decomposer.instruction.TestInstructions.MUL_INSTRUCTION;

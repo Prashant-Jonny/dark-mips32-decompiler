@@ -3,7 +3,13 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 import java.util.Arrays;
 
 
-public class Decomposer {
+public class DecomposedRepresentation {
+    private final int[] decomposition;
+
+    private DecomposedRepresentation(int[] decomposition) {
+        this.decomposition = decomposition;
+    }
+
     /**
      * Decomposes the given number into chunks that have the specified lengths.
      *
@@ -14,7 +20,7 @@ public class Decomposer {
      * @param lengths the length of each chunk if the number was in base 2.
      * @return the decomposed representation of the number.
      */
-    public static int[] decompose(int number, int... lengths) {
+    public static DecomposedRepresentation fromNumber(int number, int... lengths) {
         assert(Arrays.stream(lengths).sum() == 32);
 
         int[] decomposition = new int[lengths.length];
@@ -24,6 +30,10 @@ public class Decomposer {
             start += lengths[i];
         }
 
+        return new DecomposedRepresentation(decomposition);
+    }
+
+    public int[] toIntArray() {
         return decomposition;
     }
 
