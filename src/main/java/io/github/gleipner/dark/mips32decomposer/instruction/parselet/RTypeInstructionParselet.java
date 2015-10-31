@@ -4,16 +4,11 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class RTypeInstructionParselet implements Parselet {
     private long instruction;
 
-    private static final Map<Shamt,
-            Function<Integer, Instruction>> map = new HashMap<>();
-
-    static {
-    }
+    private static final Map<Shamt, String> map = new HashMap<>();
 
     @Override
     public Instruction parse(int instruction) {
@@ -22,15 +17,35 @@ public class RTypeInstructionParselet implements Parselet {
         return null;
     }
 
-    private static int getLastNBits(int bits, int n) {
-        return bits & (1 << (n - 1));
+    /**
+     * Associates the shamt with the corresponding instruction.
+     */
+    private static void put(int shamt, String name) {
+        map.put(Shamt.fromInstruction(shamt), name);
     }
 
-    private class Shamt {
-        private int shamt;
+    private static String get(int shamt) {
+        return map.get(shamt);
+    }
 
-        Shamt(int instruction) {
-            shamt = getLastNBits(instruction, 6);
+    static {
+       put(0x02, "mul");
+    }
+
+    private static class Shamt {
+        private int numericRepresentation;
+
+        private Shamt(int numericRepresentation) {
+            this.numericRepresentation = numericRepresentation;
+        }
+
+        static Shamt fromInstruction(int instruction) {
+            int shamtNo = DecomposedRepresentation.getNBits(instruction, 26, 6);
+            return new Shamt(shamtNo);
+        }
+
+        static Shamt fromNumber(int number) {
+            return new Shamt(number);
         }
     }
 }

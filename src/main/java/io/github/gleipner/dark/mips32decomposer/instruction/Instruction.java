@@ -1,15 +1,23 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
-public class Instruction {
-    private final long instruction;
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.DecomposedRepresentation;
 
+/**
+ * Represents an instruction in the MIPS 32 instruction set
+ */
+public abstract class Instruction {
+    private final long instruction;
     private final Format format;
     private final Mnemonic mnemonic;
 
-    public Instruction(int instruction, Format format, String name) {
+    protected Instruction(int instruction, Format format, String name) {
         this.instruction = Integer.toUnsignedLong(instruction);
         this.format = format;
-        mnemonic = Mnemonic.fromInstructionName(name);
+        mnemonic = Mnemonic.fromString(name);
+    }
+
+    public static Instruction fromNumericalRepresentation(int instruction) {
+        return InstructionParser.parse(instruction);
     }
 
     public OpCode getOpcode() {
@@ -23,4 +31,6 @@ public class Instruction {
     public Mnemonic getMnemonic() {
         return mnemonic;
     }
+
+    public abstract DecomposedRepresentation getDecomposedRepresentation();
 }

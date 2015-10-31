@@ -7,11 +7,7 @@ public class Mnemonic {
         this.stringRepresentation = stringRepresentation;
     }
 
-    public static Mnemonic fromInstructionName(String name) {
-        return new Mnemonic(name);
-    }
-
-    public static Mnemonic fromRegisterAddress(int address) {
-        return null;
+    public static Mnemonic fromString(String s) {
+        return new Mnemonic(s);
     }
 }

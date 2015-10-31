@@ -38,7 +38,7 @@ public final class DecomposedRepresentation {
         return decomposition;
     }
 
-    private static int getNBits(int number, int start, int numberOfBits) {
+    public static int getNBits(int number, int start, int numberOfBits) {
         String s = asBitPattern(number);
         String requestedBits = s.substring(start, start + numberOfBits - 1);
         return Integer.parseInt(requestedBits, 2);

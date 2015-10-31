@@ -12,15 +12,4 @@ public class Parser {
     public final void register(int opcode, Parselet parselet) {
         map.put(opcode, parselet);
     }
-
-    public final Instruction parse(int instruction) {
-        OpCode op = OpCode.fromNumericalRepresentation(instruction);
-        Parselet parselet = map.get(op.toInteger());
-
-        if (Objects.isNull(parselet)) {
-            throw new UnknownInstructionException(op.toInteger());
-        }
-
-        return parselet.parse(instruction);
-    }
 }
