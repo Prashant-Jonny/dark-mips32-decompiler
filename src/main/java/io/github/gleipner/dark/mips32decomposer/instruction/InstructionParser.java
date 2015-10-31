@@ -1,13 +1,13 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.ITypeInstructionParselet;
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.JTypeInstructionParselet;
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.Parselet;
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.RTypeInstructionParselet;
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
-public class InstructionParser extends Parser {
+public class InstructionParser {
     public InstructionParser() {
         registerRType(0x00);
         registerRType(0x1c);
@@ -17,26 +17,32 @@ public class InstructionParser extends Parser {
         /** We can for-loop over the remaining I-type instructions */
     }
 
-    public static Instruction parse(int instruction) {
+    public Instruction parse(int instruction) {
         OpCode op = OpCode.fromNumericalRepresentation(instruction);
-        Parselet parselet = map.get(op.toInteger());
+        InstructionConstructor constructor = map.get(op.toInteger());
 
-        if (Objects.isNull(parselet)) {
+        if (Objects.isNull(constructor)) {
             throw new UnknownInstructionException(op.toInteger());
         }
 
-        return parselet.parse(instruction);
+        return constructor.apply(instruction);
+    }
+
+    protected static Map<Integer, InstructionConstructor> map = new HashMap<>();
+
+    public static void register(int opcode, InstructionConstructor constructor) {
+        map.put(opcode, constructor);
     }
 
     private void registerRType(int opcode) {
-        register(opcode, new RTypeInstructionParselet());
+        register(opcode, RTypeInstructionParselet::parse);
     }
 
-    private void registerIType(int opcode) {
-        register(opcode, new ITypeInstructionParselet());
+    private static void registerIType(int opcode) {
+        register(opcode, ITypeInstructionParselet::parse);
     }
 
-    private void registerJType(int opcode) {
-        register(opcode, new JTypeInstructionParselet());
+    private static void registerJType(int opcode) {
+        register(opcode, ITypeInstructionParselet::parse);
     }
 }

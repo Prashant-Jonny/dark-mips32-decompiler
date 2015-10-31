@@ -2,6 +2,6 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 
-public interface Parselet {
+public interface InstructionParselet {
     Instruction parse(int instruction);
 }

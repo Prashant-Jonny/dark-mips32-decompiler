@@ -5,14 +5,10 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RTypeInstructionParselet implements Parselet {
-    private long instruction;
-
+public class RTypeInstructionParselet implements InstructionParselet {
     private static final Map<Shamt, String> map = new HashMap<>();
 
-    @Override
     public Instruction parse(int instruction) {
-        this.instruction = Integer.toUnsignedLong(instruction);
 
         return null;
     }
@@ -25,15 +21,15 @@ public class RTypeInstructionParselet implements Parselet {
     }
 
     private static String get(int shamt) {
-        return map.get(shamt);
+        return map.get(Shamt.fromNumber(shamt));
     }
 
     static {
        put(0x02, "mul");
     }
 
-    private static class Shamt {
-        private int numericRepresentation;
+    private static final class Shamt {
+        private final int numericRepresentation;
 
         private Shamt(int numericRepresentation) {
             this.numericRepresentation = numericRepresentation;
@@ -46,6 +42,22 @@ public class RTypeInstructionParselet implements Parselet {
 
         static Shamt fromNumber(int number) {
             return new Shamt(number);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Shamt shamt = (Shamt) o;
+
+            return numericRepresentation == shamt.numericRepresentation;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return numericRepresentation;
         }
     }
 }
