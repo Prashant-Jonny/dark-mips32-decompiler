@@ -1,15 +1,8 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-public class JTypeInstruction extends Instruction {
+public class JTypeInstruction implements Parselet {
     @Override
-    public Format getFormat() {
-        return Format.J;
-    }
-
-    public JTypeInstruction(InputStream inputStream) throws IOException {
-
+    public Instruction parse(int instruction) {
+        return null;
     }
 }
