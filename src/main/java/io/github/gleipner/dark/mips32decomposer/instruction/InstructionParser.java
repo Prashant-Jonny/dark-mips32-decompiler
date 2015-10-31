@@ -1,5 +1,9 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.ITypeInstructionParselet;
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.JTypeInstructionParselet;
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.RTypeInstructionParselet;
+
 public class InstructionParser extends Parser {
     public InstructionParser() {
         registerRType(0x00);
@@ -11,14 +15,14 @@ public class InstructionParser extends Parser {
     }
 
     private void registerRType(int opcode) {
-        map.put(opcode, new RTypeInstruction());
+        register(opcode, new RTypeInstructionParselet());
     }
 
     private void registerIType(int opcode) {
-        map.put(opcode, new ITypeInstruction());
+        register(opcode, new ITypeInstructionParselet());
     }
 
     private void registerJType(int opcode) {
-        map.put(opcode, new JTypeInstruction());
+        register(opcode, new JTypeInstructionParselet());
     }
 }

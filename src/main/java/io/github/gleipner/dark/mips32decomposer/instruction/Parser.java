@@ -1,5 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.Parselet;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,7 +13,7 @@ public class Parser {
         map.put(opcode, parselet);
     }
 
-    public Instruction parse(int instruction) {
+    public final Instruction parse(int instruction) {
         OpCode op = OpCode.fromNumericalRepresentation(instruction);
         Parselet parselet = map.get(op.toInteger());
 
