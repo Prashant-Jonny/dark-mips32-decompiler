@@ -1,6 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
 import java.util.Arrays;
+import java.util.StringJoiner;
 
 
 public final class DecomposedRepresentation {
@@ -45,5 +46,19 @@ public final class DecomposedRepresentation {
 
     private static String asBitPattern(int number) {
         return Integer.toBinaryString(number);
+    }
+
+    public String toHexadecimalString() {
+        StringJoiner sj = new StringJoiner(" ", "[", "]");
+        Arrays.stream(decomposition).forEach(e -> {
+            sj.add(Integer.toHexString(e));
+        });
+        return sj.toString();
+    }
+
+    public String toDecimalString() {
+        StringJoiner sj = new StringJoiner(" ", "[", "]");
+        Arrays.stream(decomposition).forEach(e -> sj.add(Integer.toString(e)));
+        return sj.toString();
     }
 }
