@@ -1,9 +1,12 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+public enum RTypeInstruction {
+    MUL(0x02);
 
-public class RTypeInstruction {
-    public DecomposedRepresentation getDecomposedRepresentation() {
-        return null;
+
+    private final int identifier;
+
+    RTypeInstruction(int identifier) {
+        this.identifier = identifier;
     }
 }

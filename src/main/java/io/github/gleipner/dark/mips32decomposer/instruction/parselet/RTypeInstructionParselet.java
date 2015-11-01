@@ -1,31 +1,27 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RTypeInstructionParselet implements InstructionParselet {
-    private static final Map<Shamt, String> map = new HashMap<>();
+public class RTypeInstructionParselet {
+    private static final Map<Shamt, InstructionConstructor> map = new HashMap<>();
 
-    public Instruction parse(int instruction) {
-
-        return null;
+    public static Instruction parse(int instruction) {
+        return map.get(Shamt.fromInstruction(instruction)).apply(instruction);
     }
 
     /**
-     * Associates the shamt with the corresponding instruction.
+     * Associates the shamt with the corresponding instruction constructor.
      */
-    private static void put(int shamt, String name) {
-        map.put(Shamt.fromInstruction(shamt), name);
-    }
-
-    private static String get(int shamt) {
-        return map.get(Shamt.fromNumber(shamt));
+    private static void put(int shamt, InstructionConstructor constructor) {
+        map.put(Shamt.fromNumber(shamt), constructor);
     }
 
     static {
-       put(0x02, "mul");
+       put(0x02, fromPattern_INAME_RD_RS_RT("mul"));
     }
 
     private static final class Shamt {
@@ -59,5 +55,15 @@ public class RTypeInstructionParselet implements InstructionParselet {
         public int hashCode() {
             return numericRepresentation;
         }
+    }
+
+    public static InstructionConstructor fromPattern_INAME_RD_RS_RT(String name) {
+        return instruction -> new Instruction(instruction, Format.R, name) {
+            @Override
+            public DecomposedRepresentation getDecomposedRepresentation() {
+                return DecomposedRepresentation.fromNumber(instruction,
+                        6, 5, 5, 5, 6);
+            }
+        };
     }
 }

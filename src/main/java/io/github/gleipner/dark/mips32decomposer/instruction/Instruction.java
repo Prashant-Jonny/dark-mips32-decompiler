@@ -10,14 +10,10 @@ public abstract class Instruction {
     private final Format format;
     private final Mnemonic mnemonic;
 
-    protected Instruction(int instruction, Format format, String name) {
+    public Instruction(int instruction, Format format, String name) {
         this.instruction = Integer.toUnsignedLong(instruction);
         this.format = format;
         mnemonic = Mnemonic.fromString(name);
-    }
-
-    public static Instruction fromNumericalRepresentation(int instruction) {
-        return InstructionParser.parse(instruction);
     }
 
     public OpCode getOpcode() {

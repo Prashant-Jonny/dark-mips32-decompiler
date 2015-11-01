@@ -10,4 +10,8 @@ public class Mnemonic {
     public static Mnemonic fromString(String s) {
         return new Mnemonic(s);
     }
+
+    public String asString() {
+        return stringRepresentation;
+    }
 }
