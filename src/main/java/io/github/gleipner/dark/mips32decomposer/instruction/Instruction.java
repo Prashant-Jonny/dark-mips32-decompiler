@@ -1,5 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.opcode.OpCode;
+import io.github.gleipner.dark.mips32decomposer.mnemonic.Mnemonic;
 import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 
 /**

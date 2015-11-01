@@ -1,6 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.Mnemonic;
+import io.github.gleipner.dark.mips32decomposer.mnemonic.Mnemonic;
 
 import java.util.HashMap;
 import java.util.Map;

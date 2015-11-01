@@ -1,5 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.opcode.OpCode;
 import io.github.gleipner.dark.mips32decomposer.instruction.parselet.*;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package io.github.gleipner.dark.mips32decomposer.instruction;
+package io.github.gleipner.dark.mips32decomposer.instruction.opcode;
 
 import java.util.Arrays;
 import java.util.Collection;

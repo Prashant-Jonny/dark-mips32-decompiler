@@ -1,4 +1,4 @@
-package io.github.gleipner.dark.mips32decomposer.instruction;
+package io.github.gleipner.dark.mips32decomposer.mnemonic;
 
 @FunctionalInterface
 public interface MnemonicYielder {

@@ -1,5 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.mnemonic.Mnemonic;
+
 /**
  * An enum containing the names of some of the instructions in the MIPS32
  * instruction set.

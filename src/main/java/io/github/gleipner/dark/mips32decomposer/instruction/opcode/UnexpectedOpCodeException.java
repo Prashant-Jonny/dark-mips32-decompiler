@@ -1,4 +1,7 @@
-package io.github.gleipner.dark.mips32decomposer.instruction;
+package io.github.gleipner.dark.mips32decomposer.instruction.opcode;
+
+import io.github.gleipner.dark.mips32decomposer.instruction.Format;
+import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 
 /**
  * This exception should be thrown whenever one attempts to construct an

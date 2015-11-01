@@ -1,4 +1,6 @@
-package io.github.gleipner.dark.mips32decomposer.instruction;
+package io.github.gleipner.dark.mips32decomposer.instruction.opcode;
+
+import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 
 import java.util.HashMap;
 import java.util.Map;
