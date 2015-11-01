@@ -1,6 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
 import io.github.gleipner.dark.mips32decomposer.instruction.opcode.OpCode;
+import io.github.gleipner.dark.mips32decomposer.instruction.opcode.RTypeInstructionOpcodeSet;
 import io.github.gleipner.dark.mips32decomposer.instruction.parselet.*;
 
 import java.util.HashMap;
@@ -9,12 +10,9 @@ import java.util.Objects;
 
 public class InstructionParser {
     public InstructionParser() {
-        registerRType(0x00);
-        registerRType(0x1c);
-        registerIType(0x01);
-        registerJType(0x02);
-
-        /** We can for-loop over the remaining I-type instructions */
+        RTypeInstructionOpcodeSet.all().forEach(e -> {
+            register(e, RTypeInstructionParselet::parse);
+        });
     }
 
     public Instruction parse(int instruction) {
@@ -32,17 +30,5 @@ public class InstructionParser {
 
     public static void register(int opcode, InstructionParseFunction constructor) {
         map.put(opcode, constructor);
-    }
-
-    private void registerRType(int opcode) {
-        register(opcode, RTypeInstructionParselet::parse);
-    }
-
-    private static void registerIType(int opcode) {
-        register(opcode, ITypeInstructionParselet::parse);
-    }
-
-    private static void registerJType(int opcode) {
-        register(opcode, JTypeInstructionParselet::parse);
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 import static io.github.gleipner.dark.mips32decomposer.instruction.Format.R;
 
 public class RTypeInstructionParselet {
-    private static final Map<Shamt, InstructionConstructor> map = new HashMap<>();
+    private static final Map<Funct, InstructionConstructor> map = new HashMap<>();
 
     /**
      * Yields an {@link Instruction} instance corresponding to the
@@ -29,34 +29,34 @@ public class RTypeInstructionParselet {
         if (op.getFormat() != R) {
             throw new UnexpectedOpCodeException(op, R);
         }
-        return map.get(Shamt.fromInstruction(instruction)).apply(instruction);
+        return map.get(Funct.fromInstruction(instruction)).apply(instruction);
     }
 
     /**
      * Associates the shamt with the corresponding instruction constructor.
      */
     private static void put(int shamt, InstructionConstructor constructor) {
-        map.put(Shamt.fromNumber(shamt), constructor);
+        map.put(Funct.fromNumber(shamt), constructor);
     }
 
     static {
        put(0x02, fromPattern_INAME_RD_RS_RT(InstructionName.MUL));
     }
 
-    private static final class Shamt {
+    private static final class Funct {
         private final int numericRepresentation;
 
-        private Shamt(int numericRepresentation) {
+        private Funct(int numericRepresentation) {
             this.numericRepresentation = numericRepresentation;
         }
 
-        static Shamt fromInstruction(int instruction) {
+        static Funct fromInstruction(int instruction) {
             int shamtNo = BitField.getNBits(instruction, 26, 6);
-            return new Shamt(shamtNo);
+            return new Funct(shamtNo);
         }
 
-        static Shamt fromNumber(int number) {
-            return new Shamt(number);
+        static Funct fromNumber(int number) {
+            return new Funct(number);
         }
 
         @Override
@@ -64,9 +64,9 @@ public class RTypeInstructionParselet {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Shamt shamt = (Shamt) o;
+            Funct funct = (Funct) o;
 
-            return numericRepresentation == shamt.numericRepresentation;
+            return numericRepresentation == funct.numericRepresentation;
         }
 
         @Override
