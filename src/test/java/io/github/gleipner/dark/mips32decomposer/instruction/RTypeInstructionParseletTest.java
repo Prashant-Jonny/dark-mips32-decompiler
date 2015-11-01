@@ -2,6 +2,7 @@ package io.github.gleipner.dark.mips32decomposer.instruction;
 
 import org.junit.Test;
 
+import static io.github.gleipner.dark.mips32decomposer.instruction.InstructionName.MUL;
 import static io.github.gleipner.dark.mips32decomposer.instruction.TestInstructions.MUL_INSTRUCTION;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -25,7 +26,7 @@ public class RTypeInstructionParseletTest {
     }
 
     @Test
-    public void decomposingMulInstructionShouldHaveCorrectMnemonic() {
-        assertThat(parsedInstruction.getMnemonic().asString(), is(equalTo("mul")));
+    public void decomposingMulInstructionShouldHaveCorrectName() {
+        assertThat(parsedInstruction.getName(), is(equalTo(MUL)));
     }
 }

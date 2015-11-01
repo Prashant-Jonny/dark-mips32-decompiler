@@ -1,4 +1,4 @@
-package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
+package io.github.gleipner.dark.mips32decomposer.instruction;
 
 import java.util.Arrays;
 import java.util.Collection;

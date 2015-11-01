@@ -1,7 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+import io.github.gleipner.dark.mips32decomposer.instruction.InstructionName;
 import io.github.gleipner.dark.mips32decomposer.instruction.OpCode;
 import io.github.gleipner.dark.mips32decomposer.util.BitField;
 import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
@@ -32,7 +32,7 @@ public class RTypeInstructionParselet {
     }
 
     static {
-       put(0x02, fromPattern_INAME_RD_RS_RT("mul"));
+       put(0x02, fromPattern_INAME_RD_RS_RT(InstructionName.MUL));
     }
 
     private static final class Shamt {
@@ -68,7 +68,7 @@ public class RTypeInstructionParselet {
         }
     }
 
-    public static InstructionConstructor fromPattern_INAME_RD_RS_RT(String name) {
+    public static InstructionConstructor fromPattern_INAME_RD_RS_RT(InstructionName name) {
         return instruction -> new Instruction(instruction, name) {
             @Override
             public DecomposedRepresentation getDecomposedRepresentation() {

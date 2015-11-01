@@ -36,12 +36,12 @@ public abstract class Instruction {
     /** Always maintain the numerical representation of the instruction */
     private final long numericalRepresentation;
     private final OpCode opcode;
-    private final Mnemonic mnemonic;
+    private final InstructionName name;
 
-    public Instruction(int instruction, String name) {
+    public Instruction(int instruction, InstructionName name) {
         this.numericalRepresentation = Integer.toUnsignedLong(instruction);
         opcode = OpCode.fromInstruction(instruction);
-        mnemonic = Mnemonic.fromString(name);
+        this.name = name;
     }
 
     public OpCode getOpcode() {
@@ -52,8 +52,8 @@ public abstract class Instruction {
         return opcode.getFormat();
     }
 
-    public Mnemonic getMnemonic() {
-        return mnemonic;
+    public InstructionName getName() {
+        return name;
     }
 
     public abstract DecomposedRepresentation getDecomposedRepresentation();
