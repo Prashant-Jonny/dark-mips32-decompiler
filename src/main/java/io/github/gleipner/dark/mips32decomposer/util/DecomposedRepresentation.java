@@ -1,5 +1,8 @@
 package io.github.gleipner.dark.mips32decomposer.util;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -27,8 +30,14 @@ public final class DecomposedRepresentation {
      * @param lengths the length of each chunk if {@code number} was in base 2.
      * @return the decomposed representation of {@code number} into chunks
      * where each chunk matches (in order) the supplied lengths.
+     * @throws InvalidParameterException if the sum of {@code lengths} is not 32.
      */
     public static DecomposedRepresentation fromNumber(int number, int... lengths) {
+        if (Arrays.stream(lengths).sum() != 32) {
+            String err = "Expected the sum of \"lengths\" to be 32. Got: ";
+            err += Arrays.stream(lengths).sum();
+            throw new InvalidParameterException(err);
+        }
         assert(Arrays.stream(lengths).sum() == 32);
 
         int[] decomposition = new int[lengths.length];

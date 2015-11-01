@@ -16,10 +16,10 @@ public class RTypeInstructionParselet {
      * Yields an {@link Instruction} instance corresponding to the
      * supplied numerical representation of the MIPS32 instruction.
      *
-     * Note that the passed instruction must be in the R-format.
-     *
      * @param instruction the numerical representation of a MIPS32 instruction.
      * @return the corresponding {@link Instruction} instance.
+     * @throws UnexpectedOpCodeException if the instruction is not in
+     * the R-format.
      */
     public static Instruction parse(int instruction) {
         OpCode op = OpCode.fromInstruction(instruction);
