@@ -1,5 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.RTypeInstructionOpcodeSet;
 import org.junit.Test;
 
 import static io.github.gleipner.dark.mips32decomposer.instruction.Format.R;
@@ -28,5 +29,13 @@ public class OpCodeTest {
         Format f1 = OpCode.getFormat(MUL_INSTRUCTION);
         Format f2 = mulInstructionOpCode.getFormat();
         assertThat(f1, is(equalTo(f2)));
+    }
+
+    @Test
+    public void shouldHaveCorrectFormatForAllRTypeInstructions() {
+        RTypeInstructionOpcodeSet.all().forEach(e -> {
+            Format f = OpCode.fromNumericalRepresentation(e).getFormat();
+            assertThat(f, is(equalTo(R)));
+        });
     }
 }

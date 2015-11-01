@@ -2,16 +2,25 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
 import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+import io.github.gleipner.dark.mips32decomposer.instruction.OpCode;
 import io.github.gleipner.dark.mips32decomposer.util.BitField;
 import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.github.gleipner.dark.mips32decomposer.instruction.Format.R;
+
 public class RTypeInstructionParselet {
     private static final Map<Shamt, InstructionConstructor> map = new HashMap<>();
 
+    /**
+     *
+     * @param instruction
+     * @return
+     */
     public static Instruction parse(int instruction) {
+        assert(OpCode.fromInstruction(instruction).getFormat() == R);
         return map.get(Shamt.fromInstruction(instruction)).apply(instruction);
     }
 

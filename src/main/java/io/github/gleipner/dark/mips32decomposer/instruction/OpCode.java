@@ -1,5 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.parselet.RTypeInstructionOpcodeSet;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,10 +105,9 @@ public final class OpCode {
 
     static {
         /* Pair known opcodes with their corresponding format */
-        put(0x00, R);
+        RTypeInstructionOpcodeSet.all().forEach(e -> put(e, R));
         put(0x01, I);
         put(0x02, J);
         put(0x03, J);
-        put(0x1c, R);
     }
 }
