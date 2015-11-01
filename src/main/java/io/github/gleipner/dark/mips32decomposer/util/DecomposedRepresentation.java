@@ -1,7 +1,5 @@
 package io.github.gleipner.dark.mips32decomposer.util;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.StringJoiner;

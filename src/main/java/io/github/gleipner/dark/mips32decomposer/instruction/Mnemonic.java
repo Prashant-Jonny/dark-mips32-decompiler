@@ -1,9 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class Mnemonic {
     private final String stringRepresentation;
@@ -24,8 +21,24 @@ public class Mnemonic {
         return stringRepresentation;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Mnemonic mnemonic = (Mnemonic) o;
+
+        return stringRepresentation.equals(mnemonic.stringRepresentation);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return stringRepresentation.hashCode();
+    }
+
     private class MnemonicBuilder {
-        private Set<Mnemonic> mnemonics = new HashSet<>();
+        private final List<Mnemonic> mnemonics = new ArrayList<>();
 
         public MnemonicBuilder add(MnemonicYielder obj) {
             mnemonics.add(obj.toMnemonic());

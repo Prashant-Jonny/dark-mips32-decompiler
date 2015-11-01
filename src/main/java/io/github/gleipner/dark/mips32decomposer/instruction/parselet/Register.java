@@ -35,7 +35,7 @@ public class Register {
 
     /** Method used for brevity in the static initializer */
     private static void put(int address, String name) {
-        map.put(address, name);
+        map.put(address, "$" + name);
     }
 
     /**
@@ -53,7 +53,7 @@ public class Register {
      */
     private static void put(int startAddress, int stopAddress, String prefix) {
         for (int i = startAddress; i <= stopAddress; i++) {
-            put(i, prefix + i);
+            put(i, prefix + (i - startAddress));
         }
     }
 
