@@ -4,6 +4,7 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Mnemonic;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a register source or destination.
@@ -18,6 +19,13 @@ public class Register {
     }
 
     public Mnemonic toMnemonic(int address) {
+        String name = map.get(address);
+
+        /** Not all registers are named */
+        if (Objects.isNull(name)) {
+            return new Mnemonic(Integer.toString(address));
+        }
+
         return new Mnemonic(map.get(address));
     }
 
