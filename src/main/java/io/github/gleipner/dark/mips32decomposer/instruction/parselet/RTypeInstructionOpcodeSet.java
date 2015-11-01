@@ -1,5 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,12 +16,11 @@ public enum RTypeInstructionOpcodeSet {
         return set;
     }
 
-    private static void add(int opcode) {
-        set.add(opcode);
+    private static void add(int... opcodes) {
+        Arrays.stream(opcodes).forEach(set::add);
     }
 
     static {
-        add(0x00);
-        add(0x1c);
+        add(0x00, 0x1c);
     }
 }
