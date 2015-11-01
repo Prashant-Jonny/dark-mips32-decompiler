@@ -35,21 +35,21 @@ import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 public abstract class Instruction {
     /** Always maintain the numerical representation of the instruction */
     private final long numericalRepresentation;
-    private final Format format;
+    private final OpCode opcode;
     private final Mnemonic mnemonic;
 
-    public Instruction(int instruction, Format format, String name) {
+    public Instruction(int instruction, String name) {
         this.numericalRepresentation = Integer.toUnsignedLong(instruction);
-        this.format = format;
+        opcode = OpCode.fromInstruction(instruction);
         mnemonic = Mnemonic.fromString(name);
     }
 
     public OpCode getOpcode() {
-        return OpCode.fromNumericalRepresentation((int) numericalRepresentation);
+        return opcode;
     }
 
     public Format getFormat() {
-        return format;
+        return opcode.getFormat();
     }
 
     public Mnemonic getMnemonic() {

@@ -2,6 +2,7 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
 import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+import io.github.gleipner.dark.mips32decomposer.util.BitField;
 import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class RTypeInstructionParselet {
         }
 
         static Shamt fromInstruction(int instruction) {
-            int shamtNo = DecomposedRepresentation.getNBits(instruction, 26, 6);
+            int shamtNo = BitField.getNBits(instruction, 26, 6);
             return new Shamt(shamtNo);
         }
 
@@ -59,7 +60,7 @@ public class RTypeInstructionParselet {
     }
 
     public static InstructionConstructor fromPattern_INAME_RD_RS_RT(String name) {
-        return instruction -> new Instruction(instruction, Format.R, name) {
+        return instruction -> new Instruction(instruction, name) {
             @Override
             public DecomposedRepresentation getDecomposedRepresentation() {
                 return DecomposedRepresentation.fromNumber(instruction,

@@ -13,7 +13,7 @@ public class RTypeInstructionParseletTest {
 
     @Test
     public void decomposingMulInstructionShouldHaveCorrectOpcode() {
-        int expectedOpcode = 0x1c;
+        int expectedOpcode = 0x00;
         int actualOpcode = parsedInstruction.getOpcode().toInteger();
 
         assertThat(actualOpcode, is(equalTo(expectedOpcode)));
