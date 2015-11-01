@@ -73,7 +73,12 @@ public final class DecomposedRepresentation {
     public String toHexadecimalString() {
         StringJoiner sj = new StringJoiner(" ", "[", "]");
         Arrays.stream(decomposition).forEach(e -> {
-            sj.add(Integer.toHexString(e));
+            String prefix = "";
+            if (e > 9) {
+                prefix = "0x";
+            }
+
+            sj.add(prefix + Integer.toHexString(e));
         });
         return sj.toString();
     }

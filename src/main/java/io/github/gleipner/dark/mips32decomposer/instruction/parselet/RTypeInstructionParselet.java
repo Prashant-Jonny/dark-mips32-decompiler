@@ -59,7 +59,6 @@ public class RTypeInstructionParselet {
             Shamt shamt = (Shamt) o;
 
             return numericRepresentation == shamt.numericRepresentation;
-
         }
 
         @Override

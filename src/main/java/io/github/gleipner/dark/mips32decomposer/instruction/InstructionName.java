@@ -1,5 +1,9 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
+/**
+ * An enum containing the names of some of the instructions in the MIPS32
+ * instruction set.
+ */
 public enum InstructionName {
     /**
      * Addition (with overflow). Put the sum of registers rs and rt into

@@ -29,4 +29,9 @@ public class RTypeInstructionParseletTest {
     public void decomposingMulInstructionShouldHaveCorrectName() {
         assertThat(parsedInstruction.getName(), is(equalTo(MUL)));
     }
+
+    @Test
+    public void decomposingMulInstructionShouldHaveCorrectMnemonicRepresentation() {
+
+    }
 }
