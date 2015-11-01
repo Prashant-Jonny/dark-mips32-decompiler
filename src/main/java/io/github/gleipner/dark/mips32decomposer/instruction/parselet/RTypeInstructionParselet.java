@@ -2,6 +2,7 @@ package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
 import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 
 import java.util.HashMap;
 import java.util.Map;

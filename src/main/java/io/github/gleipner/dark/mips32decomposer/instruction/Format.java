@@ -1,7 +1,7 @@
 package io.github.gleipner.dark.mips32decomposer.instruction;
 
 /**
- * Represents the formats for the different types of instructions that
+ * Represents the formats for some of the different types of instructions that
  * make up the MIPS32 instruction set.
  */
 public enum Format {
