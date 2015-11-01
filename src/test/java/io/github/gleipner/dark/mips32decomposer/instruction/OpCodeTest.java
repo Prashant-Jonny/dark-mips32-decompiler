@@ -25,7 +25,7 @@ public class OpCodeTest {
 
     @Test
     public void formatInvariantShouldHold() {
-        Format f1 = OpCode.getFormat(MUL_INSTRUCTION);
+        Format f1 = OpCode.getFormatFromInstruction(MUL_INSTRUCTION);
         Format f2 = mulInstructionOpCode.getFormat();
         assertThat(f1, is(equalTo(f2)));
     }

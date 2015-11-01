@@ -57,6 +57,28 @@ public final class OpCode {
     }
 
     /**
+     * Gets the format of the supplied numerical representation of
+     * a MIPS32 instruction.
+     *
+     * @param instruction the numerical representation of the MIPS32 instruction.
+     * @return the format of the instruction.
+     */
+    public static Format getFormatFromInstruction(int instruction) {
+        return fromInstruction(instruction).getFormat();
+    }
+
+    /**
+     * Gets the format of the supplied numerical representation of
+     * the given opcode
+     *
+     * @param opcode the numerical representation of the opcode.
+     * @return the format of the associated instruction.
+     */
+    public static Format getFormatFromOpcode(int opcode) {
+        return fromNumericalRepresentation(opcode).getFormat();
+    }
+
+    /**
      * Yanks the opcode numerical representation from a 32-bit number
      * corresponding to a known MIPS32 instruction.
      *
@@ -74,17 +96,6 @@ public final class OpCode {
      */
     public Format getFormat() {
         return format;
-    }
-
-    /**
-     * Gets the format of the supplied numerical representation of
-     * a MIPS32 instruction.
-     *
-     * @param instruction the numerical representation of the MIPS32 instruction.
-     * @return the format of the instruction.
-     */
-    public static Format getFormat(int instruction) {
-        return map.get(toInteger(instruction));
     }
 
     /**

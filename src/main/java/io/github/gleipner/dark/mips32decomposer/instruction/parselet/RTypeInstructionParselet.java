@@ -13,12 +13,19 @@ public class RTypeInstructionParselet {
     private static final Map<Shamt, InstructionConstructor> map = new HashMap<>();
 
     /**
+     * Yields an {@link Instruction} instance corresponding to the
+     * supplied numerical representation of the MIPS32 instruction.
      *
-     * @param instruction
-     * @return
+     * Note that the passed instruction must be in the R-format.
+     *
+     * @param instruction the numerical representation of a MIPS32 instruction.
+     * @return the corresponding {@link Instruction} instance.
      */
     public static Instruction parse(int instruction) {
-        assert(OpCode.fromInstruction(instruction).getFormat() == R);
+        OpCode op = OpCode.fromInstruction(instruction);
+        if (op.getFormat() != R) {
+            throw new UnexpectedOpCodeException(op, R);
+        }
         return map.get(Shamt.fromInstruction(instruction)).apply(instruction);
     }
 
