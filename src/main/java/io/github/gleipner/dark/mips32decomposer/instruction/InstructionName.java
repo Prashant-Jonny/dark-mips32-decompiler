@@ -428,6 +428,9 @@ public enum InstructionName {
     /** No operation. Do nothing */
     NOP;
 
+    /**
+     * @return Get the {@link Mnemonic} representation of this Instruction.
+     */
     public Mnemonic toMnemonic() {
         return new Mnemonic(this.name().toLowerCase());
     }

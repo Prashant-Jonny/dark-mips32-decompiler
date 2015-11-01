@@ -34,6 +34,6 @@ public class RTypeInstructionParseletTest {
     @Test
     public void decomposingMulInstructionShouldHaveCorrectMnemonicRepresentation() {
         Mnemonic m = new Mnemonic("mul $t1 $t0 $at");
-        assertThat(parsedInstruction.getMnemonicRepresentation(), is(equalTo(m)));
+        assertThat(parsedInstruction.toMnemonic(), is(equalTo(m)));
     }
 }

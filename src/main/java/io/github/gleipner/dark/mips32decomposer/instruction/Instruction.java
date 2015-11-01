@@ -46,18 +46,34 @@ public abstract class Instruction {
         this.name = name;
     }
 
+    /**
+     * @return Get the OpCode of the instruction
+     */
     public OpCode getOpcode() {
         return opcode;
     }
 
+    /**
+     * @return The format of this instruction.
+     */
     public Format getFormat() {
         return opcode.getFormat();
     }
 
+    /**
+     * @return The name of this instruction.
+     */
     public InstructionName getName() {
         return name;
     }
 
+    /**
+     * @return this instruction decomposed into its bitfields.
+     */
     public abstract DecomposedRepresentation getDecomposedRepresentation();
-    public abstract Mnemonic getMnemonicRepresentation();
+
+    /**
+     * @return the {@link Mnemonic} representation of this instruction.
+     */
+    public abstract Mnemonic toMnemonic();
 }

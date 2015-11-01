@@ -2,6 +2,9 @@ package io.github.gleipner.dark.mips32decomposer.mnemonic;
 
 import java.util.*;
 
+/**
+ * Represents a mnemonic name for some thing.
+ */
 public class Mnemonic {
     private final String stringRepresentation;
 
@@ -9,7 +12,12 @@ public class Mnemonic {
         this.stringRepresentation = stringRepresentation;
     }
 
-    /** Creates a concatenation of mnemonics */
+    /**
+     * Takes several {@link MnemonicYielder}s which are functions that yield a
+     * single Mnemonic from some object and concatenates these in-order.
+     *
+     * @param mnemonics functions that returns a {@code Mnemonic}.
+     */
     public Mnemonic(MnemonicYielder... mnemonics) {
         MnemonicBuilder builder = new MnemonicBuilder();
         Arrays.stream(mnemonics).forEach(builder::add);
@@ -29,7 +37,6 @@ public class Mnemonic {
         Mnemonic mnemonic = (Mnemonic) o;
 
         return stringRepresentation.equals(mnemonic.stringRepresentation);
-
     }
 
     @Override

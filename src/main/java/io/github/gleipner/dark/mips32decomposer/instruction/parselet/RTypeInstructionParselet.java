@@ -81,13 +81,15 @@ public class RTypeInstructionParselet {
                     DecomposedRepresentation.fromNumber(instruction, 6,
                             5, 5, 5, 5, 6);
 
+            /** {@inheritDoc} */
             @Override
             public DecomposedRepresentation getDecomposedRepresentation() {
                 return decomposed;
             }
 
+            /** {@inheritDoc} */
             @Override
-            public Mnemonic getMnemonicRepresentation() {
+            public Mnemonic toMnemonic() {
                 int[] decomposedAsArray = decomposed.toIntArray();
                 Register rd = new Register(decomposedAsArray[3]);
                 Register rs = new Register(decomposedAsArray[1]);
