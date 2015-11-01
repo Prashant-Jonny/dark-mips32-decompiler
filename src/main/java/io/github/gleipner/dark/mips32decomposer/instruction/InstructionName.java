@@ -426,6 +426,10 @@ public enum InstructionName {
     /** No operation. Do nothing */
     NOP;
 
+    public Mnemonic toMnemonic() {
+        return new Mnemonic(this.name().toLowerCase());
+    }
+
     @Override
     public String toString() {
         return this.name().toLowerCase();

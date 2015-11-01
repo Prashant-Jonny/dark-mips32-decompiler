@@ -9,17 +9,20 @@ import java.util.Map;
  * Represents a register source or destination.
  */
 public class Register {
-    private final int address;
-
     /** Pairs address numbers with their corresponding name */
     private static final Map<Integer, String> map = new HashMap<>();
+    private final int address;
 
     public Register(int address) {
         this.address = address;
     }
 
-    public Mnemonic getMnemonicRepresentation() {
-        return Mnemonic.fromString(map.get(address));
+    public Mnemonic toMnemonic(int address) {
+        return new Mnemonic(map.get(address));
+    }
+
+    public Mnemonic toMnemonic() {
+        return toMnemonic(address);
     }
 
     /** Method used for brevity in the static initializer */

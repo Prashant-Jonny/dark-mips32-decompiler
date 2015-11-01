@@ -57,4 +57,5 @@ public abstract class Instruction {
     }
 
     public abstract DecomposedRepresentation getDecomposedRepresentation();
+    public abstract Mnemonic getMnemonicRepresentation();
 }

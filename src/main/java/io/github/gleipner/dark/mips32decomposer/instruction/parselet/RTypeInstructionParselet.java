@@ -1,8 +1,6 @@
 package io.github.gleipner.dark.mips32decomposer.instruction.parselet;
 
-import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
-import io.github.gleipner.dark.mips32decomposer.instruction.InstructionName;
-import io.github.gleipner.dark.mips32decomposer.instruction.OpCode;
+import io.github.gleipner.dark.mips32decomposer.instruction.*;
 import io.github.gleipner.dark.mips32decomposer.util.BitField;
 import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 
@@ -69,10 +67,25 @@ public class RTypeInstructionParselet {
 
     public static InstructionConstructor fromPattern_INAME_RD_RS_RT(InstructionName name) {
         return instruction -> new Instruction(instruction, name) {
+            DecomposedRepresentation decomposed =
+                    DecomposedRepresentation.fromNumber(instruction, 6,
+                            5, 5, 5, 5, 6);
+
             @Override
             public DecomposedRepresentation getDecomposedRepresentation() {
-                return DecomposedRepresentation.fromNumber(instruction,
-                        6, 5, 5, 5, 6);
+                return decomposed;
+            }
+
+            @Override
+            public Mnemonic getMnemonicRepresentation() {
+                int[] decomposedAsArray = decomposed.toIntArray();
+                Register rd = new Register(decomposedAsArray[3]);
+                Register rs = new Register(decomposedAsArray[1]);
+                Register rt = new Register(decomposedAsArray[2]);
+                return new Mnemonic(name::toMnemonic,
+                        rd::toMnemonic,
+                        rs::toMnemonic,
+                        rt::toMnemonic);
             }
         };
     }
