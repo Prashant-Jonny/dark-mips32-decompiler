@@ -85,4 +85,22 @@ public abstract class Instruction {
      * @return the {@link Mnemonic} representation of this instruction.
      */
     public abstract Mnemonic toMnemonic();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Instruction that = (Instruction) o;
+
+        if (!opcode.equals(that.opcode)) return false;
+        return name == that.name;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = opcode.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
 }

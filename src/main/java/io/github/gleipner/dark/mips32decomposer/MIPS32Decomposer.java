@@ -4,11 +4,8 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
 import io.github.gleipner.dark.mips32decomposer.instruction.parser
         .InstructionParser;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.io.*;
+import java.util.*;
 
 public class MIPS32Decomposer {
     private static StringJoiner sj = new StringJoiner(" ");
@@ -27,27 +24,49 @@ public class MIPS32Decomposer {
         }
 
         if ("-n".equals(args[0])) {
-            System.out.println(decompose(getNumberFromString(args[1])));
+            System.out.println(parse(getNumberFromString(args[1])));
+            print(parse(getNumberFromString(args[1])));
             return;
         }
 
-        BufferedReader br = new BufferedReader(new FileReader(args[0]));
-
-        int lineNo = 1;
-        String line;
-        while (isNotNull(line = br.readLine())) {
-            System.out.println(lineNo + decompose(getNumberFromString(line)));
-            lineNo++;
+        Iterator<Instruction> i = parse(new FileInputStream(args[0]));
+        int lineno = 1;
+        while (i.hasNext()) {
+            print(lineno++, i.next());
         }
     }
 
-    private static String decompose(int instruction) {
-        Instruction inst = InstructionParser.parse(instruction);
-        add("Mnemonic: " + inst.toMnemonic())
-                .add("Decimal: " + inst.toDecimalString())
-                .add("Hex: " + inst.toHexadecimalString())
-                .add("Format: " + inst.getFormat());
-        return sj.toString();
+    public static Iterator<Instruction> parse(InputStream is) throws
+            IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+        List<Instruction> instructions = new ArrayList<>();
+        String line;
+        while (isNotNull(line = br.readLine())) {
+            instructions.add(parse(getNumberFromString(line)));
+        }
+
+        return instructions.iterator();
+    }
+
+    private static Instruction parse(int instruction) {
+        return InstructionParser.parse(instruction);
+    }
+
+    private static void print(Instruction instruction) {
+        add("Mnemonic: " + instruction.toMnemonic())
+                .add("Decimal: " + instruction.toDecimalString())
+                .add("Hex: " + instruction.toHexadecimalString())
+                .add("Format: " + instruction.getFormat());
+        System.out.println(sj.toString());
+    }
+
+    private static void print(int lineno, Instruction instruction) {
+        add("Mnemonic: " + instruction.toMnemonic())
+                .add("Decimal: " + instruction.toDecimalString())
+                .add("Hex: " + instruction.toHexadecimalString())
+                .add("Format: " + instruction.getFormat());
+        System.out.println(lineno + sj.toString());
     }
 
     private static StringJoiner add(Object o) {
@@ -58,7 +77,7 @@ public class MIPS32Decomposer {
         return !Objects.isNull(o);
     }
 
-    private static int getNumberFromString(String s) {
+    public static int getNumberFromString(String s) {
         if (s.startsWith("0x")) {
             return Integer.parseInt(s.substring(2), 16);
         }

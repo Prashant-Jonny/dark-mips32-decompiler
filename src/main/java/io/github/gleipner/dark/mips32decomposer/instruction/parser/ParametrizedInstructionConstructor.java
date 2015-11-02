@@ -51,7 +51,22 @@ import java.util.List;
  * in which to display these fields must be specified.
  */
 public class ParametrizedInstructionConstructor {
-    public static InstructionConstructor createPatternizedConstructor(InstructionName iname, int[] bitfieldLengths, int[] inOrderBitFieldIndexes) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        return this.getClass() != o.getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    public static InstructionConstructor createPatternizedConstructor(
+            InstructionName iname,
+            int[] bitfieldLengths,
+            int[] inOrderBitFieldIndexes) {
         return instruction -> new Instruction(instruction, iname) {
             DecomposedRepresentation decomposed =
                     DecomposedRepresentation.fromNumber(instruction,
@@ -81,6 +96,18 @@ public class ParametrizedInstructionConstructor {
             protected DecomposedRepresentation getDecomposedRepresentation() {
                 return decomposed;
             }
+
+            @Override
+            public int hashCode() {
+                return super.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                return !(o == null || getClass() != o.getClass());
+            }
         };
+
     }
 }

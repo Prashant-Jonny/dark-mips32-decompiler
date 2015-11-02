@@ -51,4 +51,11 @@ public class RTypeInstructionParserTest {
         assertThat(parsedInstruction.toDecimalString(),
                 is(equalTo("[28 8 1 9 0 2]")));
     }
+
+    @Test
+    public void decomposingMulInstructionShouldYieldEqualInstances() {
+        Instruction actual = InstructionParser.parse(MUL_INSTRUCTION);
+        Instruction expected = parsedInstruction;
+        assertThat(actual, is(equalTo(expected)));
+    }
 }
