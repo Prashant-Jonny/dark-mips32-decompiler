@@ -35,16 +35,22 @@ import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
  * bit-fields represents the operands of the instruction.
  */
 public abstract class Instruction {
-    /** Always maintain the numerical representation of the instruction */
-    private final long numericalRepresentation;
     private final OpCode opcode;
     private final InstructionName name;
 
+    /**
+     * An instruction instance may be constructed by its numerical
+     * representation and name alone.
+     *
+     * @param instruction the numerical representation of the instruction.
+     * @param name the name of the instruction. {@see InstructionName}.
+     */
     public Instruction(int instruction, InstructionName name) {
-        this.numericalRepresentation = Integer.toUnsignedLong(instruction);
         opcode = OpCode.fromInstruction(instruction);
         this.name = name;
     }
+
+    protected abstract DecomposedRepresentation getDecomposedRepresentation();
 
     /**
      * @return Get the OpCode of the instruction
@@ -67,10 +73,13 @@ public abstract class Instruction {
         return name;
     }
 
-    /**
-     * @return this instruction decomposed into its bitfields.
-     */
-    public abstract DecomposedRepresentation getDecomposedRepresentation();
+    public String toHexadecimalString() {
+        return getDecomposedRepresentation().toHexadecimalString();
+    }
+
+    public String toDecimalString() {
+        return getDecomposedRepresentation().toDecimalString();
+    }
 
     /**
      * @return the {@link Mnemonic} representation of this instruction.

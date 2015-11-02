@@ -54,12 +54,8 @@ public class ParametrizedInstructionConstructor {
     public static InstructionConstructor createPatternizedConstructor(InstructionName iname, int[] bitfieldLengths, int[] inOrderBitFieldIndexes) {
         return instruction -> new Instruction(instruction, iname) {
             DecomposedRepresentation decomposed =
-                    DecomposedRepresentation.fromNumber(instruction, bitfieldLengths);
-
-            /** {@inheritDoc} */
-            public DecomposedRepresentation getDecomposedRepresentation() {
-                return decomposed;
-            }
+                    DecomposedRepresentation.fromNumber(instruction,
+                            bitfieldLengths);
 
             /** {@inheritDoc} */
             public Mnemonic toMnemonic() {
@@ -79,6 +75,11 @@ public class ParametrizedInstructionConstructor {
                 });
                 yielders.add(0, iname::toMnemonic);
                 return new Mnemonic(yielders);
+            }
+
+            @Override
+            protected DecomposedRepresentation getDecomposedRepresentation() {
+                return decomposed;
             }
         };
     }

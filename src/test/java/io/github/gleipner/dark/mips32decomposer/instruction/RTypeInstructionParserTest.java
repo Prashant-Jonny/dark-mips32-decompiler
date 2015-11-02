@@ -13,7 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class RTypeInstructionParseletTest {
+public class RTypeInstructionParserTest {
     private final Instruction parsedInstruction = InstructionParser.parse(MUL_INSTRUCTION);
 
     @Test
@@ -38,5 +38,17 @@ public class RTypeInstructionParseletTest {
     public void decomposingMulInstructionShouldHaveCorrectMnemonicRepresentation() {
         Mnemonic m = new Mnemonic("mul $t1 $t0 $at");
         assertThat(parsedInstruction.toMnemonic(), is(equalTo(m)));
+    }
+
+    @Test
+    public void decomposingMulInstructionShouldHaveCorrectHexRepresentation() {
+        assertThat(parsedInstruction.toHexadecimalString(),
+                is(equalTo("[0x1c 8 1 9 0 2]")));
+    }
+
+    @Test
+    public void decomposingMulInstructionShouldHaveCorrectDecimalRepresentation() {
+        assertThat(parsedInstruction.toDecimalString(),
+                is(equalTo("[28 8 1 9 0 2]")));
     }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static io.github.gleipner.dark.mips32decomposer.instruction.Format.R;
 
-public class RTypeInstructionParselet {
+public class RTypeInstructionParser {
     private static final Map<Funct, InstructionConstructor> map = new HashMap<>();
 
     /**
