@@ -7,8 +7,6 @@ compileJava {
     sourceCompatibility = '1.8'
 }
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
@@ -16,3 +14,11 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
+
+jar {
+    archiveName = 'MIPS32Decomposer.jar'
+    manifest {
+        attributes 'Main-Class': 'io.github.gleipner.dark.mips32decomposer.MIPS32Decomposer'
+    }
+}
+
