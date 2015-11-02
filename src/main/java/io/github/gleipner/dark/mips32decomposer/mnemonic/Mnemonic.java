@@ -1,6 +1,8 @@
 package io.github.gleipner.dark.mips32decomposer.mnemonic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Represents a mnemonic name for some thing.

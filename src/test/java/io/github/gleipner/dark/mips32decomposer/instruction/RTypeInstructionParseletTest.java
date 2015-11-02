@@ -5,8 +5,10 @@ import io.github.gleipner.dark.mips32decomposer.instruction.parser
 import io.github.gleipner.dark.mips32decomposer.mnemonic.Mnemonic;
 import org.junit.Test;
 
-import static io.github.gleipner.dark.mips32decomposer.instruction.InstructionName.MUL;
-import static io.github.gleipner.dark.mips32decomposer.instruction.TestInstructions.MUL_INSTRUCTION;
+import static io.github.gleipner.dark.mips32decomposer.instruction
+        .InstructionName.MUL;
+import static io.github.gleipner.dark.mips32decomposer.instruction
+        .TestInstructions.MUL_INSTRUCTION;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;

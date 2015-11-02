@@ -5,9 +5,7 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.github.gleipner.dark.mips32decomposer.instruction.Format.I;
-import static io.github.gleipner.dark.mips32decomposer.instruction.Format.J;
-import static io.github.gleipner.dark.mips32decomposer.instruction.Format.R;
+import static io.github.gleipner.dark.mips32decomposer.instruction.Format.*;
 
 /**
  * All MIPS32 instructions, 32-bit numbers, have an associated opcode.
