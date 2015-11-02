@@ -1,8 +1,9 @@
-package io.github.gleipner.dark.mips32decomposer.instruction;
+package io.github.gleipner.dark.mips32decomposer.instruction.parser;
 
+import io.github.gleipner.dark.mips32decomposer.instruction.Instruction;
+import io.github.gleipner.dark.mips32decomposer.instruction.UnknownInstructionException;
 import io.github.gleipner.dark.mips32decomposer.instruction.opcode.OpCode;
 import io.github.gleipner.dark.mips32decomposer.instruction.opcode.RTypeInstructionOpcodeSet;
-import io.github.gleipner.dark.mips32decomposer.instruction.parselet.*;
 
 import java.util.HashMap;
 import java.util.Map;
