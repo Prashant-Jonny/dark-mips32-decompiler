@@ -108,4 +108,27 @@ public final class DecomposedRepresentation {
         Arrays.stream(decomposition).forEach(e -> sj.add(Integer.toString(e)));
         return sj.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DecomposedRepresentation that = (DecomposedRepresentation) o;
+
+        return Arrays.equals(decomposition, that.decomposition);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(decomposition);
+    }
+
+    @Override
+    public String toString() {
+        return "DecomposedRepresentation{" +
+                "decomposition=" + Arrays.toString(decomposition) +
+                '}';
+    }
 }

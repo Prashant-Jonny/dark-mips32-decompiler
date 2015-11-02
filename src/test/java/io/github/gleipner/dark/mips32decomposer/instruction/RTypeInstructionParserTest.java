@@ -11,6 +11,7 @@ import static io.github.gleipner.dark.mips32decomposer.instruction
         .TestInstructions.MUL_INSTRUCTION;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 public class RTypeInstructionParserTest {
@@ -57,5 +58,11 @@ public class RTypeInstructionParserTest {
         Instruction actual = InstructionParser.parse(MUL_INSTRUCTION);
         Instruction expected = parsedInstruction;
         assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    public void decomposingDifferentInstructionsShouldYieldDifferentInstances() {
+        Instruction actual = InstructionParser.parse(0x70014802);
+        assertThat(actual, is(not(equalTo(parsedInstruction))));
     }
 }

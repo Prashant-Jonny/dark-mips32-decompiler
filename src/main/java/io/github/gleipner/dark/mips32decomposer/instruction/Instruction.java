@@ -37,6 +37,7 @@ import io.github.gleipner.dark.mips32decomposer.util.DecomposedRepresentation;
 public abstract class Instruction {
     private final OpCode opcode;
     private final InstructionName name;
+    private final long instruction;
 
     /**
      * An instruction instance may be constructed by its numerical
@@ -46,11 +47,12 @@ public abstract class Instruction {
      * @param name the name of the instruction. {@see InstructionName}.
      */
     public Instruction(int instruction, InstructionName name) {
+        this.instruction = Integer.toUnsignedLong(instruction);
         opcode = OpCode.fromInstruction(instruction);
         this.name = name;
     }
 
-    protected abstract DecomposedRepresentation getDecomposedRepresentation();
+    public abstract DecomposedRepresentation getDecomposedRepresentation();
 
     /**
      * @return Get the OpCode of the instruction
@@ -86,21 +88,7 @@ public abstract class Instruction {
      */
     public abstract Mnemonic toMnemonic();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Instruction that = (Instruction) o;
-
-        if (!opcode.equals(that.opcode)) return false;
-        return name == that.name;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = opcode.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+    public long getInstruction() {
+        return instruction;
     }
 }

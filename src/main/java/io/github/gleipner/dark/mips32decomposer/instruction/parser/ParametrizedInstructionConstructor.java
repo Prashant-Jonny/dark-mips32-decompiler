@@ -93,19 +93,38 @@ public class ParametrizedInstructionConstructor {
             }
 
             @Override
-            protected DecomposedRepresentation getDecomposedRepresentation() {
+            public DecomposedRepresentation getDecomposedRepresentation() {
                 return decomposed;
             }
 
             @Override
             public int hashCode() {
-                return super.hashCode();
+                return 31*decomposed.hashCode() + instruction;
             }
 
             @Override
             public boolean equals(Object o) {
                 if (this == o) return true;
-                return !(o == null || getClass() != o.getClass());
+                if (o == null || getClass() != o.getClass()) return false;
+                Instruction that = (Instruction) o;
+
+                if (this.getInstruction() != that.getInstruction()) return false;
+
+                if (!this.getDecomposedRepresentation()
+                        .equals(that.getDecomposedRepresentation())) {
+                    return false;
+                }
+
+                if (!this.toMnemonic().equals(that.toMnemonic())) return false;
+
+                return this.getName().equals(that.getName());
+            }
+
+            @Override
+            public String toString() {
+                return "$InstructionConstructor{" +
+                        "decomposed=" + decomposed +
+                        '}';
             }
         };
 
