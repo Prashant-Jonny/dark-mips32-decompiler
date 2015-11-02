@@ -14,8 +14,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class RTypeInstructionParseletTest {
-    private final InstructionParser parser = new InstructionParser();
-    private final Instruction parsedInstruction = parser.parse(MUL_INSTRUCTION);
+    private final Instruction parsedInstruction = InstructionParser.parse(MUL_INSTRUCTION);
 
     @Test
     public void decomposingMulInstructionShouldHaveCorrectOpcode() {

@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents all opcodes associated with instructions in the R-type format.
+ * Represents all the set of all the opcodes (in their numerical representation)
+ * that are associated with instructions in the R-type format.
  */
 public enum RTypeInstructionOpcodeSet {
     ;
