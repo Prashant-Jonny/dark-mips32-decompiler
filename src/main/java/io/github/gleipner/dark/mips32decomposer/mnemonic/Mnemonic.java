@@ -13,14 +13,15 @@ public class Mnemonic {
     }
 
     /**
-     * Takes several {@link MnemonicYielder}s which are functions that yield a
-     * single Mnemonic from some object and concatenates these in-order.
+     * Takes a collection of {@link MnemonicYielder}s which are functions
+     * that yield a single Mnemonic from some object and
+     * concatenates these (in-order).
      *
      * @param mnemonics functions that returns a {@code Mnemonic}.
      */
-    public Mnemonic(MnemonicYielder... mnemonics) {
+    public Mnemonic(Iterable<MnemonicYielder> mnemonics) {
         MnemonicBuilder builder = new MnemonicBuilder();
-        Arrays.stream(mnemonics).forEach(builder::add);
+        mnemonics.forEach(builder::add);
         this.stringRepresentation = builder.build().toString();
     }
 
