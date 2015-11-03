@@ -5,8 +5,6 @@ import io.github.gleipner.dark.mips32decomposer.instruction.Format;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.github.gleipner.dark.mips32decomposer.instruction.Format.*;
-
 /**
  * All MIPS32 instructions, 32-bit numbers, have an associated opcode.
  * The opcode is <i>always</i> encased in the 6 leftmost bits. For certain
@@ -114,9 +112,9 @@ public final class OpCode {
 
     static {
         /* Pair known opcodes with their corresponding format */
-        RTypeInstructionOpcodeSet.all().forEach(e -> put(e, R));
-        put(0x01, I);
-        put(0x02, J);
-        put(0x03, J);
+        RTypeInstructionOpcodeSet.all().forEach(e -> put(e, Format.R));
+        put(0x01, Format.I);
+        put(0x02, Format.J);
+        put(0x03, Format.J);
     }
 }

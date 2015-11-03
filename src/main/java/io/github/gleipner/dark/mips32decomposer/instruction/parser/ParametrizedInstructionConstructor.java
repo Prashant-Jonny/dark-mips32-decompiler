@@ -84,7 +84,7 @@ public class ParametrizedInstructionConstructor {
                 List<MnemonicYielder> yielders = new ArrayList<>();
                 Arrays.stream(inOrderBitFieldIndexes).forEach(i -> {
                     /*
-                     * TODO: not all entries in the array are registers, although this works its confusing.
+                     * TODO: not all entries in the array are registers, although this works, it is confusing.
                      */
                     yielders.add(new Register(decomposedAsArray[i])::toMnemonic);
                 });
