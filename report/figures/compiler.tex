@@ -1,0 +1,13 @@
+\documentclass[border=3mm]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,positioning}
+\begin{document}
+
+\begin{tikzpicture}[>=stealth]
+  \node [draw] (compiler) {Compiler};
+  \node [above=of compiler] (input) {source program};
+  \node [below=of compiler] (output) {target program};
+  \draw [->] (input) -- (compiler);
+  \draw [->] (compiler) -- (output);
+\end{tikzpicture}
+\end{document}

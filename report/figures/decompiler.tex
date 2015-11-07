@@ -1,0 +1,13 @@
+\documentclass[border=3mm]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,positioning}
+\begin{document}
+
+\begin{tikzpicture}[>=stealth]
+  \node [draw] (decompiler) {Decompiler};
+  \node [above=of decompiler] (input) {executable};
+  \node [below=of decompiler] (output) {source};
+  \draw [->] (input) -- (decompiler);
+  \draw [->] (decompiler) -- (output);
+\end{tikzpicture}
+\end{document}
