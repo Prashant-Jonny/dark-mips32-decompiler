@@ -1,10 +1,17 @@
 \documentclass[border=3mm]{standalone}
 
 \usepackage{tikz}
-\usetikzlibrary{matrix}
+
+\usetikzlibrary{
+  matrix,
+  positioning
+}
+
 \begin{document}
-\begin{tikzpicture}
-\matrix [
+
+\begin{tikzpicture}[node distance=1em]
+
+\matrix (decomposed-representation) [
   matrix of nodes,
   row sep=0.2em,
   column sep=-\pgflinewidth,
@@ -20,6 +27,10 @@
   }
 ] {
 0x1c & rs & rt & rd & 0 & 2 \\
-6 & 5 & 5 & 5 & 5 & 6 \\};
+6 & 5 & 5 & 5 & 5 & 6 \\
+};
+\node [left=of decomposed-representation] (mnemonic-representation) {\texttt{mul rd, rs, rt}};
+
 \end{tikzpicture}
+
 \end{document}
