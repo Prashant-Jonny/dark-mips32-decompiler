@@ -1,12 +1,14 @@
 \section{Introduction}
 
-This article presents a MIPS32-decompiler that, when passed a (semi) valid
-32-bit number representing an instruction from the MIPS32 instruction-set
-outputs the same instruction in various forms of representation.
+This article presents a MIPS32-decompiler that, when passed a valid
+and semi-valid 32-bit number representing an instruction from the
+MIPS32 instruction-set outputs the same instruction in several
+representation forms.
 
-In the following subsections the problem solved by the software is
-presented, as is an introduction (with examples) describing the
-terminology that will be used throughout this document.
+In the following subsections an introduction describing the
+terminology used throughout this document is provided and afterwards
+a description of the problem that this software aims to address
+and solve.
 
 The rest of the article will provide a high-level description of this
 solution accompanied with a guide on how to compile and run the
@@ -16,6 +18,31 @@ The appendix contains an overview of all those instructions that
 the decompiler is capable of comprehending.
 
 \subsection{Problem statement}
+
+In the MIPS32 architecture, all machine instructions are represented
+as 32-bit numbers. The core functionality to be presented is translating
+a 32-bit number into other forms of representation.
+
+Specifically, MIPS32 instructions are to be read from a file with
+numbers either in decimal or hexadecimal form. For each number
+in the input file, the disassembler, viz. the solution, produces
+one line of output containing
+
+\begin{itemize}
+  \item The number from the input file.
+  \item The format of the instruction (R, I, or J).
+  \item The decomposed representation in decimal.
+  \item The decomposed representation in hexadecimal.
+  \item The representation of the instruction in mnemonic format,
+    using register abbreviations wherever possible (e.g.,
+    \mathtt{\$t0} instead of \mathtt{\$8}) and using decimal numbers
+    whenever actual numbers are necessary.
+\end{itemize}
+
+In this assignment the core functionality which is exposed is
+\emph{parsing} such a number and outputting other representations of
+the same instruction, as well as some additional information regarding
+it.
 
 \subsection{Terminology}
 

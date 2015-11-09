@@ -46,3 +46,4 @@
 
 .gradle
 build
+*.pdf
