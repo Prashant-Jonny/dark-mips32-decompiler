@@ -132,7 +132,7 @@ Fig. \ref{fig:mul-decomposed}
 From Fig. \ref{fig:r-decomposed} the registers \texttt{rs},
 \texttt{rt} and \texttt{rd} were determined to have the addresses 8,
 1, and 9, respectively. In MIPS registers are named, following the
-convention shown in \ref{table:mips-register-naming-convention}
+convention shown in Table. \ref{table:mips-register-naming-convention}
 
 \begin{table}[H]
 \centering
@@ -157,6 +157,14 @@ Nickname & Register Number \\
 \end{tabular}
 \label{table:mips-register-naming-convention}
 \end{table}
+
+Replacing the numerical values of \texttt{rs}, \texttt{rt} and
+\texttt{rd}, with their named counterparts yields the mnemonic
+representation of the instruction to be
+
+\begin{center}
+  \texttt{mul \$t1, \$t0, \$at}
+\end{center}
 
 
 This subsection concludes with a concept review that serves as a brief
