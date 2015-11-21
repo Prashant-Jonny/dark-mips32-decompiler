@@ -18,6 +18,9 @@ public class Instruction {
         this.mnemonicRepresentation = mnemonicRepresentation;
     }
 
+    public InstructionName getInstructionName() {
+        return iname;
+    }
 
     public MnemonicRepresentation getMnemonicRepresentation() {
         return mnemonicRepresentation;
@@ -43,6 +46,8 @@ public class Instruction {
     public String toString() {
         return "Instruction{" +
                 "iname=" + iname +
+                ", numericalRepresentation=" + toNumericalRepresentation()
+                +
                 ", decomposedRepresentationDecimal=" +
                 toDecimalString() + ", decomposedRepresentationHex=" +
                 toHexadecimalString() +
