@@ -36,8 +36,7 @@ public class RTypeInstructionParser {
      * function returns and {@link Instruction} instance.
      */
     private static final Map<InstructionName,
-            BiFunction<InstructionName, DecomposedRepresentation,
-                    Instruction>> constructorMap = new HashMap<>();
+            ParametrizedConstructor> constructorMap = new HashMap<>();
 
 
     /**
@@ -65,11 +64,9 @@ public class RTypeInstructionParser {
         int[] decomposedArray = d.toIntArray();
         int opcode = decomposedArray[0];
         int funct = decomposedArray[5];
-
         /* Use the opcode funct pair to get the associated name */
         InstructionName iname = map.get(new OpcodeFunctPair(opcode,
                 funct));
-
         /*
          * From the name get the appropriate constructor pattern and
          * apply it.
@@ -79,15 +76,29 @@ public class RTypeInstructionParser {
 
     static {
         /* Store all opcode-funct pairs */
-        put(0x1c, 2, InstructionName.MUL);
+        put(InstructionName.MUL,
+                RTypeInstructionParser::INAME_RD_RS_RT,
+                0x1c, 2);
 
-        /* Associate instructions with their constructor function */
-        constructorMap.put(InstructionName.MUL,
-                RTypeInstructionParser::INAME_RD_RS_RT);
+        put(InstructionName.SUB,
+                RTypeInstructionParser::INAME_RD_RS_RT,
+                0x00, 0x22);
     }
 
-    private static void put(int opcode, int funct, InstructionName name) {
+    private static void put(InstructionName iname,
+                            ParametrizedConstructor constructor,
+                            int opcode, int funct) {
+        put(iname, opcode, funct);
+        put(iname, constructor);
+    }
+
+    private static void put(InstructionName name, int opcode, int funct) {
         map.put(new OpcodeFunctPair(opcode, funct), name);
+    }
+
+    private static void put(InstructionName iname,
+                            ParametrizedConstructor constructor) {
+        constructorMap.put(iname, constructor);
     }
 
     private static Instruction INAME_RD_RS_RT(InstructionName iname,
@@ -112,6 +123,13 @@ public class RTypeInstructionParser {
 
         /* Return the instruction instance */
         return new Instruction(iname, Format.R, d, mnemonic);
+    }
+
+    @FunctionalInterface
+    private interface ParametrizedConstructor extends
+            BiFunction<InstructionName, DecomposedRepresentation,
+                    Instruction> {
+        /* Intentionally left empty */
     }
 
     private static class OpcodeFunctPair {

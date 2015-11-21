@@ -28,4 +28,16 @@ public class BitTest {
     public void shouldThrowAnExceptionForOutOfRange() {
         Bit.getNBits(0, 28, 5);
     }
+
+    @Test
+    public void shouldYieldStringsOfLength32() {
+        int number = 0x00012122;
+        assertThat(Bit.asBitPattern(number).length(), is(equalTo(32)));
+    }
+
+    @Test
+    public void shouldYieldLastSixBitsCorrectly() {
+        int number = 0x00012122;
+        assertThat(Bit.getNBits(number, 26, 6), is(equalTo(34)));
+    }
 }

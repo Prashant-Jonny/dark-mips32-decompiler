@@ -31,5 +31,27 @@ public class RTypeInstructionParserTest {
         assertThat(actualParameters, is(equalTo(expectedParameters)));
     }
 
+    @Test
+    public void subTest() {
+        int subInstruction = 0x00012122;
+
+        Instruction instruction = RTypeInstructionParser.parse(subInstruction);
+
+        /* Check that the format is okay */
+        assertThat(instruction.getFormat(), is(equalTo(Format.R)));
+
+        /* Check that the name matches */
+        assertThat(instruction.getInstructionName(), is(equalTo(SUB)));
+
+        /* Check that the numerical representation is intact */
+        assertThat(instruction.toNumericalRepresentation(), is(equalTo
+                (subInstruction)));
+
+        /* Check that the actual parameters are in the correct order */
+        String[] expectedParameters = {"$a0", "$zero", "$at"};
+        String[] actualParameters = instruction
+                .getMnemonicRepresentation().getInstructionParameters();
+        assertThat(actualParameters, is(equalTo(expectedParameters)));
+    }
 
 }

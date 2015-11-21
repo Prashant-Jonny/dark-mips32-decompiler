@@ -32,8 +32,8 @@ public class Bit {
     public static int getNBits(int number, int start, int numberOfBits) {
         if (start > 31 || start < 0) {
             throw new IllegalArgumentException(start > 31 ?
-                    "The supplied index \"start\" must be satisfy start <= 31" :
-                    "The supplied index \\\"start\\\" must be satisfy start >= 0");
+                    "The supplied index \"start\" must satisfy start <= 31" :
+                    "The supplied index \\\"start\\\" must satisfy start >= 0");
         }
         if (start + numberOfBits > 32) {
             throw new IllegalArgumentException(
@@ -43,11 +43,18 @@ public class Bit {
         }
 
         String s = asBitPattern(number);
-        String requestedBits = s.substring(start, start + numberOfBits - 1);
+        String requestedBits = s.substring(start, start + numberOfBits);
         return Integer.parseInt(requestedBits, 2);
     }
 
-    private static String asBitPattern(int number) {
-        return Integer.toBinaryString(number);
+    public static String asBitPattern(int number) {
+        String binaryString = Integer.toBinaryString(number);
+        int length = binaryString.length();
+        String pad = "";
+        if (length <= 32) {
+            pad = new String(new char[32-length]).replace("\0",
+                    "0");
+        }
+        return pad + binaryString;
     }
 }
