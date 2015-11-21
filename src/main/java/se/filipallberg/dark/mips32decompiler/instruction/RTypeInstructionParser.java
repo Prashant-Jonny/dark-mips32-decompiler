@@ -3,9 +3,10 @@ package se.filipallberg.dark.mips32decompiler.instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.StringJoiner;
 
 /**
  * An R-type instruction is determined uniquely by the combination
@@ -118,18 +119,14 @@ public class RTypeInstructionParser {
         };
 
         /* Create the mnemonic representation of the instruction */
-        MnemonicRepresentation mnemonic = new MnemonicRepresentation
-                (iname, instructionParameters);
+        StringJoiner sj = new StringJoiner(", ");
+        Arrays.stream(instructionParameters).forEach(sj::add);
+        MnemonicRepresentation mnemonic =
+                MnemonicRepresentation.fromString(iname + " " + sj
+                        .toString());
 
         /* Return the instruction instance */
         return new Instruction(iname, Format.R, d, mnemonic);
-    }
-
-    @FunctionalInterface
-    private interface ParametrizedConstructor extends
-            BiFunction<InstructionName, DecomposedRepresentation,
-                    Instruction> {
-        /* Intentionally left empty */
     }
 
     private static class OpcodeFunctPair {

@@ -24,11 +24,11 @@ public class RTypeInstructionParserTest {
         assertThat(instruction.toNumericalRepresentation(), is(equalTo
                 (mulInstruction)));
 
-        /* Check that the actual parameters are in the correct order */
-        String[] expectedParameters = {"$t1", "$t0", "$at"};
-        String[] actualParameters = instruction
-                .getMnemonicRepresentation().getInstructionParameters();
-        assertThat(actualParameters, is(equalTo(expectedParameters)));
+        /* Check that the representation is correct */
+        MnemonicRepresentation expected = MnemonicRepresentation.fromString("mul " +
+                "$t1, $t0, $at");
+        assertThat(instruction.getMnemonicRepresentation(), is(equalTo
+                (expected)));
     }
 
     @Test
@@ -48,10 +48,9 @@ public class RTypeInstructionParserTest {
                 (subInstruction)));
 
         /* Check that the actual parameters are in the correct order */
-        String[] expectedParameters = {"$a0", "$zero", "$at"};
-        String[] actualParameters = instruction
-                .getMnemonicRepresentation().getInstructionParameters();
-        assertThat(actualParameters, is(equalTo(expectedParameters)));
+        MnemonicRepresentation expected = MnemonicRepresentation
+                .fromString("sub $a0, $zero, $at");
+        assertThat(instruction.getMnemonicRepresentation(), is(equalTo(expected)));
     }
 
 }
