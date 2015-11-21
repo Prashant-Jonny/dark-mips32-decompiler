@@ -65,6 +65,8 @@ not themselves identical.
   \label{fig:decompiler}
 \end{figure}
 
+\subsection{Key concepts}
+
 In this assignment the decompiler must be able to translate from the
 machine-readable language of 32-bit numbers representing MIPS32
 instructions to the human-readable target language described in the
@@ -83,6 +85,8 @@ Specifically,
 \end{itemize}
 
 will be covered.
+
+\subsubsection{Example: Decomposing \texttt{mul}}
 
 Consider the 32-bit number \texttt{0x71014802}. It is \emph{decomposed}
 into fields of varying lengths depending on the \emph{format} of the
@@ -114,13 +118,14 @@ Decomposing \texttt{0x71014802} into the fields shown in
 Fig. \ref{fig:r-decomposed} yields \texttt{rs=8}, \texttt{rt=1},
 \texttt{rd=9}, \texttt{shamt=0}, and \texttt{funct=2}. The
 \emph{decomposed representation} of this instruction in hexadecimal
-form is thus \texttt{[0x1c 8 1 9 0 2]}. 
+form is thus \texttt{[0x1c 8 1 9 0 2]}.\footnote{The corresponding
+\emph{decimal representation} is \texttt{[28 8 1 9 0 2]}}
 
 To identify the particular instruction represented by
-\texttt{0x71014802} the \texttt{funct} must be consulted. Pairing the
-opcode, \texttt{0x1c} and the value in the \texttt{funct} field
-uniquely identifies the instruction a \texttt{mul} instruction; see
-Fig. \ref{fig:mul-decomposed}
+\texttt{0x71014802} the \texttt{funct} field must be
+consulted. Pairing the opcode, \texttt{0x1c} and the value in the
+\texttt{funct} field uniquely identifies the instruction a
+\texttt{mul} instruction; see Fig. \ref{fig:mul-decomposed}
 
 \begin{figure}[H]
   \centering
@@ -159,23 +164,26 @@ Nickname & Register Number \\
 \end{table}
 
 Replacing the numerical values of \texttt{rs}, \texttt{rt} and
-\texttt{rd}, with their named counterparts yields the mnemonic
-representation of the instruction to be
+\texttt{rd}, with their named counterparts yields the \emph{mnemonic
+representation} of the instruction to be
 
 \begin{center}
   \texttt{mul \$t1, \$t0, \$at}
 \end{center}
 
-
-This subsection concludes with a concept review that serves as a brief
-summary for the reader.
-
 \subsection{Problem statement}
 
-
 In this assignment the core functionality which is exposed is
-\emph{parsing} such a number and outputting other representations of
-the same instruction, as well as some additional information regarding
-it.
+\emph{parsing} such a 32-bit number representing an instruction from
+the MIPS32-instruction set and outputting other representations of the
+same instruction, as well as some additional information regarding the
+very same instruction, see Fig. \ref{fig:mips32-decompiler}.
 
-\subsection{Concept review}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/mips32-decompiler.png}
+  \caption{Input and output of the decompiler}
+  \label{fig:mips32-decompiler}
+\end{figure}
+
+

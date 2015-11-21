@@ -1,4 +1,27 @@
 package se.filipallberg.dark.mips32decompiler.instruction.opcode;
 
-public class RTypeOpcodeSet {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Represents the set of all the opcodes (in their numerical representation)
+ * that are associated with instructions in the R-type format.
+ */
+public enum RTypeOpcodeSet {
+    ;
+    private static final Set<Integer> set = new HashSet<>();
+
+    public static Collection<Integer> all() {
+        return set;
+    }
+
+    private static void add(int... opcodes) {
+        Arrays.stream(opcodes).forEach(set::add);
+    }
+
+    static {
+        add(0x00, 0x1c);
+    }
 }

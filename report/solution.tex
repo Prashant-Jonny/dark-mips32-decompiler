@@ -1,0 +1,53 @@
+In the previous section we established the terminology we will use
+throughout the document. This terminology will also be used to
+decompose our system that solves the problem at hand.
+
+Specifically, we will create a system such that any given
+\texttt{Instruction} knows, or can retrieve information
+about,\footnote{Using its collaborators}
+
+\begin{itemize}
+\item Its own name
+\item Its own format
+\item Its own decomposed representation(s)
+\subitem Hexadecimal
+\subitem Decimal
+\item Its own mnemonic representation
+\end{itemize}
+
+The \texttt{Instruction} class is an abstraction providing an
+encapsulation around the aforementioned points.
+
+Furthermore, the system will be divided into the self-explanatory
+constituents
+
+\begin{itemize}
+\item Format: R, I, J
+\item InstructionName: All known instruction names, excluding
+  pseudo-instructions.
+\item Opcode: An abstraction around the numerical opcode. Knows its
+  associated format.
+\item DecomposedRepresentation: Can decompose a 32-bit number into
+  varying lengths.
+\item Register: Associates a number with the register name.
+\end{itemize}
+
+The manner with which we determine the particular instruction, and
+yield the correct output, becomes very closely related to our original
+example for the \texttt{mul} instruction.
+
+First, we must check the leftmost 6 bits.\footnote{The most
+  significant bits} Recall from earlier that these 6 bits make up the
+\texttt{Opcode} of the instruction \emph{and} that from the opcode
+alone we may infer the format.
+
+From the three formats we are working with we find that the I-format
+type instructions and J-format type instructions are the simplest, as
+the opcode does not only identify the format but also the particular
+instruction as is the manner in which the instruction should be
+decomposed.
+
+From the earlier example we learned that for an R-type instruction we
+must consult an additional set of bits, namely the \texttt{funct}
+field before we can know the instruction name and its decomposition.
+
