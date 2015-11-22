@@ -226,17 +226,18 @@ for R-format instructions and
 for I-format instructions.
 
 Each \inamem is associated with a particular \pattern! We will call
-these patterns a \mij{MnemonicRule}, so we have that
+these patterns a \mij{MnemonicPattern}, so we have that
 
 \begin{minted}{haskell}
-getMnemonicRule :: InstructionName -> MnemonicRule
+getMnemonicPattern :: InstructionName -> MnemonicPattern
 \end{minted}
 
-and that a \mij{MnemonicRule} when applied to a \decomposedm
+and that a \mij{MnemonicPattern} when applied to a \decomposedm
 yields a \mij{Mnemonic}.\footnote{This is just a type synonym for a \texttt{String}}
 
 \begin{minted}{haskell}
-getMnemonic :: InstructionName -> MnemonicRule -> DecomposedRepresentation -> Mnemonic
+getMnemonicRepresentation :: InstructionName -> MnemonicPattern -> 
+            DecomposedRepresentation -> MnemonicRepresentation
 \end{minted}
 
 \subsection{An decompilation algorithm}
@@ -260,9 +261,16 @@ define an algorithm for our 32-bit integers.
 \State \get{}{d}\from{getDecomposedRepresentation}\of{format, int}
 \State \get{String}{dec}\from{decimal}\of{d}
 \State \get{String}{hex}\from{hex}\of{d}
-\State \get{MnemonicRule}{r}\from{getMnemonicRule}\of{iname}
-\State \get{Mnemonic}{mnemonic}\from{getMnemonic}\of{iname, r, d} \\
+\State \get{MnemonicPattern}{r}\from{getMnemonicPattern}\of{iname}
+\State \tt{MnemonicRepresentation} mnemonic
+\State \get{}{mnemonic}\from{getMnemonicRepresentation}\of{iname, r, d} \\
 \Return (int, format, dec, hex, mnemonic)
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
+
+Simplified, we have that lines 2, and 3 can be made in a single
+step. Ostensibly,\footnote{apparently or purportedly, but perhaps not
+actually.} there is no need for the first step, that of the opcode at
+all.
+
