@@ -1,53 +1,268 @@
 In the previous section we established the terminology we will use
 throughout the document. This terminology will also be used to
-decompose our system that solves the problem at hand.
+decompose our system that solves the problem at hand, viz. that
+we will model our solution according to the problem domain.
 
 Specifically, we will create a system such that any given
-\texttt{Instruction} knows, or can retrieve information
+\tt{Instruction} knows, or can retrieve information
 about,\footnote{Using its collaborators}
 
 \begin{itemize}
+\item Its numerical representation
 \item Its own name
 \item Its own format
-\item Its own decomposed representation(s)
-\subitem Hexadecimal
-\subitem Decimal
-\item Its own mnemonic representation
+\item Its decomposed representation(s)
+\subitem Hexadecimal representation
+\subitem Decimal representation
+\item Its mnemonic representation
 \end{itemize}
 
-The \texttt{Instruction} class is an abstraction providing an
-encapsulation around the aforementioned points.
+The \tt{Instruction} class is an abstraction providing an
+encapsulation around the aforementioned points. Ultimately
 
 Furthermore, the system will be divided into the self-explanatory
 constituents
 
 \begin{itemize}
-\item Format: R, I, J
-\item InstructionName: All known instruction names, excluding
+\item \formatm: R, I, J
+\item \inamem: All known instruction names, excluding
   pseudo-instructions.
-\item Opcode: An abstraction around the numerical opcode. Knows its
+\item \opcodem: An abstraction around the numerical opcode. Knows its
   associated format.
-\item DecomposedRepresentation: Can decompose a 32-bit number into
+\item \decomposedm: Can decompose a 32-bit number into
   varying lengths.
-\item Register: Associates a number with the register name.
+\item \registerm: Associates a number with the register name.
 \end{itemize}
 
 The manner with which we determine the particular instruction, and
 yield the correct output, becomes very closely related to our original
-example for the \texttt{mul} instruction.
+example for the \tt{mul} instruction. In the following example
+we will parse another R-type instruction, namely \tt{sub}, this
+time explaining the process more formally,
 
-First, we must check the leftmost 6 bits.\footnote{The most
-  significant bits} Recall from earlier that these 6 bits make up the
-\texttt{Opcode} of the instruction \emph{and} that from the opcode
-alone we may infer the format.
+\subsection{Example: Decomposing \texttt{sub}}
 
-From the three formats we are working with we find that the I-format
-type instructions and J-format type instructions are the simplest, as
-the opcode does not only identify the format but also the particular
-instruction as is the manner in which the instruction should be
-decomposed.
+Consider the 32-bit integer \tt{0x00012122}. In this example, we
+will parse the number in a sequence of steps, before finally arriving
+at that this number represents an instance of the \tt{sub}
+instruction.
 
-From the earlier example we learned that for an R-type instruction we
-must consult an additional set of bits, namely the \texttt{funct}
-field before we can know the instruction name and its decomposition.
+\subsubsection{Determining \texttt{Opcode} from a 32-bit integer}
+First, we have that from the \tt{Opcode} may be determined
+by the 6 left-most bits of the number, hence we would like to
+have a function $f$ such that,
 
+\begin{equation*}
+        f: \textrm{32-bit integer} \to \tt{Opcode}
+\end{equation*}
+
+In Java we can represent this by having a class, \opcodem\footnote{
+\tt{src/main/java/se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode}}
+with the method,
+
+\begin{minted}{java}
+        public static Opcode fromInstruction(int instruction);
+\end{minted}
+
+The \opcodem abstraction will intermittently be represented in
+numberical form, so in this case \mintinline{java}{Opcode.fromInstruction(0x00012122)}
+will occassionally be written out as \tt{0x00}.
+
+\subsubsection{Determining the \texttt{Format} from an \texttt{Opcode}}
+
+As previously stated, for any defined \opcodem the
+format is always known, for legibilitywe will adopt the following
+notation to describe this function.\footnote{And that methods are
+routinely renamed}
+
+\begin{minted}{haskell}
+getFormat :: Opcode -> Format
+\end{minted}
+
+which means that getting the format is a function \emph{from} \opcodem
+to \formatm.
+
+This also means that we will write out
+
+\begin{minted}{java}
+  public static Opcode fromInstruction(int instruction);
+\end{minted}
+
+as
+
+\begin{minted}{haskell}
+fromInstruction :: Integer32 -> Opcode
+\end{minted}
+
+When appropriate, we will disregard the names and just write
+
+\begin{verbatim}
+Integer32 -> Opcode
+\end{verbatim}
+
+Recall that so far we have applied the following steps,
+
+\begin{itemize}
+\item \tt{\integer -> \opcode}, which yields \tt{0x00}
+\item \tt{\opcode -> \format}, which yields the R-format
+\end{itemize}
+
+Now while the above two steps are always applicable regardless of the instruction
+there lies a cross-roads in the next step that we have to take into account.
+
+\subsubsection{Getting the \texttt{InstructionName} from the \texttt{Format}}
+
+Recall from earlier that the \opcode alone is not always a unique identifier of
+the instruction. For I-format instructions it is, but for R-format instructions
+it is not!
+
+But, for any given \formatm we may always identify the name of the
+an \instructionm, i.e. the \inamem as long as we can supply the format
+with the numerical representation of the instruction.
+
+In the case of the formats where the \opcodem uniquely identifies the
+instruction the specific \formatm only confers with the \opcodem to
+supply the \inamem. In those formats where the \opcodem is not
+adequate to identify the instruction \formatm may confer with any bits
+necessary to provide the \inamem.\footnote{For the opcodes \tt{op=0x00}, \tt{op=0x01},
+and \tt{op=0x1c} it is necessary to consult a sencond field in order to identify
+the instruction completely (\tt{funct} in the case of \tt{op=x00} or \tt{ox1c} and
+\tt{rt} in the case of \tt{op=0x01})}.
+
+Using our previous notation convention we will write,
+
+\begin{minted}{haskell}
+getName :: Format -> Integer32 -> InstructionName
+\end{minted}
+
+and the way we interpret is a left-associative function application, which
+means that reading from the left we first apply \integer as an argument
+to \formatm, i.e. \mij{Format(Integer32)} which returns an \inamem.
+
+So, our initial two steps gave us the R-format, which when given a
+32-bit integer (in this case \tt{0x00012122}) will give us
+the \inamem: \mij{SUB}.
+
+The \formatm also affords us the definition of how to decompose an
+instruction of that format.
+
+\begin{minted}{haskell}
+getDecomposedRepresentation :: Format -> Integer32 -> DecomposedRepresentation
+\end{minted}
+
+\subsubsection{Review}
+
+So far we have retrieved the \opcodem from \tt{0x00012122}, and from the
+\opcodem we got the \formatm.
+
+In turn, the \formatm gave us both the \decomposedm and the \inamem.
+
+\subsection{Example: Decomposing \tt{sub} (continued)}
+
+Before the above review we retrieved the \decomposedm. A \decomposedm
+can represent itself in different bases, specifically in hex and decimal,
+as a \mij{String}.
+
+\begin{minted}{haskell}
+hex :: DecomposedRepresentation -> String
+decimal :: DecomposedRepresentation -> String
+\end{minted}
+
+where if we apply \mi{haskell}{hex} to the \decomposedm we have
+we get \tt{[0 0 1 4 4 0x22]}.\footnote{Remember that an R-type instruction
+decomposes into bitfields of length $(6, 5, 5, 5, 5, 6)$} and applying
+\mintinline{haskell}{decimal} yields \tt{[0 0 1 4 4 34]}.
+
+Recall from Fig. \ref{fig:mips32-decompiler} that for any 32-bit integer
+representing a valid MIPS32-instruction the output we intend to produce is
+
+\begin{itemize}
+  \item The supplied 32-bit integer
+  \item the format of the instruction
+  \item the hexadecimal and decimal decomposed representation
+  \item the mnemonic representation using register
+          abbreviations wherever possible, and using decimal numbers
+          when actual numbers are necessary.
+\end{itemize}
+
+We have docked off the first three items, and only getting the
+mnemonic representation remains.\footnote{The first item is trivial}
+
+\subsubsection{Mnemonic patterns}
+
+We have not covered this before but the mnemonic representation of
+instructions in the MIPS32 instruction set has a tendency to follow
+a certain pattern, and these patterns are dependent upon the format of
+the particular instruction.
+
+For an example, the instructions
+
+\begin{verbatim}
+add, addu, sub, mul, and, or, nor, xor, movn, movz
+\end{verbatim}
+
+among possibly others, have the common pattern \emph{$\langle$iname
+rd, rs, rt$\rangle$} with
+\emph{iname} the instruction name.\footnote{\inamem}
+
+\newcommand{\pattern}[1]{\emph{$\langle$#1$\rangle$}}
+
+Other common patterns include 
+
+\begin{itemize}
+\item \pattern{iname rd, rs}
+\item \pattern{iname rd, rt, rs}
+\item \pattern{iname, rd, rt, shamt}
+\end{itemize}
+
+for R-format instructions and
+
+\begin{itemize}
+\item \pattern{iname, rt, rs, imm}
+\item \pattern{iname rt, imm}
+\item \pattern{iname, rt, rs(addr)}
+\end{itemize}
+
+for I-format instructions.
+
+Each \inamem is associated with a particular \pattern! We will call
+these patterns a \mij{MnemonicRule}, so we have that
+
+\begin{minted}{haskell}
+getMnemonicRule :: InstructionName -> MnemonicRule
+\end{minted}
+
+and that a \mij{MnemonicRule} when applied to a \decomposedm
+yields a \mij{Mnemonic}.\footnote{This is just a type synonym for a \texttt{String}}
+
+\begin{minted}{haskell}
+getMnemonic :: InstructionName -> MnemonicRule -> DecomposedRepresentation -> Mnemonic
+\end{minted}
+
+\subsection{An decompilation algorithm}
+
+Using the functions expressed in the previous sections we are now ready to
+define an algorithm for our 32-bit integers.
+
+\LetLtxMacro\i\textit
+\newcommand{\get}[2]{\tt{#1} \i{#2} $\gets$ }
+\newcommand{\of}[1]{(\i{#1})}
+\newcommand{\from}[1]{\i{#1}}
+
+\begin{algorithm}
+\caption{Parsing/Decompilation algorithm}\label{algo:decompile}
+\begin{algorithmic}[1]
+\Procedure{Parse}{32-bit integer \i{int}}
+\State \get{Opcode}{o}\from{getOpcode}\of{int}
+\State \get{Format}{format}\from{getFormat}\of{o}
+\State \get{InstructionName}{iname}\from{getName}\of{format, int}
+\State \tt{DecomposedRepresentation} d
+\State \get{}{d}\from{getDecomposedRepresentation}\of{format, int}
+\State \get{String}{dec}\from{decimal}\of{d}
+\State \get{String}{hex}\from{hex}\of{d}
+\State \get{MnemonicRule}{r}\from{getMnemonicRule}\of{iname}
+\State \get{Mnemonic}{mnemonic}\from{getMnemonic}\of{iname, r, d} \\
+\Return (int, format, dec, hex, mnemonic)
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
