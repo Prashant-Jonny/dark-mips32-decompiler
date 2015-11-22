@@ -13,6 +13,6 @@ public class ITypeInstructionOpcodeSet implements OpcodeSet {
     }
 
     static {
-        OpcodeSet.add(set, 0x08, 43);
+        OpcodeSet.add(set, 8, 9, 0xc, 43);
     }
 }

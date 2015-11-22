@@ -510,7 +510,6 @@ public enum InstructionName {
     private static MnemonicRepresentation RT_OFFSET_RS(InstructionName
                                                                iname,
                                                        DecomposedRepresentation d) {
-
         return MnemonicRepresentation.fromString(iname + " " + d.rt() +
                 ", " + d.offset() + "(" + d.rs() + ")");
     }
