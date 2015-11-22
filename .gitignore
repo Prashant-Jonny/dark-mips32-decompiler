@@ -47,3 +47,5 @@
 .gradle
 build
 *.pdf
+_minted-report
+.#*
