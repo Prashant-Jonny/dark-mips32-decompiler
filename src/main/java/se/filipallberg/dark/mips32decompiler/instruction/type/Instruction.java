@@ -1,5 +1,7 @@
-package se.filipallberg.dark.mips32decompiler.instruction;
+package se.filipallberg.dark.mips32decompiler.instruction.type;
 
+import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.InstructionName;
 import se.filipallberg.dark.mips32decompiler.instruction.format.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;

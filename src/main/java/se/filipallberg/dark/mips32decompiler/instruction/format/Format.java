@@ -3,6 +3,7 @@ package se.filipallberg.dark.mips32decompiler.instruction.format;
 import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.InstructionName;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.ITypeInstructionOpcodeSet;
+import se.filipallberg.dark.mips32decompiler.instruction.opcode.JTypeInstructionOpcodeSet;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.RTypeInstructionOpcodeSet;
 
@@ -104,6 +105,10 @@ public enum Format {
 
         new ITypeInstructionOpcodeSet().all().forEach(op -> {
             formatMap.put(op, Format.I);
+        });
+
+        new JTypeInstructionOpcodeSet().all().forEach(op -> {
+            formatMap.put(op, Format.J);
         });
     }
 }

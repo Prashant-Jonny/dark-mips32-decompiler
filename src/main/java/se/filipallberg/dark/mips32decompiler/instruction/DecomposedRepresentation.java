@@ -167,4 +167,7 @@ public class DecomposedRepresentation {
     }
 
     public String label() { return Integer.toString(decomposition[3]); }
+
+    public int opcode() { return decomposition[0]; }
+    public int funct() { return decomposition[5]; }
 }
