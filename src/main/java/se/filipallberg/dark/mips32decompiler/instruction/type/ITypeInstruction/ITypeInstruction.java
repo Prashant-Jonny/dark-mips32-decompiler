@@ -275,7 +275,7 @@ public enum ITypeInstruction {
         return opcodeSet;
     }
 
-    public static Instruction toInstruction(int instruction) {
+    public static Instruction fromNumericalRepresentation(int instruction) {
         /* Validate input */
         if (!hasCorrectFormat(instruction)) {
             String err = "Expected an instruction in the R-format. The" +

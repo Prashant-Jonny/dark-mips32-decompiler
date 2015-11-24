@@ -10,7 +10,7 @@ import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
  * we can retrieve bitfields from the decomposition using named methods
  * as opposed to the less human legible array indexes.
  */
-class RDecomposition {
+public class RDecomposition {
     private final int[] decomposition;
 
     private RDecomposition(int[] decomposition) {

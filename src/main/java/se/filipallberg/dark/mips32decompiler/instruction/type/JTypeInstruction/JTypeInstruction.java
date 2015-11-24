@@ -35,7 +35,7 @@ public enum JTypeInstruction {
         return map.keySet();
     }
 
-    public static Instruction toInstruction(int instruction) {
+    public static Instruction fromNumericalRepresentation(int instruction) {
         /* Validate input */
         Opcode opcode = Opcode.fromInstruction(instruction);
 

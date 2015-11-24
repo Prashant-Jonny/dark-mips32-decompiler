@@ -7,6 +7,8 @@ import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Describes a stateless representation of all the known R-type
@@ -350,7 +352,7 @@ public enum RTypeInstruction {
         return opcodeSet;
     }
 
-    public static Instruction toInstruction(int instruction) {
+    public static Instruction fromNumericalRepresentation(int instruction) {
         /* Validate input */
         if (!hasCorrectFormat(instruction)) {
             String err = "Expected an instruction in the R-format. The" +
@@ -362,7 +364,6 @@ public enum RTypeInstruction {
         }
 
         /** Get the correct R-type instruction */
-
         DecomposedRepresentation d = DecomposedRepresentation.fromNumber
                 (instruction, decomposedPattern);
         RDecomposition di = RDecomposition.fromDecomposedRepresentation(d);

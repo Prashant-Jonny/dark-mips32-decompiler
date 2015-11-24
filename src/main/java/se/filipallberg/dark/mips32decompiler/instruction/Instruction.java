@@ -34,11 +34,11 @@ public class Instruction {
         /* Opcodes map uniquely to a format, get the associated format */
         Format format = Format.fromOpcode(op);
         if (format == Format.R) {
-            return RTypeInstruction.toInstruction(instruction);
+            return RTypeInstruction.fromNumericalRepresentation(instruction);
         } else if (format == Format.I) {
-            return ITypeInstruction.toInstruction(instruction);
+            return ITypeInstruction.fromNumericalRepresentation(instruction);
         } else if (format == Format.J) {
-            return JTypeInstruction.toInstruction(instruction);
+            return JTypeInstruction.fromNumericalRepresentation(instruction);
         }
         throw new IllegalArgumentException(
                 "The instruction: " + instruction + " with opcode: " +
