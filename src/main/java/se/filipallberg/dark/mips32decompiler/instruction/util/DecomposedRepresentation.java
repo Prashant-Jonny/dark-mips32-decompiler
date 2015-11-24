@@ -1,4 +1,4 @@
-package se.filipallberg.dark.mips32decompiler.instruction;
+package se.filipallberg.dark.mips32decompiler.instruction.util;
 
 import se.filipallberg.util.Bit;
 
@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 public class DecomposedRepresentation {
     private final int[] decomposition;
 
-    private DecomposedRepresentation(int number, int[] decomposition) {
+    private DecomposedRepresentation(int[] decomposition) {
         this.decomposition = decomposition;
     }
 
@@ -43,7 +43,7 @@ public class DecomposedRepresentation {
             start += lengths[i];
         }
 
-        return new DecomposedRepresentation(number, decomposition);
+        return new DecomposedRepresentation(decomposition);
     }
 
     /**
@@ -107,36 +107,5 @@ public class DecomposedRepresentation {
         return sj.toString();
     }
 
-    /**
-     * Assumes that the decomposed instruction is in the I-format.
-     */
-    public String imm() {
-        return Short.toString((short) decomposition[3]);
-    }
-
-    /**
-     * Assumes that the decomposed instruction is in the I-format.
-     */
-    public String addr() {
-        return Integer.toString(decomposition[3]);
-    }
-
-    /**
-     * Assumes that the decomposed instruction is in the I-format.
-     */
-    public String offset() {
-        return addr();
-    }
-
-    /**
-     * Assumes that the decomposed instruction is in the J-format.
-     */
-    public String target() {
-        return Integer.toString(decomposition[1]);
-    }
-
-    public String label() { return Integer.toString(decomposition[3]); }
-
     public int opcode() { return decomposition[0]; }
-    public int funct() { return decomposition[5]; }
 }

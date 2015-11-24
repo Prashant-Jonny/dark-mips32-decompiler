@@ -1,6 +1,6 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 
 /**
  * An R-type instruction is determined uniquely by the combination

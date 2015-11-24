@@ -1,4 +1,4 @@
-package se.filipallberg.dark.mips32decompiler.instruction;
+package se.filipallberg.dark.mips32decompiler.instruction.util;
 
 import java.util.HashMap;
 import java.util.Map;

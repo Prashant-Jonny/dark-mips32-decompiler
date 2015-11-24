@@ -1,8 +1,7 @@
-package se.filipallberg.dark.mips32decompiler.instruction.format;
+package se.filipallberg.dark.mips32decompiler.instruction.util;
 
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.ITypeInstructionOpcodeSet;
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.JTypeInstructionOpcodeSet;
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
+import se.filipallberg.dark.mips32decompiler.instruction.type.ITypeInstruction.ITypeInstruction;
+import se.filipallberg.dark.mips32decompiler.instruction.type.JTypeInstruction.JTypeInstruction;
 import se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction.RTypeInstruction;
 
 import java.util.HashMap;
@@ -29,11 +28,11 @@ public enum Format {
             formatMap.put(op, Format.R);
         });
 
-        new ITypeInstructionOpcodeSet().all().forEach(op -> {
+        ITypeInstruction.getOpcodeSet().forEach(op -> {
             formatMap.put(op, Format.I);
         });
 
-        new JTypeInstructionOpcodeSet().all().forEach(op -> {
+        JTypeInstruction.getOpcodeSet().forEach(op -> {
             formatMap.put(op, Format.J);
         });
     }

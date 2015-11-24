@@ -1,7 +1,5 @@
 package se.filipallberg.dark.mips32decompiler.instruction.mnemonic;
 
-import se.filipallberg.dark.mips32decompiler.instruction.InstructionName;
-
 import java.util.Arrays;
 import java.util.StringJoiner;
 

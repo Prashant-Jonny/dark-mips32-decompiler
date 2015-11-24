@@ -1,28 +1,28 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
-import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
-import se.filipallberg.dark.mips32decompiler.instruction.Register;
-import se.filipallberg.dark.mips32decompiler.instruction.format.Format;
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
+import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 
 /**
  * A wrapper class around {@link DecomposedRepresentation} so that
  * we can retrieve bitfields from the decomposition using named methods
  * as opposed to the less human legible array indexes.
  */
-class DecomposedInterpreter {
-    int[] decomposition;
+class RDecomposition {
+    private final int[] decomposition;
 
-    private DecomposedInterpreter(int[] decomposition) {
+    private RDecomposition(int[] decomposition) {
         this.decomposition = decomposition;
     }
 
-    public static DecomposedInterpreter fromDecomposedRepresentation
+    public static RDecomposition fromDecomposedRepresentation
             (DecomposedRepresentation d) {
         Opcode op = Opcode.fromNumericalRepresentation(d.opcode());
         Format f = Format.fromOpcode(op);
         assert(f == Format.R);
-        return new DecomposedInterpreter(d.toIntArray());
+        return new RDecomposition(d.toIntArray());
     }
 
     public int op() {

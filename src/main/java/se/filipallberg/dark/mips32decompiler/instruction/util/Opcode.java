@@ -1,4 +1,4 @@
-package se.filipallberg.dark.mips32decompiler.instruction.opcode;
+package se.filipallberg.dark.mips32decompiler.instruction.util;
 
 /**
  * All MIPS32 instructions, 32-bit numbers, have an associated opcode.

@@ -1,15 +1,14 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type;
 
-import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
-import se.filipallberg.dark.mips32decompiler.instruction.InstructionName;
-import se.filipallberg.dark.mips32decompiler.instruction.format.Format;
-import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
-import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
+import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.type.ITypeInstruction.ITypeInstruction;
+import se.filipallberg.dark.mips32decompiler.instruction.type.JTypeInstruction.JTypeInstruction;
 import se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction.RTypeInstruction;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 public class Instruction {
@@ -35,12 +34,20 @@ public class Instruction {
         /* Get the opcode of this instruction */
         Opcode op = Opcode.fromInstruction(instruction);
 
-        /* Get the format from the opcode */
+        /* Opcodes map uniquely to a format, get the associated format */
         Format format = Format.fromOpcode(op);
         if (format == Format.R) {
             return RTypeInstruction.toInstruction(instruction);
+        } else if (format == Format.I) {
+            return ITypeInstruction.toInstruction(instruction);
+        } else if (format == Format.J) {
+            return JTypeInstruction.toInstruction(instruction);
         }
-        return null;
+        throw new IllegalArgumentException(
+                "The instruction: " + instruction + " with opcode: " +
+                        Opcode.toNumericalRepresentation(instruction) +
+                        " is not associated with any Format (R, I, J)"
+        );
     }
 
     public String asHexadecimalString() {
