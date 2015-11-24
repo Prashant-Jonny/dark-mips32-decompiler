@@ -10,7 +10,8 @@ public class MIPS32Decompiler {
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0 || args.length > 2) {
-            System.err.println("Usage: MIPS32Decomposer [OPTIONS] <number|file>");
+            System.err.println("Usage: MIPS32Decompiler [OPTION] " +
+                    "<number|file>");
             System.err.println("OPTIONS:");
             System.err.println("    -n Specifies that input should be read from ");
             System.err.println("       from the command-line. The following ");
@@ -22,7 +23,7 @@ public class MIPS32Decompiler {
         }
 
         if ("-n".equals(args[0])) {
-            int instruction = (int) Long.parseLong(args[1]);
+            int instruction = numberFromString(args[1]);
             System.out.println(Instruction.fromInteger(instruction));
             return;
         }
@@ -38,13 +39,19 @@ public class MIPS32Decompiler {
         List<Instruction> instructions = new ArrayList<>();
         String line;
         while (isNotNull(line = br.readLine())) {
-            int numericalRepresentation = (int) Long.parseLong(line);
             Instruction instruction;
-            instruction = Instruction.fromInteger(numericalRepresentation);
+            instruction = Instruction.fromInteger(numberFromString(line));
             instructions.add(instruction);
         }
 
         return instructions.iterator();
+    }
+
+    private static int numberFromString(String s) {
+        if (s.startsWith("0x")) {
+            return (int) Long.parseLong(s.substring(2), 16);
+        }
+        return (int) Long.parseLong(s);
     }
 
     private static boolean isNotNull(Object o) {

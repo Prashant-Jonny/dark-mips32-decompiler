@@ -70,7 +70,7 @@ public class Instruction {
     @Override
     public String toString() {
         String[] representations = {
-                Integer.toString(instruction),
+                "0x" + Integer.toHexString(instruction),
                 format.toString(),
                 asDecimalString(),
                 asHexadecimalString(),

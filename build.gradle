@@ -14,3 +14,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile group: 'com.google.guava', name: 'guava', version: '12.0'
 }
+
+
+jar {
+    archiveName = 'MIPS32Decompiler.jar'
+    manifest {
+        attributes 'Main-Class': 'se.filipallberg.dark.mips32decompiler.MIPS32Decompiler'
+    }
+}
