@@ -1,14 +1,15 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
+import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Describes a stateless representation of all the known R-type
@@ -21,40 +22,40 @@ public enum RTypeInstruction {
      * register rd.
      */
     // TODO: Validate that shamt is 0
-    ADD(0x00, 0x20, RTypeMnemonicPattern::RD_RS_RT),
+    ADD(0x00, 0x20, R::rd, R::rs, R::rt),
 
     /**
      * Addition (without overflow). Put the sum of registers rs and rt into
      * register rd.
      */
     // TODO: Validate that shamt is 0
-    ADDU(0, 0x21, RTypeMnemonicPattern::RD_RS_RT),
+    ADDU(0, 0x21, R::rd, R::rs, R::rt),
 
     /** Put the logical AND of registers rs and rt into register rd */
     // TODO: validate that shamt is 0
-    AND(0x00, 0x24, RTypeMnemonicPattern::RD_RS_RT),
+    AND(0x00, 0x24, R::rd, R::rs, R::rt),
 
     /**
      * Count leading ones in the word in register rs and put the result
      * into register rd. If a word is all ones, the result is 32.
      */
     // TODO: Validate that shamt is 0 and rt is 0
-    CLO(0x1c, 0x21, RTypeMnemonicPattern::RD_RS),
+    CLO(0x1c, 0x21, R::rd, R::rs),
 
     /**
      * Count leading zeroes in the word in register rs and put the result
      * into register rd. If a word is all zeroes, the result is 32.
      */
     // TODO: Validate that shamt is 0 and rt is 0
-    CLZ(0x1c, 0x20, RTypeMnemonicPattern::RD_RS),
+    CLZ(0x1c, 0x20, R::rd, R::rs),
     
     /** Divide (with overflow). Divide register rs by register rt. */
     // TODO: Validate that rd and shamt is 0
-    DIV(0x00, 0x1a, RTypeMnemonicPattern::RS_RT),
+    DIV(0x00, 0x1a, R::rs, R::rt),
 
     /** Divide (without overflow). Divide register rs by register rt. */
     // TODO: Validate that rd and shamt is 0
-    DIVU(0x00, 0x1b, RTypeMnemonicPattern::RS_RT),
+    DIVU(0x00, 0x1b, R::rs, R::rt),
 
     /**
      * Multiply. Multiply registers rs and rt. Leave the low-order word
@@ -62,7 +63,7 @@ public enum RTypeInstruction {
      * register hi
      */
     // TODO: Validate that rd and shamt is 0
-    MULT(0x00, 0x18, RTypeMnemonicPattern::RS_RT),
+    MULT(0x00, 0x18, R::rs, R::rt),
 
     /**
      * Unsigned multiply. Multiply registers rs and rt. Leave the low-order word
@@ -70,28 +71,28 @@ public enum RTypeInstruction {
      * register hi
      */
     // TODO: Validate that rd and shamt is 0
-    MULTU(0x00, 0x19, RTypeMnemonicPattern::RS_RT),
+    MULTU(0x00, 0x19, R::rs, R::rt),
 
     /**
      * Multiply (without overflow). Put the low-order 32 bits of the product
      * of rs and rt into register rd.
      */
     // TODO: Validate that shamt is 0
-    MUL(0x1c, 2, RTypeMnemonicPattern::RD_RS_RT),
+    MUL(0x1c, 2, R::rd, R::rs, R::rt),
 
     /**
      * Multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
      * and add the resulting 64-bit product to the 64-bit value in the
      * concatenated registers lo and hi. */
     // TODO: Validate that rd and shamt is 0
-    MADD(0x1c, 0, RTypeMnemonicPattern::RS_RT),
+    MADD(0x1c, 0, R::rs, R::rt),
 
     /**
      * Unsigned multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
      * and add the resulting 64-bit product to the 64-bit value in the
      * concatenated registers lo and hi. */
     // TODO: Validate that rd and shamt is 0
-    MADDU(0x1c, 1, RTypeMnemonicPattern::RS_RT),
+    MADDU(0x1c, 1, R::rs, R::rt),
 
     /**
      * Multiply subtract. Multiply registers rs and rt and subtract the
@@ -99,7 +100,7 @@ public enum RTypeInstruction {
      * concatenated registers lo and hi.
      */
     // TODO: Validate that rd and shamt is 0
-    MSUB(0x1c, 4, RTypeMnemonicPattern::RS_RT),
+    MSUB(0x1c, 4, R::rs, R::rt),
 
     /**
      * Unsigned multiply subtract. Multiply registers rs and rt and subtract
@@ -107,107 +108,107 @@ public enum RTypeInstruction {
      * concatenated registers lo and hi.
      */
     // TODO: Validate that rd and shamt is 0
-    MSUBU(0x1c, 5, RTypeMnemonicPattern::RS_RT),
+    MSUBU(0x1c, 5, R::rs, R::rt),
     
     /** Put the logical NOR of registers rs and rt into register rd. */
     // TODO: Validate that shamt is 0
-    NOR(0x00, 0x27, RTypeMnemonicPattern::RD_RS_RT),
+    NOR(0x00, 0x27, R::rd, R::rs, R::rt),
 
     /** Put the logical OR of registers rs and rt into register rd. */
     // TODO: Validate that shamt is 0
-    OR(0x00, 0x25, RTypeMnemonicPattern::RD_RS_RT),
+    OR(0x00, 0x25, R::rd, R::rs, R::rt),
 
     /**
      * Shift left logical. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SLL(0x00, 0x00, RTypeMnemonicPattern::RD_RT_SHAMT),
+    SLL(0x00, 0x00, R::rd, R::rt, R::shamt),
 
     /**
      * Shift left logical variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
      */
     // TODO: Validate that shamt is 0
-    SLLV(0x00, 4, RTypeMnemonicPattern::RD_RT_RS),
+    SLLV(0x00, 4, R::rd, R::rt, R::rs),
 
     /**
      * Shift right arithmetic. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SRA(0x00, 0x03, RTypeMnemonicPattern::RD_RT_SHAMT),
+    SRA(0x00, 0x03, R::rd, R::rt, R::shamt),
 
     /**
      * Shift right arithmetic variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
      */
     // TODO: Validate that shamt is 0
-    SRAV(0x00, 7, RTypeMnemonicPattern::RD_RT_RS),
+    SRAV(0x00, 7, R::rd, R::rt, R::rs),
 
     /**
      * Shift right logical. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SRL(0x00, 0x02, RTypeMnemonicPattern::RD_RT_SHAMT),
+    SRL(0x00, 0x02, R::rd, R::rt, R::shamt),
 
     /**
      * Shift right logical variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
      */
     // TODO: Validate that shamt is 0
-    SRLV(0x00, 0x06, RTypeMnemonicPattern::RD_RT_RS),
+    SRLV(0x00, 0x06, R::rd, R::rt, R::rs),
 
     /**
      * Subtract (with overflow). Put the difference of registers rs and rt
      * into register rd.
      */
     // TODO: Validate that shamt is 0
-    SUB(0x00, 0x22, RTypeMnemonicPattern::RD_RS_RT),
+    SUB(0x00, 0x22, R::rd, R::rs, R::rt),
 
     /**
      * Subtract (without overflow). Put the difference of registers rs and rt
      * into register rd.
      */
     // TODO: Validate that shamt is 0
-    SUBU(0x00, 0x23, RTypeMnemonicPattern::RD_RS_RT),
+    SUBU(0x00, 0x23, R::rd, R::rs, R::rt),
 
     /** Put the logical XOR of registers rs and rt into register rd. */
     // TODO: Validate that shamt is 0
-    XOR(0x00, 0x26, RTypeMnemonicPattern::RD_RS_RT),
+    XOR(0x00, 0x26, R::rd, R::rs, R::rt),
 
     /**
      * Trap if equal. If register rs is equal to register rt, raise a
      * Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TEQ(0x00, 0x52, RTypeMnemonicPattern::RS_RT),
+    TEQ(0x00, 0x52, R::rs, R::rt),
 
     /**
      * Trap if greater equal. If register rs is greater than or equal to
      * register rt, raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TGE(0x00, 0x48, RTypeMnemonicPattern::RS_RT),
+    TGE(0x00, 0x48, R::rs, R::rt),
 
     /**
      * Unsigned trap if greater equal. If register rs is greater than or equal
      * to register rt, raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TGEU(0x00, 0x49, RTypeMnemonicPattern::RS_RT),
+    TGEU(0x00, 0x49, R::rs, R::rt),
 
     /**
      * Trap if less than. If register rs is less than register rt, raise a
      * Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TLT(0x00, 0x50, RTypeMnemonicPattern::RS_RT),
+    TLT(0x00, 0x50, R::rs, R::rt),
 
     /**
      * Trap if less than unsigned. If register rs is less than register rt,
      * raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TLTU(0x00, 0x51, RTypeMnemonicPattern::RS_RT),
+    TLTU(0x00, 0x51, R::rs, R::rt),
 
     /**
      * Move from hi
@@ -216,7 +217,7 @@ public enum RTypeInstruction {
      * to rd.
      */
     // TODO: Verify that rs and rt and shamt is 0
-    MFHI(0x00, 0x10, RTypeMnemonicPattern::RD),
+    MFHI(0x00, 0x10, R::rd),
 
     /**
      * Move from lo
@@ -225,20 +226,20 @@ public enum RTypeInstruction {
      * register to rd.
      */
     // TODO: Verify that rs and rt and shamt is 0
-    MFLO(0x00, 0x10, RTypeMnemonicPattern::RD),
+    MFLO(0x00, 0x10, R::rd),
 
     /**
      * Move to hi, move register rs to the hi register.
      */
     // TODO: Validate that rt, rd, and shamt = 0
-    MTHI(0x00, 0x11, RTypeMnemonicPattern::RS),
+    MTHI(0x00, 0x11, R::rs),
 
 
     /**
      * Move to lo, move register rs to the lo register.
      */
     // TODO: Validate that rt, rd, and shamt = 0
-    MTLO(0x00, 0x13, RTypeMnemonicPattern::RS),
+    MTLO(0x00, 0x13, R::rs),
 
     /**
      * Move from coprocessor 0. Move register rd in a coprocessor (register
@@ -246,22 +247,22 @@ public enum RTypeInstruction {
      * coprocessor 1.
      */
     // TODO: Validate that rs, shamt, and funct is 0
-    MFC0(0x10, 0x00, RTypeMnemonicPattern::RT_RD),
+    MFC0(0x10, 0x00, R::rt, R::rd),
 
     /**
      * Move from coprocessor 1. Move register rd in a coprocessor (register
      * fs in the FPU) to CPU register rt. The floating-point unit is
-     * coprocessor 1. Note that FS occupies the rd field
+     * coprocessor 1. Note that R::fs occupies the rd field
      */
     // TODO: Validate that rs, shamt and funct is 0
-    MFC1(0x11, 0x00, RTypeMnemonicPattern::RT_FS),
+    MFC1(0x11, 0x00, R::rt, R::fs),
 
     /**
      * Move to coprocessor 0, move CPU register rt to register
      * rd in a coprocessor
      */
     // TODO: Validate that rs = 4 and that shamt and funct is 0
-    MTC0(0x10, 0x00, RTypeMnemonicPattern::RD_RT),
+    MTC0(0x10, 0x00, R::rd, R::rt),
 
     /**
      * Move to coprocessor 0, move CPU register rt to register
@@ -270,49 +271,49 @@ public enum RTypeInstruction {
      * field. The rs field distinguishes them.
      */
     // TODO: Validate that rs = 4 and funct and shamt = 0
-    MTC1(0x11, 0x00, RTypeMnemonicPattern::RT_FS),
+    MTC1(0x11, 0x00, R::rt, R::fs),
 
     /**
      * Move conditional not zero. Move register rs to register rd if
      * register rt is not zero.
      */
-    MOVN(0x00, 0x11, RTypeMnemonicPattern::RD_RS_RT),
+    MOVN(0x00, 0x11, R::rd, R::rs, R::rt),
 
     /**
      * Move conditional zero. Move register rs to register rd if
      * register rt is zero.
      */
-    MOVZ(0x00, 0x10, RTypeMnemonicPattern::RD_RS_RT),
+    MOVZ(0x00, 0x10, R::rd, R::rs, R::rt),
 
     /**
      * Set less than. Set register rd to 1 if register rs is less than rt,
      * otherwise set register rd to 0.
      */
-    SLT(0x00, 0x42, RTypeMnemonicPattern::RD_RS_RT),
+    SLT(0x00, 0x42, R::rd, R::rs, R::rt),
 
     /**
      * Set less than unsigned. Set register rd to 1 if register rs is
      * less than rt, otherwise set register rd to 0.
      */
-    SLTU(0x00, 0x43, RTypeMnemonicPattern::RD_RS_RT),
+    SLTU(0x00, 0x43, R::rd, R::rs, R::rt),
 
     /**
      * Unconditionally jump to the instruction whose address is in register
      * rs. Save the address of the next instruction in register rd.
      */
     // TODO Verify that rs and shamt is 0
-    JALR(0x00, 0x09, RTypeMnemonicPattern::RS_RD),
+    JALR(0x00, 0x09, R::rs, R::rd),
 
     /**
      * Unconditionally jump to the instruction whose address is in
      * register rs.
      */
     // TODO: Validate that rt, rd, and shamt is 0
-    JR(0x00, 0x08, RTypeMnemonicPattern::RS),
+    JR(0x00, 0x08, R::rs),
 
     /** Do nothing */
     // TODO: Validate that all fields are 0
-    NOP(0x00, 0x00, RTypeMnemonicPattern::NOP)
+    NOP(0x00, 0x00);
     ;
 
     /**
@@ -336,15 +337,16 @@ public enum RTypeInstruction {
         });
     }
 
-    private final MnemonicPattern pattern;
+    //private final MnemonicPattern pattern;
+    private final List<BitField> list = new ArrayList<>();
     private final OpcodeFunctPair pair;
 
     /** All R-format instructions follow the same pattern */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
     RTypeInstruction(int opcode, int funct,
-                     MnemonicPattern pattern) {
-        this.pattern = pattern;
+                     BitField... bitFields) {
+        list.addAll(Arrays.asList(bitFields));
         pair = new OpcodeFunctPair(opcode, funct);
     }
 
@@ -364,18 +366,56 @@ public enum RTypeInstruction {
         }
 
         /** Get the correct R-type instruction */
-        DecomposedRepresentation d = DecomposedRepresentation.fromNumber
-                (instruction, decomposedPattern);
-        RDecomposition di = RDecomposition.fromDecomposedRepresentation(d);
-        OpcodeFunctPair key = new OpcodeFunctPair(di.op(), di.funct());
+        DecomposedRepresentation d = DecomposedRepresentation.
+                fromNumber(instruction, decomposedPattern);
+        int[] decomposition = d.toIntArray();
+        int funct = R.funct(decomposition);
+        OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
         RTypeInstruction rTypeInstruction = map.get(key);
-        String iname = rTypeInstruction.name().toLowerCase();
+
+        List<String> strings = new ArrayList<>();
+        rTypeInstruction.list.forEach(e -> {
+            strings.add(e.apply(d.toIntArray()));
+        });
+
+        MnemonicRepresentation m = new MnemonicRepresentation("mul",
+                strings.toArray(new String[strings.size()]));
 
         return new Instruction(
                 instruction,
                 Format.R,
                 d,
-                rTypeInstruction.pattern.apply(iname, d));
+                m);
+    }
+    
+    private static class R {
+        static int op(int[] decomposition) {
+            return decomposition[0];
+        }
+
+        static int funct(int[] decomposition) {
+            return decomposition[5];
+        }
+
+        static String rd(int[] decomposition) {
+            return Register.toString(decomposition[3]);
+        }
+
+        static String rs(int[] decomposition) {
+            return Register.toString(decomposition[1]);
+        }
+
+        static String rt(int[] decomposition) {
+            return Register.toString(decomposition[2]);
+        }
+
+        static String shamt(int[] decomposition) {
+            return Integer.toString(decomposition[4]);
+        }
+
+        static String fs(int[] decomposition) {
+            return Integer.toString(decomposition[3]);
+        }
     }
 
 
