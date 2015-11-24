@@ -66,10 +66,6 @@ public class Instruction {
         return format;
     }
 
-    public String getInstructionName() {
-        return iname;
-    }
-
     public int toNumericalRepresentation() {
         return instruction;
     }
