@@ -29,7 +29,6 @@ public class InstructionTest {
     @Test
     public void testAllInstructions() {
         testData.forEach(InstructionTest::testDecompilation);
-
     }
 
     private static void testDecompilation(TestCase testCase) {

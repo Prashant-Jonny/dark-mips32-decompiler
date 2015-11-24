@@ -26,7 +26,7 @@ class RDecomposition {
     }
 
     public int op() {
-        return decomposition[1];
+        return decomposition[0];
     }
 
     public int funct() {

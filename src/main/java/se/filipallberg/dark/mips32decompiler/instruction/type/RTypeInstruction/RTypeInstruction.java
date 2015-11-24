@@ -362,30 +362,21 @@ public enum RTypeInstruction {
         }
 
         /** Get the correct R-type instruction */
-        DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(instruction);
-        RDecomposition di = RDecomposition
-                .fromDecomposedRepresentation(d);
+
+        DecomposedRepresentation d = DecomposedRepresentation.fromNumber
+                (instruction, decomposedPattern);
+        RDecomposition di = RDecomposition.fromDecomposedRepresentation(d);
         OpcodeFunctPair key = new OpcodeFunctPair(di.op(), di.funct());
         RTypeInstruction rTypeInstruction = map.get(key);
-        String iname = getRTypeMnemonicPattern(instruction);
+        String iname = rTypeInstruction.name().toLowerCase();
 
-        return new Instruction(instruction,
+        return new Instruction(
+                instruction,
                 Format.R,
-                iname,
                 d,
                 rTypeInstruction.pattern.apply(iname, d));
     }
 
-    private static String getRTypeMnemonicPattern(int instruction) {
-        /*
-         * Get the interpreter so that there are named methods
-         * for field accesses.
-         */
-        RDecomposition d = getInterpreter(instruction);
-        OpcodeFunctPair key = new OpcodeFunctPair(d.op(), d.funct());
-        return map.get(key).name().toLowerCase();
-    }
 
     /** Returns true if the instruction has the R-format */
     private static boolean hasCorrectFormat(int instruction) {
@@ -393,14 +384,5 @@ public enum RTypeInstruction {
         Opcode opcode = Opcode.fromNumericalRepresentation(op);
 
         return Format.fromOpcode(opcode) == Format.R;
-    }
-
-    private static RDecomposition getInterpreter(int instruction) {
-        DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(
-                        instruction,
-                        decomposedPattern);
-
-        return RDecomposition.fromDecomposedRepresentation(d);
     }
 }

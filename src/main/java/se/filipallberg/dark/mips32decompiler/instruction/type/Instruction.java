@@ -14,18 +14,15 @@ import java.util.StringJoiner;
 public class Instruction {
     private final int instruction;
     private final Format format;
-    private final String iname;
     private final DecomposedRepresentation decomposedRepresentation;
     private final MnemonicRepresentation mnemonicRepresentation;
     
     public Instruction(int instruction,
                         Format format,
-                        String iname,
                         DecomposedRepresentation decomposedRepresentation,
                         MnemonicRepresentation mnemonicRepresentation) {
         this.instruction = instruction;
         this.format = format;
-        this.iname = iname;
         this.decomposedRepresentation = decomposedRepresentation;
         this.mnemonicRepresentation = mnemonicRepresentation;
     }

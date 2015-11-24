@@ -55,7 +55,6 @@ public enum JTypeInstruction {
 
         return new Instruction(instruction,
                 Format.J,
-                iname,
                 d,
                 J(iname, d));
     }

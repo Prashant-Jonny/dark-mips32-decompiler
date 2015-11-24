@@ -288,7 +288,7 @@ public enum ITypeInstruction {
 
         /** Get the correct R-type instruction */
         DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(instruction);
+                DecomposedRepresentation.fromNumber(instruction, decomposedPattern);
 
         ITypeInstruction iTypeInstruction = map.get(Opcode
                 .fromInstruction(instruction));
@@ -296,7 +296,6 @@ public enum ITypeInstruction {
 
         return new Instruction(instruction,
                 Format.I,
-                iname,
                 d,
                 iTypeInstruction.pattern.apply(iname, d));
     }
