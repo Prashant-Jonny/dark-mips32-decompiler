@@ -2,6 +2,7 @@ package se.filipallberg.dark.mips32decompiler.instruction.type;
 
 import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.InstructionName;
+import se.filipallberg.dark.mips32decompiler.instruction.Register;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
@@ -14,10 +15,12 @@ public enum RTypeInstruction {
 
     private static final Map<OpcodeFunctPair, RTypeInstruction> map = new
             HashMap<>();
+    private static final Set<Opcode> set = new HashSet<>();
     static {
         Arrays.stream(RTypeInstruction.values()).forEach(e -> {
             map.put(e.pair, e);
         });
+        RTypeInstruction.map.keySet().forEach(e -> set.add(e.getOpcode()));
     }
 
     private final MnemonicPattern pattern;
@@ -30,6 +33,10 @@ public enum RTypeInstruction {
         pair = new OpcodeFunctPair(opcode, funct);
     }
 
+    public static Set<Opcode> getOpcodeSet() {
+        return set;
+    }
+
     public static String getInstructionName(int instruction) {
         DecomposedRepresentation d = DecomposedRepresentation.fromNumber
                 (instruction, decomposedPattern);
@@ -39,15 +46,50 @@ public enum RTypeInstruction {
 
     private static MnemonicRepresentation RD_RS_RT(InstructionName iname,
                                                    DecomposedRepresentation d) {
-        return new MnemonicRepresentation(iname, d.rd(), d.rs(), d.rt());
+        DecomposedInterpreter di = DecomposedInterpreter
+                .fromDecomposedRepresentation(d);
+        return new MnemonicRepresentation(iname, di.rd(), di.rs(), di.rt
+                ());
+    }
+
+
+
+    private static class DecomposedInterpreter {
+        int[] decomposition;
+
+        private DecomposedInterpreter(int[] decomposition) {
+            this.decomposition = decomposition;
+        }
+
+        static DecomposedInterpreter fromDecomposedRepresentation
+                (DecomposedRepresentation d) {
+            return new DecomposedInterpreter(d.toIntArray());
+        }
+
+        String rd() {
+            return Register.toString(decomposition[3]);
+        }
+
+        String rs() {
+            return Register.toString(decomposition[1]);
+        }
+
+        String rt() {
+            return Register.toString(decomposition[2]);
+        }
     }
 
     private static class OpcodeFunctPair {
         private final int opcode;
         private final int funct;
+
         OpcodeFunctPair(int opcode, int funct) {
             this.opcode = opcode;
             this.funct = funct;
+        }
+
+        public Opcode getOpcode() {
+            return Opcode.fromNumericalRepresentation(opcode);
         }
 
         @Override
