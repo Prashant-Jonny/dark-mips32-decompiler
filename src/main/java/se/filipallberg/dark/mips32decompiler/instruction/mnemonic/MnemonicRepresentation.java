@@ -12,10 +12,10 @@ public class MnemonicRepresentation {
         this.stringRepresentation = stringRepresentation;
     }
 
-    public MnemonicRepresentation(InstructionName iname, String... strings) {
+    public MnemonicRepresentation(String iname, String... strings) {
         StringJoiner sj = new StringJoiner(", ");
         Arrays.stream(strings).forEach(sj::add);
-        stringRepresentation = iname.toString() + " " + sj.toString();
+        stringRepresentation = iname + " " + sj.toString();
     }
 
     public static MnemonicRepresentation fromString(String

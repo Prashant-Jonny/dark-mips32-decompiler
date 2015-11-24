@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 import java.util.function.BiFunction;
 
 @FunctionalInterface
-public interface MnemonicPattern extends BiFunction<InstructionName,
+public interface MnemonicPattern extends BiFunction<String,
         DecomposedRepresentation, MnemonicRepresentation> {
     /* Intentionally left empty */
 }

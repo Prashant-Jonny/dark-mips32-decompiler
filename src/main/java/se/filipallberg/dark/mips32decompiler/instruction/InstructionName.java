@@ -8,18 +8,6 @@ import java.util.StringJoiner;
 
 public enum InstructionName {
     /**
-     * Addition (with overflow). Put the sum of registers rs and rt into
-     * register rd.
-     */
-    ADD(InstructionName::RD_RS_RT),
-
-    /**
-     * Addition (without overflow). Put the sum of registers rs and rt into
-     * register rd.
-     */
-    ADDU(InstructionName::RD_RS_RT),
-
-    /**
      * Addition immediate (with overflow). Put the sum of register rs and
      * the sign-extended immediate into register rt.
      */
@@ -31,8 +19,6 @@ public enum InstructionName {
      */
     ADDIU(InstructionName::RT_RS_IMM),
 
-    /** Put the logical AND of registers rs and rt into register rd */
-    AND(InstructionName::RD_RS_RT),
 
     /**
      * Put the logical AND of register rs and the zero-extended immediate
@@ -40,75 +26,11 @@ public enum InstructionName {
      */
     ANDI(InstructionName::RT_RS_IMM),
 
-    /**
-     * Count leading ones in the word in register rs and put the result
-     * into register rd. If a word is all ones, the result is 32.
-     */
-    CLO(InstructionName::RD_RS),
 
-    /**
-     * Count leading zeroes in the word in register rs and put the result
-     * into register rd. If a word is all zeroes, the result is 32.
-     */
-    CLZ(InstructionName::RD_RS),
 
-    /** Divide (with overflow). Divide register rs by register rt. */
-    DIV(InstructionName::RS_RT),
 
-    /** Divide (without overflow). Divide register rs by register rt. */
-    DIVU(InstructionName::RS_RT),
 
-    /**
-     * Multiply. Multiply registers rs and rt. Leave the low-order word
-     * of the product in the register lo and the high-order word in
-     * register hi
-     */
-    MULT(InstructionName::RS_RT),
 
-    /**
-     * Unsigned multiply. Multiply registers rs and rt. Leave the low-order word
-     * of the product in the register lo and the high-order word in
-     * register hi
-     */
-    MULTU(InstructionName::RS_RT),
-
-    /**
-     * Multiply (without overflow). Put the low-order 32 bits of the product
-     * of rs and rt into register rd.
-     */
-    MUL(InstructionName::RD_RS_RT),
-
-    /**
-     * Multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
-     * and add the resulting 64-bit product to the 64-bit value in the
-     * concatenated registers lo and hi. */
-    MADD(InstructionName::RS_RT),
-
-    /**
-     * Unsigned multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
-     * and add the resulting 64-bit product to the 64-bit value in the
-     * concatenated registers lo and hi. */
-    MADDU(InstructionName::RS_RT),
-
-    /**
-     * Multiply subtract. Multiply registers rs and rt and subtract the
-     * resulting 64-bit product from the 64-bit value in the
-     * concatenated registers lo and hi.
-     */
-    MSUB(InstructionName::RS_RT),
-
-    /**
-     * Unsigned multiply subtract. Multiply registers rs and rt and subtract
-     * the resulting 64-bit product from the 64-bit value in the
-     * concatenated registers lo and hi.
-     */
-    MSUBU(InstructionName::RS_RT),
-
-    /** Put the logical NOR of registers rs and rt into register rd. */
-    NOR(InstructionName::RD_RS_RT),
-
-    /** Put the logical OR of registers rs and rt into register rd. */
-    OR(InstructionName::RD_RS_RT),
 
     /**
      * Put the logical OR of register rs and the zero-extended immediate
@@ -116,56 +38,9 @@ public enum InstructionName {
      */
     ORI(InstructionName::RT_RS_IMM),
 
-    /**
-     * Shift left logical. Shift register rt left by the distance indicated
-     * by immediate shamt and put the result in register rd.
-     */
-    SLL(InstructionName::RD_RT_SHAMT),
 
-    /**
-     * Shift left logical variable. Shift register rt left by the distance indicated
-     * by immediate shamt or register rs and put the result in register rd.
-     */
-    SLLV(InstructionName::RD_RT_RS),
 
-    /**
-     * Shift right arithmetic. Shift register rt left by the distance indicated
-     * by immediate shamt and put the result in register rd.
-     */
-    SRA(InstructionName::RD_RT_SHAMT),
 
-    /**
-     * Shift right arithmetic variable. Shift register rt left by the distance indicated
-     * by immediate shamt or register rs and put the result in register rd.
-     */
-    SRAV(InstructionName::RD_RT_RS),
-
-    /**
-     * Shift right logical. Shift register rt left by the distance indicated
-     * by immediate shamt and put the result in register rd.
-     */
-    SRL(InstructionName::RD_RT_SHAMT),
-
-    /**
-     * Shift right logical variable. Shift register rt left by the distance indicated
-     * by immediate shamt or register rs and put the result in register rd.
-     */
-    SRLV(InstructionName::RD_RT_RS),
-
-    /**
-     * Subtract (with overflow). Put the difference of registers rs and rt
-     * into register rd.
-     */
-    SUB(InstructionName::RD_RS_RT),
-
-    /**
-     * Subtract (without overflow). Put the difference of registers rs and rt
-     * into register rd.
-     */
-    SUBU(InstructionName::RD_RS_RT),
-
-    /** Put the logical XOR of registers rs and rt into register rd. */
-    XOR(InstructionName::RD_RS_RT),
 
     /**
      * Put the logical XOR of register rs and the zero.extended immediate
@@ -445,21 +320,13 @@ public enum InstructionName {
         return new MnemonicRepresentation(iname, d.rd(), d.rs(), d.rt());
     }
 
-    private static MnemonicRepresentation RD_RT_RS(InstructionName iname,
-                                                   DecomposedRepresentation d) {
-        return new MnemonicRepresentation(iname, d.rd(), d.rt(), d.rs());
-    }
+    
 
     private static MnemonicRepresentation RD_RS(InstructionName iname,
                                                    DecomposedRepresentation d) {
         return new MnemonicRepresentation(iname, d.rd(), d.rs());
     }
 
-    private static MnemonicRepresentation RS_RT(InstructionName iname,
-                                                DecomposedRepresentation
-                                                        d) {
-        return new MnemonicRepresentation(iname, d.rs(), d.rt());
-    }
 
     private static MnemonicRepresentation RS_RD(InstructionName iname,
                                                 DecomposedRepresentation
@@ -467,12 +334,7 @@ public enum InstructionName {
         return new MnemonicRepresentation(iname, d.rs(), d.rd());
     }
 
-    private static MnemonicRepresentation RD_RT_SHAMT(InstructionName
-                                                              iname,
-                                                      DecomposedRepresentation d) {
-        return new MnemonicRepresentation(iname, d.rd(), d.rt(), d.shamt
-                ());
-    }
+
 
     private static MnemonicRepresentation RT_RS_IMM(InstructionName iname,
                                                     DecomposedRepresentation d) {

@@ -6,6 +6,7 @@ import se.filipallberg.dark.mips32decompiler.instruction.format.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction.RTypeInstruction;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,40 +15,32 @@ import java.util.StringJoiner;
 public class Instruction {
     private final int instruction;
     private final Format format;
-    private final InstructionName iname;
+    private final String iname;
     private final DecomposedRepresentation decomposedRepresentation;
     private final MnemonicRepresentation mnemonicRepresentation;
-
-    private Instruction(int instruction) {
+    
+    public Instruction(int instruction,
+                        Format format,
+                        String iname,
+                        DecomposedRepresentation decomposedRepresentation,
+                        MnemonicRepresentation mnemonicRepresentation) {
         this.instruction = instruction;
-
+        this.format = format;
+        this.iname = iname;
+        this.decomposedRepresentation = decomposedRepresentation;
+        this.mnemonicRepresentation = mnemonicRepresentation;
+    }
+    
+    public static Instruction fromInteger(int instruction) {
         /* Get the opcode of this instruction */
         Opcode op = Opcode.fromInstruction(instruction);
 
         /* Get the format from the opcode */
-        format = Format.fromOpcode(op);
-
-        /* Get the name of this instruction */
-        iname = format.getName(op, instruction);
-
-        if (Objects.isNull(iname)) {
-            String err = "The instruction: " + instruction
-                    + " with opcode: " + op.toNumericalRepresentation()
-                    + " is not associated with any known instruction.";
-            throw new IllegalStateException(err);
+        Format format = Format.fromOpcode(op);
+        if (format == Format.R) {
+            return RTypeInstruction.toInstruction(instruction);
         }
-
-        decomposedRepresentation = format.getDecomposedRepresentation
-                (instruction);
-
-        MnemonicPattern rule = iname.getMnemonicPattern();
-
-        mnemonicRepresentation = rule.apply(iname,
-                decomposedRepresentation);
-    }
-
-    public static Instruction fromInteger(int instruction) {
-        return new Instruction(instruction);
+        return null;
     }
 
     public String asHexadecimalString() {
@@ -66,7 +59,7 @@ public class Instruction {
         return format;
     }
 
-    public InstructionName getInstructionName() {
+    public String getInstructionName() {
         return iname;
     }
 

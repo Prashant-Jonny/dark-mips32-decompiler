@@ -108,37 +108,6 @@ public class DecomposedRepresentation {
     }
 
     /**
-     * Assumes that the format of the decomposed instruction has a field
-     * that represents an rs register.
-     */
-    public String rs() {
-        return Register.toString(decomposition[1]);
-    }
-
-    /**
-     * Assumes that the format of the decomposed instruction has a field
-     * that represents an rt register.
-     */
-    public String rt() {
-        return Register.toString(decomposition[2]);
-    }
-
-    /**
-     * Assumes that the format of the decomposed instruction has a field
-     * that represents an rd register.
-     */
-    public String rd() {
-        return Register.toString(decomposition[3]);
-    }
-
-    /**
-     * Assumes that the decomposed instruction is in the R-format.
-     */
-    public String shamt() {
-        return Integer.toString(decomposition[4]);
-    }
-
-    /**
      * Assumes that the decomposed instruction is in the I-format.
      */
     public String imm() {

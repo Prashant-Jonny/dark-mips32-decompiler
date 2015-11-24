@@ -24,7 +24,7 @@ class OpcodeFunctPair {
     private final int opcode;
     private final int funct;
 
-    OpcodeFunctPair(int opcode, int funct) {
+    public OpcodeFunctPair(int opcode, int funct) {
         this.opcode = opcode;
         this.funct = funct;
     }

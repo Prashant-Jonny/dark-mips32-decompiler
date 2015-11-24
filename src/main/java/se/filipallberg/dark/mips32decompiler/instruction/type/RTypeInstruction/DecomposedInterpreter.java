@@ -2,6 +2,8 @@ package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
 import se.filipallberg.dark.mips32decompiler.instruction.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.Register;
+import se.filipallberg.dark.mips32decompiler.instruction.format.Format;
+import se.filipallberg.dark.mips32decompiler.instruction.opcode.Opcode;
 
 /**
  * A wrapper class around {@link DecomposedRepresentation} so that
@@ -15,28 +17,35 @@ class DecomposedInterpreter {
         this.decomposition = decomposition;
     }
 
-    static DecomposedInterpreter fromDecomposedRepresentation
+    public static DecomposedInterpreter fromDecomposedRepresentation
             (DecomposedRepresentation d) {
+        Opcode op = Opcode.fromNumericalRepresentation(d.opcode());
+        Format f = Format.fromOpcode(op);
+        assert(f == Format.R);
         return new DecomposedInterpreter(d.toIntArray());
     }
 
-    int op() {
+    public int op() {
         return decomposition[1];
     }
 
-    int funct() {
+    public int funct() {
         return decomposition[5];
     }
 
-    String rd() {
+    public String rd() {
         return Register.toString(decomposition[3]);
     }
 
-    String rs() {
+    public String rs() {
         return Register.toString(decomposition[1]);
     }
 
-    String rt() {
+    public String rt() {
         return Register.toString(decomposition[2]);
+    }
+
+    public String shamt() {
+        return Integer.toString(decomposition[4]);
     }
 }
