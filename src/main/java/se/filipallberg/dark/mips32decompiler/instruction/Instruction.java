@@ -1,4 +1,4 @@
-package se.filipallberg.dark.mips32decompiler.instruction.type;
+package se.filipallberg.dark.mips32decompiler.instruction;
 
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;

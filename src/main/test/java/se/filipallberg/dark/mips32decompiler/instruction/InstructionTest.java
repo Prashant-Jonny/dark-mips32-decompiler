@@ -1,7 +1,6 @@
 package se.filipallberg.dark.mips32decompiler.instruction;
 
 import org.junit.Test;
-import se.filipallberg.dark.mips32decompiler.instruction.type.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 
 import java.util.HashSet;

@@ -4,7 +4,7 @@ import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresen
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
-import se.filipallberg.dark.mips32decompiler.instruction.type.Instruction;
+import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 
 import java.util.*;
 
