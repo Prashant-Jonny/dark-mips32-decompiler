@@ -3,57 +3,67 @@ throughout the document. This terminology will also be used to
 decompose our system that solves the problem at hand, viz. that
 we will model our solution according to the problem domain.
 
-Specifically, we will create a system such that any given
-\tt{Instruction} knows, or can retrieve information
-about,\footnote{Using its collaborators}
+Specifically, we will create a system such that when we take in a
+32-bit integer representing a valid or semi-valid MIPS32-instruction
+then we can construct an object instance named \mij{Instruction} that
+knows, or can retrieve information about,\footnote{Using its
+collaborators}
 
+\begin{table}
 \begin{itemize}
 \item Its numerical representation
-\item Its own name
 \item Its own format
-\item Its decomposed representation(s)
-\subitem Hexadecimal representation
-\subitem Decimal representation
-\item Its mnemonic representation
+\item Its own decomposed representation presented in both:
+\subitem Hexadecimal form
+\subitem Decimal form
+\item Its own mnemonic representation
 \end{itemize}
-
-The \tt{Instruction} class is an abstraction providing an
-encapsulation around the aforementioned points. Ultimately
-
-Furthermore, the system will be divided into the self-explanatory
-constituents
+\caption{\mij{Instruction} operations/fields}
+\label{table:instruction-operations}
+\end{table}
+The \mij{Instruction} class is an abstraction providing an
+encapsulation around the aforementioned points. Ultimately, the system
+will be divided into the self-explanatory constituents
 
 \begin{itemize}
 \item \formatm: R, I, J
-\item \inamem: All known instruction names, excluding
-  pseudo-instructions.
-\item \opcodem: An abstraction around the numerical opcode. Knows its
-  associated format.
-\item \decomposedm: Can decompose a 32-bit number into
-  varying lengths.
-\item \registerm: Associates a number with the register name.
+\item \opcodem: An abstraction around the numerical opcode.
+\item \formatm: Can for a given \opcodem return the associated format.
+\item \decomposedm: Can decompose a 32-bit number into varying lengths.
+\item \registerm: Associates a number with the register name, see Table.~\ref{table:mips-register-naming-convention}
 \end{itemize}
 
 The manner with which we determine the particular instruction, and
 yield the correct output, becomes very closely related to our original
-example for the \tt{mul} instruction. In the following example
-we will parse another R-type instruction, namely \tt{sub}, this
-time explaining the process more formally,
+example for the \tt{mul} instruction. In the following example we will
+parse another R-type instruction, namely \tt{sub}, this time
+explaining the process by following the code path.
 
 \subsection{Example: Decomposing \texttt{sub}}
 
-Consider the 32-bit integer \tt{0x00012122}. In this example, we
-will parse the number in a sequence of steps, before finally arriving
-at that this number represents an instance of the \tt{sub}
-instruction.
+Consider the 32-bit integer \tt{0x00012122}. In this example, we will
+parse the number in a sequence of steps, before finally arriving at
+that this number represents an instance of the \tt{sub} instruction.
+
+In an earlier section we established the input and output of our
+decompiler, see Fig.~\eqref{fig:mips32-decompiler} which maps nicely
+into Table.~\ref{table:instruction-operations}. In this example we
+will start by supplying our factory
+method \mij{Instruction.fromInteger(int instruction}} with
+\tt{0x00012122} and evaluate the 
+
+\begin{figure}[H]
+  \centering \includegraphics[width=0.7\textwidth]{figures/mips32-decompiler-interface.png} \caption{Interface} \label{fig:mips32-decompiler-interface}
+\end{figure}
+
 
 \subsubsection{Determining \texttt{Opcode} from a 32-bit integer}
-First, we have that from the \tt{Opcode} may be determined
-by the 6 left-most bits of the number, hence we would like to
-have a function $f$ such that,
+First, we have that the \tt{Opcode} may be determined by the 6
+left-most bits of the number, hence we would like to have a function
+$f$ such that,
 
 \begin{equation*}
-        f: \textrm{32-bit integer} \to \tt{Opcode}
+f: \textrm{32-bit integer} \to \tt{Opcode}
 \end{equation*}
 
 In Java we can represent this by having a class, \opcodem\footnote{
@@ -61,101 +71,45 @@ In Java we can represent this by having a class, \opcodem\footnote{
 with the method,
 
 \begin{minted}{java}
-        public static Opcode fromInstruction(int instruction);
+public static Opcode fromInstruction(int instruction);
 \end{minted}
 
 The \opcodem abstraction will intermittently be represented in
-numberical form, so in this case \mintinline{java}{Opcode.fromInstruction(0x00012122)}
-will occassionally be written out as \tt{0x00}.
+numerical form, so in this
+case \mintinline{java}{Opcode.fromInstruction(0x00012122)} will
+occassionally be written out as \tt{0x00}. The class, \opcodem,
+supplies handy utility methods for representing itself either as an
+object or the \mij{int} primitive.
 
 \subsubsection{Determining the \texttt{Format} from an \texttt{Opcode}}
 
-As previously stated, for any defined \opcodem the
-format is always known, for legibilitywe will adopt the following
-notation to describe this function.\footnote{And that methods are
-routinely renamed}
+As previously stated, for any defined \opcodem the format of the
+instruction with that opcode is always known. I.e. there is a
+one-to-one function (i.e. a mapping) that pairs an \mij{Opcode} with
+a \mij{Format}.
 
-\begin{minted}{haskell}
-getFormat :: Opcode -> Format
-\end{minted}
 
-which means that getting the format is a function \emph{from} \opcodem
-to \formatm.
 
-This also means that we will write out
+\subsubsection{Identifying the instruction using the \texttt{Format}}
 
-\begin{minted}{java}
-  public static Opcode fromInstruction(int instruction);
-\end{minted}
-
-as
-
-\begin{minted}{haskell}
-fromInstruction :: Integer32 -> Opcode
-\end{minted}
-
-When appropriate, we will disregard the names and just write
-
-\begin{verbatim}
-Integer32 -> Opcode
-\end{verbatim}
-
-Recall that so far we have applied the following steps,
-
-\begin{itemize}
-\item \tt{\integer -> \opcode}, which yields \tt{0x00}
-\item \tt{\opcode -> \format}, which yields the R-format
-\end{itemize}
-
-Now while the above two steps are always applicable regardless of the instruction
-there lies a cross-roads in the next step that we have to take into account.
-
-\subsubsection{Getting the \texttt{InstructionName} from the \texttt{Format}}
-
-Recall from earlier that the \opcode alone is not always a unique identifier of
-the instruction. For I-format instructions it is, but for R-format instructions
-it is not!
-
-But, for any given \formatm we may always identify the name of the
-an \instructionm, i.e. the \inamem as long as we can supply the format
-with the numerical representation of the instruction.
-
-In the case of the formats where the \opcodem uniquely identifies the
-instruction the specific \formatm only confers with the \opcodem to
-supply the \inamem. In those formats where the \opcodem is not
-adequate to identify the instruction \formatm may confer with any bits
-necessary to provide the \inamem.\footnote{For the opcodes \tt{op=0x00}, \tt{op=0x01},
-and \tt{op=0x1c} it is necessary to consult a sencond field in order to identify
-the instruction completely (\tt{funct} in the case of \tt{op=x00} or \tt{ox1c} and
-\tt{rt} in the case of \tt{op=0x01})}.
-
-Using our previous notation convention we will write,
-
-\begin{minted}{haskell}
-getName :: Format -> Integer32 -> InstructionName
-\end{minted}
-
-and the way we interpret is a left-associative function application, which
-means that reading from the left we first apply \integer as an argument
-to \formatm, i.e. \mij{Format(Integer32)} which returns an \inamem.
-
-So, our initial two steps gave us the R-format, which when given a
-32-bit integer (in this case \tt{0x00012122}) will give us
-the \inamem: \mij{SUB}.
-
-The \formatm also affords us the definition of how to decompose an
-instruction of that format.
-
-\begin{minted}{haskell}
-getDecomposedRepresentation :: Format -> Integer32 -> DecomposedRepresentation
-\end{minted}
+Before we stated that the \opcode is not always adequate to uniquely
+identify the instruction. We find that all J-type instructions and for
+some, but not all, I-type instructions the \opcode will suffice.
+Specifically, those I-type instructions which cannot be identified by
+their opcode alone is the branch instructions and immediate trap
+operations.\footnote{For the opcodes \tt{op=0x00}, \tt{op=0x01},
+and \tt{op=0x1c} it is necessary to consult a second field in order to
+identify the instruction completely (\tt{funct} in the case
+of \tt{op=x00} or \tt{ox1c} and
+\tt{rt} in the case of \tt{op=0x01})}
 
 \subsubsection{Review}
 
-So far we have retrieved the \opcodem from \tt{0x00012122}, and from the
+So far we have retrieved the \opcodem from \tt{0x00012122}, and from
+the
 \opcodem we got the \formatm.
 
-In turn, the \formatm gave us both the \decomposedm and the \inamem.
+%In turn, the \formatm gave us both the \decomposedm and the \inamem.
 
 \subsection{Example: Decomposing \tt{sub} (continued)}
 
@@ -203,7 +157,7 @@ add, addu, sub, mul, and, or, nor, xor, movn, movz
 
 among possibly others, have the common pattern \emph{$\langle$iname
 rd, rs, rt$\rangle$} with
-\emph{iname} the instruction name.\footnote{\inamem}
+\emph{iname} the instruction name.
 
 \newcommand{\pattern}[1]{\emph{$\langle$#1$\rangle$}}
 
@@ -225,7 +179,7 @@ for R-format instructions and
 
 for I-format instructions.
 
-Each \inamem is associated with a particular \pattern! We will call
+%Each \inamem is associated with a particular \pattern! We will call
 these patterns a \mij{MnemonicPattern}, so we have that
 
 \begin{minted}{haskell}
