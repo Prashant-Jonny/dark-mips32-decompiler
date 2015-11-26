@@ -10,6 +10,7 @@ import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 /**
  * Describes a stateless representation of all the known R-type
@@ -341,6 +342,10 @@ public enum RTypeInstruction {
     private final List<BitField> list = new ArrayList<>();
     private final OpcodeFunctPair pair;
 
+    /** Set this upon use in fromNumericalRepresentation */
+    private int instruction;
+    private DecomposedRepresentation decomposedRepresentation;
+
     /** All R-format instructions follow the same pattern */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
@@ -368,21 +373,28 @@ public enum RTypeInstruction {
         /** Get the correct R-type instruction */
         RTypeInstruction rTypeInstruction = identifyInstruction
                 (instruction);
-        DecomposedRepresentation d = DecomposedRepresentation.fromNumber
-                (instruction, decomposedPattern);
 
-        MnemonicRepresentation m = composeMnemonic(rTypeInstruction, d);
+        MnemonicRepresentation m = composeMnemonic(rTypeInstruction);
 
         return new Instruction(
                 instruction,
                 Format.R,
-                d,
+                rTypeInstruction.decomposedRepresentation,
                 m);
     }
 
+    private static boolean shamt(int expectedValue) {
+        return false;
+    }
+
+    @FunctionalInterface
+    private interface Condition extends UnaryOperator<Integer> {
+
+    }
+
     private static MnemonicRepresentation composeMnemonic
-            (RTypeInstruction instruction, DecomposedRepresentation d){
-        int[] decomposition = d.toIntArray();
+            (RTypeInstruction instruction){
+        int[] decomposition = instruction.decomposedRepresentation.toIntArray();
         List<String> strings = new ArrayList<>();
         instruction.list.forEach(e -> {
             strings.add(e.apply(decomposition));
@@ -398,7 +410,11 @@ public enum RTypeInstruction {
         int[] decomposition = d.toIntArray();
         int funct = R.funct(decomposition);
         OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
-        return map.get(key);
+
+        RTypeInstruction r = map.get(key);
+        r.instruction = instruction;
+        r.decomposedRepresentation = d;
+        return r;
     }
     
     private static class R {
