@@ -4,13 +4,12 @@ import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepres
 import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
-import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 
 /**
  * Describes a stateless representation of all the known R-type
@@ -23,7 +22,11 @@ public enum RTypeInstruction {
      * register rd.
      */
     // TODO: Validate that shamt is 0
-    ADD(0x00, 0x20, {"shamt", 0}, R::rd, R::rs, R::rt),
+    ADD(0x00, 0x20, new Condition[] {
+            RTypeInstruction::shamt
+    }, R::rd,
+            R::rs,
+            R::rt),
 
     /**
      * Addition (without overflow). Put the sum of registers rs and rt into
@@ -315,6 +318,10 @@ public enum RTypeInstruction {
     /** Do nothing */
     // TODO: Validate that all fields are 0
     NOP(0x00, 0x00);
+
+    private static Integer shamt(Boolean aBoolean) {
+    }
+
     ;
 
     /**
@@ -349,7 +356,7 @@ public enum RTypeInstruction {
     /** All R-format instructions follow the same pattern */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
-    RTypeInstruction(int opcode, int funct,
+    RTypeInstruction(int opcode, int funct, Condition[] conditions,
                      BitField... bitFields) {
         list.addAll(Arrays.asList(bitFields));
         pair = new OpcodeFunctPair(opcode, funct);
@@ -383,12 +390,12 @@ public enum RTypeInstruction {
                 m);
     }
 
-    private static boolean shamt(int expectedValue) {
+    static boolean shamt(int expectedValue) {
         return false;
     }
 
     @FunctionalInterface
-    private interface Condition extends UnaryOperator<Integer> {
+    interface Condition extends Function<Integer, Boolean> {
 
     }
 
