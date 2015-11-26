@@ -1,7 +1,11 @@
 package se.filipallberg.dark.mips32decompiler.instruction.mnemonic;
 
+import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
+import se.filipallberg.dark.mips32decompiler.instruction.type.InstructionType;
+
 import java.util.Arrays;
 import java.util.StringJoiner;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MnemonicRepresentation {
@@ -20,14 +24,6 @@ public class MnemonicRepresentation {
             tmp += " " + sj.toString();
         }
         stringRepresentation = tmp;
-    }
-
-    public static MnemonicRepresentation from(Supplier<String>[] suppliers) {
-        String[] strings = new String[suppliers.length];
-        for (int i = 1; i < suppliers.length; i++) {
-            strings[i] = suppliers[i].get();
-        }
-        return new MnemonicRepresentation(strings[0], strings);
     }
 
     public static MnemonicRepresentation fromString(String

@@ -21,7 +21,7 @@ public class InstructionTest {
                 "addi $sp, $sp, -8"));
         /*add(new TestCase(0xafbf0004, Format.I,
                 "[43 29 31 4]", "[0x2b 0x1d 0x1f 4]",
-                "sw $ra, 4($sp)"));*/
+                "sw $ra, 4($sp)"));*/             
         add(new TestCase(0, Format.R,
                 "[0 0 0 0 0 0]", "[0 0 0 0 0 0]",
                 "nop"));

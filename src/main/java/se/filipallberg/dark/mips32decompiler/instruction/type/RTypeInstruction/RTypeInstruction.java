@@ -1,7 +1,9 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
+import se.filipallberg.dark.mips32decompiler.instruction.PartiallyLegalInstructionException;
+import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
-import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
+import se.filipallberg.dark.mips32decompiler.instruction.type.InstructionType;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
@@ -9,31 +11,42 @@ import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Describes a stateless representation of all the known R-type
  * instructions. Pass in an numerical representation of an instruction
  * and get the instruction instance.
  */
-public enum RTypeInstruction {
+public enum RTypeInstruction implements InstructionType {
     /**
      * Addition (with overflow). Put the sum of registers rs and rt into
-     * register rd.
+     * register rd. Is only valid if shamt is 0.
      */
-    // TODO: Validate that shamt is 0
-    ADD(0x00, 0x20, AsString::rd,  AsString::rs,  AsString::rt),
+    ADD(0x00, 0x20,
+            new Condition<RTypeInstruction, Integer>()
+                    .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Addition (without overflow). Put the sum of registers rs and rt into
-     * register rd.
+     * register rd. Is only valid if shamt is 0
      */
-    // TODO: Validate that shamt is 0
-    ADDU(0, 0x21,  AsString::rd,  AsString::rs,  AsString::rt),
+    ADDU(0, 0x21,
+            new Condition<RTypeInstruction, Integer>()
+                    .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
-    /** Put the logical AND of registers rs and rt into register rd */
-    // TODO: validate that shamt is 0
-    AND(0x00, 0x24,  AsString::rd,  AsString::rs,  AsString::rt),
+    /**
+     * Put the logical AND of registers rs and rt into register rd.
+     * Is only valid if shamt is 0
+     */
+    AND(0x00, 0x24,
+            new Condition<RTypeInstruction, Integer>()
+                    .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Count leading ones in the word in register rs and put the result
@@ -45,176 +58,257 @@ public enum RTypeInstruction {
             new Condition<RTypeInstruction, Integer>()
                     .checkThat(Int::shamt).is(0x00).
                     andThat(Int::rt).is(0x00),
-            AsString::rd, AsString::rs),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rd, Str::rs)),
 
     /**
      * Count leading zeroes in the word in register rs and put the result
      * into register rd. If a word is all zeroes, the result is 32.
+     * Is only valid if shamt is 0 and rt is 0
      */
-    // TODO: Validate that shamt is 0 and rt is 0
-    CLZ(0x1c, 0x20,  AsString::rd,  AsString::rs),
+    CLZ(0x1c, 0x20,
+            new Condition<RTypeInstruction, Integer>()
+                    .checkThat(Int::shamt).is(0x00).
+                    andThat(Int::rt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rd, Str::rs)),
     
-    /** Divide (with overflow). Divide register rs by register rt. */
-    // TODO: Validate that rd and shamt is 0
-    DIV(0x00, 0x1a,  AsString::rs,  AsString::rt),
+    /**
+     * Divide (with overflow). Divide register rs by register rt.
+     * Is only valid if rd and shamt is 0.
+     */
+    DIV(0x00, 0x1a, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
 
-    /** Divide (without overflow). Divide register rs by register rt. */
-    // TODO: Validate that rd and shamt is 0
-    DIVU(0x00, 0x1b,  AsString::rs,  AsString::rt),
+    /**
+     * Divide (without overflow). Divide register rs by register rt.
+     * Is only valid if rd and shamt is 0.
+     */
+    DIVU(0x00, 0x1b, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
 
     /**
      * Multiply. Multiply registers rs and rt. Leave the low-order word
      * of the product in the register lo and the high-order word in
-     * register hi
+     * register hi. Is only valid if rd and shamt is 0
      */
-    // TODO: Validate that rd and shamt is 0
-    MULT(0x00, 0x18,  AsString::rs,  AsString::rt),
+    MULT(0x00, 0x18, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
+
 
     /**
      * Unsigned multiply. Multiply registers rs and rt. Leave the low-order word
      * of the product in the register lo and the high-order word in
-     * register hi
+     * register hi. Is only valid if rd and shamt is 0.
      */
-    // TODO: Validate that rd and shamt is 0
-    MULTU(0x00, 0x19,  AsString::rs,  AsString::rt),
+    MULTU(0x00, 0x19, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
+
 
     /**
      * Multiply (without overflow). Put the low-order 32 bits of the product
      * of rs and rt into register rd. Is valid iff the shamt field is 0.
      */
     MUL(0x1c, 2, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
-            AsString::rd,  AsString::rs,  AsString::rt),
+            .checkThat("shamt", Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd, Str::rs, Str::rt)),
 
     /**
      * Multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
      * and add the resulting 64-bit product to the 64-bit value in the
-     * concatenated registers lo and hi. */
-    // TODO: Validate that rd and shamt is 0
-    MADD(0x1c, 0,  AsString::rs,  AsString::rt),
+     * concatenated registers lo and hi. Is only valid if rd and shamt
+     * are both zero
+     */
+    MADD(0x1c, 0, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
 
     /**
      * Unsigned multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
      * and add the resulting 64-bit product to the 64-bit value in the
-     * concatenated registers lo and hi. */
-    // TODO: Validate that rd and shamt is 0
-    MADDU(0x1c, 1,  AsString::rs,  AsString::rt),
+     * concatenated registers lo and hi. Is only valid if rd and shamt
+     * are both zero
+     */
+    MADDU(0x1c, 1, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
 
     /**
      * Multiply subtract. Multiply registers rs and rt and subtract the
      * resulting 64-bit product from the 64-bit value in the
-     * concatenated registers lo and hi.
+     * concatenated registers lo and hi. Is only valid if both rd
+     * and shamt are 0. Is only valid if rd and shamt are both 0.
      */
-    // TODO: Validate that rd and shamt is 0
-    MSUB(0x1c, 4,  AsString::rs,  AsString::rt),
+    MSUB(0x1c, 4, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
 
     /**
      * Unsigned multiply subtract. Multiply registers rs and rt and subtract
      * the resulting 64-bit product from the 64-bit value in the
-     * concatenated registers lo and hi.
+     * concatenated registers lo and hi. Is only valid if both rd
+     * and shamt are 0.
      */
-    // TODO: Validate that rd and shamt is 0
-    MSUBU(0x1c, 5,  AsString::rs,  AsString::rt),
+    MSUBU(0x1c, 5, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>
+                    (Str::iname, Str::rs, Str::rt)),
     
-    /** Put the logical NOR of registers rs and rt into register rd. */
-    // TODO: Validate that shamt is 0
-    NOR(0x00, 0x27,  AsString::rd,  AsString::rs,  AsString::rt),
+    /**
+     * Put the logical NOR of registers rs and rt into register rd.
+     * Is only valid if shamt is 0.
+     */
+    NOR(0x00, 0x27, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rd, Str::rs, Str::rt)),
 
-    /** Put the logical OR of registers rs and rt into register rd. */
-    // TODO: Validate that shamt is 0
-    OR(0x00, 0x25,  AsString::rd,  AsString::rs,  AsString::rt),
+    /**
+     * Put the logical OR of registers rs and rt into register rd.
+     * Is only valid if shamt is 0.
+     */
+    OR(0x00, 0x25, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rd, Str::rs, Str::rt)),
 
     /**
      * Shift left logical. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SLL(0x00, 0x00,  AsString::rd,  AsString::rt,  AsString::shamt),
+    SLL(0x00, 0x00, new MnemonicPattern<>(
+            Str::iname, Str::rd,  Str::rt,  Str::shamt)),
 
     /**
      * Shift left logical variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
+     * Is only valid if shamt is 0.
      */
-    // TODO: Validate that shamt is 0
-    SLLV(0x00, 4,  AsString::rd,  AsString::rt,  AsString::rs),
+    SLLV(0x00, 4, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd, Str::rt, Str::rs)),
 
     /**
      * Shift right arithmetic. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SRA(0x00, 0x03,  AsString::rd,  AsString::rt,  AsString::shamt),
+    SRA(0x00, 0x03,
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd, Str::rt, Str::shamt)),
 
     /**
      * Shift right arithmetic variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
+     * Is only valid if shamt is 0.
      */
-    // TODO: Validate that shamt is 0
-    SRAV(0x00, 7,  AsString::rd,  AsString::rt,  AsString::rs),
+    SRAV(0x00, 7, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rt,  Str::rs)),
 
     /**
      * Shift right logical. Shift register rt left by the distance indicated
      * by immediate shamt and put the result in register rd.
      */
-    SRL(0x00, 0x02,  AsString::rd,  AsString::rt,  AsString::shamt),
+    SRL(0x00, 0x02, new MnemonicPattern<>(
+            Str::iname, Str::rd,  Str::rt,  Str::shamt)),
 
     /**
      * Shift right logical variable. Shift register rt left by the distance indicated
      * by immediate shamt or register rs and put the result in register rd.
+     * Is only valid if shamt is 0.
      */
-    // TODO: Validate that shamt is 0
-    SRLV(0x00, 0x06,  AsString::rd,  AsString::rt,  AsString::rs),
+    SRLV(0x00, 0x06, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt,  Str::rs)),
 
     /**
      * Subtract (with overflow). Put the difference of registers rs and rt
      * into register rd.
      */
     // TODO: Validate that shamt is 0
-    SUB(0x00, 0x22,  AsString::rd,  AsString::rs,  AsString::rt),
+    SUB(0x00, 0x22, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Subtract (without overflow). Put the difference of registers rs and rt
      * into register rd.
      */
     // TODO: Validate that shamt is 0
-    SUBU(0x00, 0x23,  AsString::rd,  AsString::rs,  AsString::rt),
+    SUBU(0x00, 0x23, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /** Put the logical XOR of registers rs and rt into register rd. */
     // TODO: Validate that shamt is 0
-    XOR(0x00, 0x26,  AsString::rd,  AsString::rs,  AsString::rt),
+    XOR(0x00, 0x26, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Trap if equal. If register rs is equal to register rt, raise a
      * Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TEQ(0x00, 0x52,  AsString::rs,  AsString::rt),
+    TEQ(0x00, 0x52, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs,  Str::rt)),
 
     /**
      * Trap if greater equal. If register rs is greater than or equal to
      * register rt, raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TGE(0x00, 0x48,  AsString::rs,  AsString::rt),
+    TGE(0x00, 0x48, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs,  Str::rt)),
 
     /**
      * Unsigned trap if greater equal. If register rs is greater than or equal
      * to register rt, raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TGEU(0x00, 0x49,  AsString::rs,  AsString::rt),
+    TGEU(0x00, 0x49, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs,  Str::rt)),
 
     /**
      * Trap if less than. If register rs is less than register rt, raise a
      * Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TLT(0x00, 0x50,  AsString::rs,  AsString::rt),
+    TLT(0x00, 0x50, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs,  Str::rt)),
 
     /**
      * Trap if less than unsigned. If register rs is less than register rt,
      * raise a Trap exception.
      */
     // TODO: Validate that shamt and rd is 0
-    TLTU(0x00, 0x51,  AsString::rs,  AsString::rt),
+    TLTU(0x00, 0x51, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs,  Str::rt)),
 
     /**
      * Move from hi
@@ -223,7 +317,12 @@ public enum RTypeInstruction {
      * to rd.
      */
     // TODO: Verify that rs and rt and shamt is 0
-    MFHI(0x00, 0x10,  AsString::rd),
+    MFHI(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00).
+                    andThat(Int::rt).is(0x00).
+                    andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd)),
 
     /**
      * Move from lo
@@ -232,20 +331,35 @@ public enum RTypeInstruction {
      * register to rd.
      */
     // TODO: Verify that rs and rt and shamt is 0
-    MFLO(0x00, 0x10,  AsString::rd),
+    MFLO(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00).
+                    andThat(Int::rt).is(0x00).
+                    andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rd)),
 
     /**
      * Move to hi, move register rs to the hi register.
      */
     // TODO: Validate that rt, rd, and shamt = 0
-    MTHI(0x00, 0x11,  AsString::rs),
+    MTHI(0x00, 0x11, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rt).is(0x00).
+                    andThat(Int::rd).is(0x00).
+                    andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs)),
 
 
     /**
      * Move to lo, move register rs to the lo register.
      */
     // TODO: Validate that rt, rd, and shamt = 0
-    MTLO(0x00, 0x13,  AsString::rs),
+    MTLO(0x00, 0x13, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rt).is(0x00).
+                    andThat(Int::rd).is(0x00).
+                    andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(
+                    Str::iname, Str::rs)),
 
     /**
      * Move from coprocessor 0. Move register rd in a coprocessor (register
@@ -253,22 +367,34 @@ public enum RTypeInstruction {
      * coprocessor 1.
      */
     // TODO: Validate that rs, shamt, and funct is 0
-    MFC0(0x10, 0x00,  AsString::rt,  AsString::rd),
+    MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00).
+                    andThat(Int::shamt).is(0x00).
+                    andThat(Int::funct).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),
 
     /**
      * Move from coprocessor 1. Move register rd in a coprocessor (register
      * fs in the FPU) to CPU register rt. The floating-point unit is
-     * coprocessor 1. Note that R::fs occupies the rd field
+     * coprocessor 1. Note that fs occupies the rd field
      */
     // TODO: Validate that rs, shamt and funct is 0
-    MFC1(0x11, 0x00,  AsString::rt,  AsString::fs),
+    MFC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00).
+                    andThat(Int::shamt).is(0x00).
+                    andThat(Int::funct).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
      * Move to coprocessor 0, move CPU register rt to register
      * rd in a coprocessor
      */
     // TODO: Validate that rs = 4 and that shamt and funct is 0
-    MTC0(0x10, 0x00,  AsString::rd,  AsString::rt),
+    MTC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x04).
+                    andThat(Int::shamt).is(0x00).
+                    andThat(Int::funct).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt)),
 
     /**
      * Move to coprocessor 0, move CPU register rt to register
@@ -277,50 +403,68 @@ public enum RTypeInstruction {
      * field. The rs field distinguishes them.
      */
     // TODO: Validate that rs = 4 and funct and shamt = 0
-    MTC1(0x11, 0x00,  AsString::rt,  AsString::fs),
+    MTC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x04).
+                    andThat(Int::shamt).is(0x00).
+                    andThat(Int::funct).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
      * Move conditional not zero. Move register rs to register rd if
      * register rt is not zero.
      */
-    MOVN(0x00, 0x11,  AsString::rd,  AsString::rs,  AsString::rt),
+    MOVN(0x00, 0x11, new MnemonicPattern<>(Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Move conditional zero. Move register rs to register rd if
      * register rt is zero.
      */
-    MOVZ(0x00, 0x10,  AsString::rd,  AsString::rs,  AsString::rt),
+    MOVZ(0x00, 0x10, new MnemonicPattern<>(Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Set less than. Set register rd to 1 if register rs is less than rt,
      * otherwise set register rd to 0.
      */
-    SLT(0x00, 0x42,  AsString::rd,  AsString::rs,  AsString::rt),
+    SLT(0x00, 0x42, new MnemonicPattern<>(Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Set less than unsigned. Set register rd to 1 if register rs is
      * less than rt, otherwise set register rd to 0.
      */
-    SLTU(0x00, 0x43,  AsString::rd,  AsString::rs,  AsString::rt),
+    SLTU(0x00, 0x43, new MnemonicPattern<>(Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /**
      * Unconditionally jump to the instruction whose address is in register
      * rs. Save the address of the next instruction in register rd.
      */
     // TODO Verify that rs and shamt is 0
-    JALR(0x00, 0x09,  AsString::rs,  AsString::rd),
+    JALR(0x00, 0x09, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00).andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rs,  Str::rd)),
 
     /**
      * Unconditionally jump to the instruction whose address is in
      * register rs.
      */
     // TODO: Validate that rt, rd, and shamt is 0
-    JR(0x00, 0x08,  AsString::rs),
+    JR(0x00, 0x08, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rt).is(0x00).
+                    andThat(Int::rd).is(0x00).
+                    andThat(Int::shamt).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rs)),
 
     /** Do nothing */
     // TODO: Validate that all fields are 0
-    NOP(0x00, 0x00);
+    NOP(0x00, 0x00, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::rt).is(0x00).
+                    andThat(Int::rs).is(0x00).
+                    andThat(Int::rd).is(0x00).
+                    andThat(Int::shamt).is(0x00).
+                    andThat(Int::funct).is(0x00)
+            ,
+            new MnemonicPattern<>(Str::iname));
     ;
+
 
     /**
      * An R-type instruction is uniquely identified by its opcode and
@@ -360,8 +504,6 @@ public enum RTypeInstruction {
         });
     }
 
-    private final List<BitField2> list = new ArrayList<>();
-
     /**
      * The OpcodeFunctPair uniquely identifies this instruction.
      */
@@ -370,11 +512,12 @@ public enum RTypeInstruction {
     /** Set this upon use in fromNumericalRepresentation */
     private DecomposedRepresentation decomposedRepresentation;
 
-    /** Make ~all~ fields accessible */
-    private int shamt;
-    private int rt;
+    private int instruction;
     private int rs;
+    private int rt;
     private int rd;
+    private int shamt;
+    private int funct;
 
     /**
      * All R-format instructions are decomposed into fields of the
@@ -382,30 +525,53 @@ public enum RTypeInstruction {
      */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
-    RTypeInstruction(int opcode, int funct, BitField2... bitFields) {
-        list.addAll(Arrays.asList(bitFields));
-        pair = new OpcodeFunctPair(opcode, funct);
-    }
-
-    private Condition<RTypeInstruction, Integer> c;
-
-    @FunctionalInterface
-    interface BitField2 extends Function<RTypeInstruction, String> {
-
-    }
+    /**
+     * Describes a condition object that takes as arguments
+     * RTypeInstruction instances that return an integer these return
+     * values are then compared for equality against the specified
+     * values given during construction.
+     *
+     * For an example, let
+     *
+     * <code>
+     * Condition c = new Condition<RTypeInstruction, Integer>()
+     * .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00)
+     * </code>
+     *
+     * Then, when we call {@code c.evaluate(this)} in a non-static
+     * method we will call each specified method (here
+     * {@code Int:rd} and {@code Int::shamt}) with the {@code this}
+     * reference and check that the return value of {@code Int::rd} is
+     * 0x00, and similarily that {@code Int::shamt} returns 0x00.
+     */
+    private Condition<RTypeInstruction, Integer> validationConditions;
+    private MnemonicPattern<RTypeInstruction> pattern;
 
     RTypeInstruction(int opcode, int funct,
-                     Condition<RTypeInstruction, Integer> c,
-                     BitField2... bitFields) {
-        list.addAll(Arrays.asList(bitFields));
+                     Condition<RTypeInstruction, Integer> validationConditions,
+                     MnemonicPattern<RTypeInstruction> pattern) {
+        this.pattern = pattern;
         pair = new OpcodeFunctPair(opcode, funct);
-        this.c = c;
+        this.validationConditions = validationConditions;
     }
 
+    /** Not all instructions need satisfy a particular condition */
+    RTypeInstruction(int opcode, int funct,
+                     MnemonicPattern<RTypeInstruction> pattern) {
+        this.pattern = pattern;
+        pair = new OpcodeFunctPair(opcode, funct);
+    }
 
     public void validate() {
-        if (c != null) {
-            System.out.println(c.validate(this));
+        if (validationConditions != null) {
+            if (!validationConditions.evaluate(this)) {
+                StringJoiner sj = new StringJoiner("\n\t", "{(0x" +
+                        Integer.toHexString(instruction) + ") " +
+                        "Errors:\n\t", "}");
+
+                validationConditions.getErrors().forEach(sj::add);
+                throw new PartiallyLegalInstructionException(sj.toString());
+            }
         }
     }
 
@@ -428,7 +594,7 @@ public enum RTypeInstruction {
         RTypeInstruction rTypeInstruction = identifyInstruction
                 (instruction);
 
-        MnemonicRepresentation m = rTypeInstruction.composeMnemonic();
+        MnemonicRepresentation m = rTypeInstruction.pattern.compose(rTypeInstruction);
         rTypeInstruction.validate();
 
         return new Instruction(
@@ -438,68 +604,71 @@ public enum RTypeInstruction {
                 m);
     }
 
-    private MnemonicRepresentation composeMnemonic() {
-        List<String> strings = new ArrayList<>();
-        list.forEach(e -> {
-            strings.add(e.apply(this));
-        });
-        return new MnemonicRepresentation(this.name().toLowerCase(),
-                strings.toArray(new String[strings.size()]));
-    }
-
     private static RTypeInstruction identifyInstruction(int instruction) {
         DecomposedRepresentation d = DecomposedRepresentation.
                 fromNumber(instruction, decomposedPattern);
         int[] decomposition = d.toIntArray();
-        int funct = Int.funct(decomposition);
+        int funct = decomposition[5];
         OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
 
         RTypeInstruction r = map.get(key);
+
+        if (Objects.isNull(r)) {
+            /*
+             * The opcode field was legal, otherwise we would not be here.
+             * But, since we were unable to find an instruction matching
+             * the pairing of the opcode and the funct field of the
+             * supplied instruction then the funct field must have been
+             * erroneous.
+             */
+            String err = "The supplied instruction: " + instruction
+                    + " has an opcode associated with the R-format: " +
+                    d.opcode() +
+                    " but the pairing of the opcode and the funct field" +
+                    " does not match any known instruction. funct: " +
+                    funct;
+            throw new PartiallyLegalInstructionException(err);
+        }
+
+        r.instruction = instruction;
         r.decomposedRepresentation = d;
         r.rs = decomposition[1];
         r.rt = decomposition[2];
         r.rd = decomposition[3];
         r.shamt = decomposition[4];
+        r.funct = decomposition[5];
         return r;
     }
     
-    private static class AsString {
-        static int op(int[] decomposition) {
-            return decomposition[0];
+    private static class Str {
+        static String iname(RTypeInstruction r) {
+            return r.name().toLowerCase();
         }
 
-        static int funct(int[] decomposition) {
-            return decomposition[5];
-        }
-
-        static  String rd(RTypeInstruction r) {
+        static String rd(RTypeInstruction r) {
             return Register.toString(r.rd);
         }
 
-        static  String rs(RTypeInstruction r) {
+        static String rs(RTypeInstruction r) {
             return Register.toString(r.rs);
         }
 
-        static  String rt(RTypeInstruction r) {
+        static String rt(RTypeInstruction r) {
             return Register.toString(r.rt);
         }
 
-        static  String shamt(RTypeInstruction r) {
+        static String shamt(RTypeInstruction r) {
             return Register.toString(r.shamt);
         }
 
-        static  String fs(RTypeInstruction r) {
+        static String fs(RTypeInstruction r) {
             return Register.toString(r.rd);
         }
     }
     
     private static class Int {
-        static int op(int[] decomposition) {
-            return decomposition[0];
-        }
-
-        static int funct(int[] decomposition) {
-            return decomposition[5];
+        static Integer funct(RTypeInstruction r) {
+            return r.funct;
         }
 
         static Integer rd(RTypeInstruction r) {
@@ -516,10 +685,6 @@ public enum RTypeInstruction {
 
         static Integer shamt(RTypeInstruction r) {
             return r.shamt;
-        }
-
-        static Integer fs(RTypeInstruction r) {
-            return r.rd;
         }
     }
 
