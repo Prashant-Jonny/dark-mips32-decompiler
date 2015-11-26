@@ -22,7 +22,7 @@ public enum RTypeInstruction {
      * register rd.
      */
     // TODO: Validate that shamt is 0
-    ADD(0x00, 0x20, R::rd, R::rs, R::rt),
+    ADD(0x00, 0x20, {"shamt", 0}, R::rd, R::rs, R::rt),
 
     /**
      * Addition (without overflow). Put the sum of registers rs and rt into
@@ -366,26 +366,39 @@ public enum RTypeInstruction {
         }
 
         /** Get the correct R-type instruction */
-        DecomposedRepresentation d = DecomposedRepresentation.
-                fromNumber(instruction, decomposedPattern);
-        int[] decomposition = d.toIntArray();
-        int funct = R.funct(decomposition);
-        OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
-        RTypeInstruction rTypeInstruction = map.get(key);
+        RTypeInstruction rTypeInstruction = identifyInstruction
+                (instruction);
+        DecomposedRepresentation d = DecomposedRepresentation.fromNumber
+                (instruction, decomposedPattern);
 
-        List<String> strings = new ArrayList<>();
-        rTypeInstruction.list.forEach(e -> {
-            strings.add(e.apply(d.toIntArray()));
-        });
-
-        MnemonicRepresentation m = new MnemonicRepresentation("mul",
-                strings.toArray(new String[strings.size()]));
+        MnemonicRepresentation m = composeMnemonic(rTypeInstruction, d);
 
         return new Instruction(
                 instruction,
                 Format.R,
                 d,
                 m);
+    }
+
+    private static MnemonicRepresentation composeMnemonic
+            (RTypeInstruction instruction, DecomposedRepresentation d){
+        int[] decomposition = d.toIntArray();
+        List<String> strings = new ArrayList<>();
+        instruction.list.forEach(e -> {
+            strings.add(e.apply(decomposition));
+        });
+        return new MnemonicRepresentation
+                (instruction.name().toLowerCase(),
+                strings.toArray(new String[strings.size()]));
+    }
+
+    private static RTypeInstruction identifyInstruction(int instruction) {
+        DecomposedRepresentation d = DecomposedRepresentation.
+                fromNumber(instruction, decomposedPattern);
+        int[] decomposition = d.toIntArray();
+        int funct = R.funct(decomposition);
+        OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
+        return map.get(key);
     }
     
     private static class R {
