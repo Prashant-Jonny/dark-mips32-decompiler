@@ -41,8 +41,7 @@ public enum RTypeInstruction {
      * For the instruction to be valid shamt has to be 0 and rt has
      * to be 0.
      */
-    // TODO: Validate that shamt is 0 and rt is 0
-    CLO(0x1c, 0x21, 
+    CLO(0x1c, 0x21,
             new Condition<RTypeInstruction, Integer>()
                     .checkThat(Int::shamt).is(0x00).
                     andThat(Int::rt).is(0x00),
@@ -81,10 +80,11 @@ public enum RTypeInstruction {
 
     /**
      * Multiply (without overflow). Put the low-order 32 bits of the product
-     * of rs and rt into register rd.
+     * of rs and rt into register rd. Is valid iff the shamt field is 0.
      */
-    // TODO: Validate that shamt is 0
-    MUL(0x1c, 2,  AsString::rd,  AsString::rs,  AsString::rt),
+    MUL(0x1c, 2, new Condition<RTypeInstruction, Integer>()
+            .checkThat(Int::shamt).is(0x00),
+            AsString::rd,  AsString::rs,  AsString::rt),
 
     /**
      * Multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
@@ -323,8 +323,11 @@ public enum RTypeInstruction {
     ;
 
     /**
-     * Map the unique identifier instruction identifier with its
-     * corresponding instruction.
+     * An R-type instruction is uniquely identified by its opcode and
+     * its funct field, viz. that the pair uniquely identifies a particular
+     * kind of instruction. This map is populated during the instantiation
+     * of each enum value so that we can later look-up the correct
+     * instruction instance given a particular number.
      */
     private static final Map<OpcodeFunctPair, RTypeInstruction> map
             = new HashMap<>();
@@ -334,16 +337,34 @@ public enum RTypeInstruction {
      */
     private static final Set<Opcode> opcodeSet = new HashSet<>();
     static {
+        /*
+         * Each RTypeInstruction sets its own OpcodeFunctPair during
+         * its instantiation in the field pair. The .values() method
+         * allows us to iterate across all the enum values of this
+         * enum class. Hence we can put all OpCodeFunct pairs into
+         * our map, and associate them with the instruction that
+         * the pair identifies.
+         */
         Arrays.stream(RTypeInstruction.values()).forEach(e -> {
             map.put(e.pair, e);
         });
 
+        /*
+         * With the map populated we can now iterate across all the
+         * OpcodeFunct pairs and yank out the opcodes, constructing a
+         * set of all the Opcodes where each opcode is correlated with
+         * an R-type instruction.
+         */
         RTypeInstruction.map.keySet().forEach(e -> {
             opcodeSet.add(e.getOpcode());
         });
     }
 
     private final List<BitField2> list = new ArrayList<>();
+
+    /**
+     * The OpcodeFunctPair uniquely identifies this instruction.
+     */
     private final OpcodeFunctPair pair;
 
     /** Set this upon use in fromNumericalRepresentation */
@@ -355,7 +376,10 @@ public enum RTypeInstruction {
     private int rs;
     private int rd;
 
-    /** All R-format instructions follow the same pattern */
+    /**
+     * All R-format instructions are decomposed into fields of the
+     * same length.
+     */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
     RTypeInstruction(int opcode, int funct, BitField2... bitFields) {
