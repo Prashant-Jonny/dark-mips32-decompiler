@@ -1,5 +1,6 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
+import com.google.common.collect.ImmutableMap;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
@@ -8,7 +9,9 @@ import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.*;
 
 /**
  * Describes a stateless representation of all the known R-type
@@ -21,7 +24,7 @@ public enum RTypeInstruction {
      * register rd.
      */
     // TODO: Validate that shamt is 0
-    ADD(0x00, 0x20,  R::rd, R::rs, R::rt),
+    ADD(0x00, 0x20, R::rd, R::rs, R::rt),
 
     /**
      * Addition (without overflow). Put the sum of registers rs and rt into
@@ -77,7 +80,9 @@ public enum RTypeInstruction {
      * of rs and rt into register rd.
      */
     // TODO: Validate that shamt is 0
-    MUL(0x1c, 2, R::rd, R::rs, R::rt),
+    MUL(0x1c, 2, ImmutableMap.of(
+            "shamt", 0
+    ),R::rd, R::rs, R::rt),
 
     /**
      * Multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
@@ -343,12 +348,40 @@ public enum RTypeInstruction {
     /** Set this upon use in fromNumericalRepresentation */
     private DecomposedRepresentation decomposedRepresentation;
 
+    /** Make ~all~ fields accessible */
+    private int shamt;
+    private int rt;
+    private int rs;
+    private int rd;
+
+    private ImmutableMap<String, Integer> conditions;
+
     /** All R-format instructions follow the same pattern */
     private final static int[] decomposedPattern = {6, 5, 5, 5, 5, 6};
 
     RTypeInstruction(int opcode, int funct, BitField... bitFields) {
         list.addAll(Arrays.asList(bitFields));
         pair = new OpcodeFunctPair(opcode, funct);
+    }
+
+    RTypeInstruction(int opcode, int funct, ImmutableMap<String,
+            Integer> conditions,
+            BitField... bitFields) {
+        list.addAll(Arrays.asList(bitFields));
+        pair = new OpcodeFunctPair(opcode, funct);
+        this.conditions = conditions;
+    }
+
+    public void validate() {
+        boolean ok = true;
+        if (conditions != null) {
+            for (Map.Entry<String, Integer> e : conditions.entrySet()) {
+                if ("shamt".equals(e.getKey())) {
+                    ok = this.shamt == e.getValue();
+                }
+            }
+            System.out.println(ok);
+        }
     }
 
     public static Set<Opcode> getOpcodeSet() {
@@ -371,6 +404,7 @@ public enum RTypeInstruction {
                 (instruction);
 
         MnemonicRepresentation m = composeMnemonic(rTypeInstruction);
+        rTypeInstruction.validate();
 
         return new Instruction(
                 instruction,
@@ -400,6 +434,10 @@ public enum RTypeInstruction {
 
         RTypeInstruction r = map.get(key);
         r.decomposedRepresentation = d;
+        r.shamt = decomposition[4];
+        r.rs = decomposition[1];
+        r.rt = decomposition[2];
+        r.rd = decomposition[3];
         return r;
     }
     

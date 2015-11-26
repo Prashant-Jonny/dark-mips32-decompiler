@@ -18,7 +18,7 @@ Summarizingly, we found that we want to be able to
 The first two items are trivial, the first is the result of a
 bit-shift operation and as alluded to previously the Format is always
 inferrable from the Opcode, which means that we can either let each
-opcode know its associated format or similarily associate formats with
+opcode know its associated format or similarily associmuate formats with
 sets of opcodes elsewhere. The specific approach will be covered
 later, as will the reason it was chosen.
 
@@ -28,3 +28,5 @@ implemented,\footnote{Floating point operations and a few others have
 like to design our system in such a manner that all of this
 \emph{knowledge} pertaining to a particular instruction, viz. how to
 validate it and represent it, be stored in a single place.
+
+

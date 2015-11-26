@@ -11,9 +11,14 @@ public class MnemonicRepresentation {
     }
 
     public MnemonicRepresentation(String iname, String... strings) {
-        StringJoiner sj = new StringJoiner(", ");
-        Arrays.stream(strings).forEach(sj::add);
-        stringRepresentation = iname + " " + sj.toString();
+        String tmp = iname;
+
+        if (strings.length > 0) {
+            StringJoiner sj = new StringJoiner(", ");
+            Arrays.stream(strings).forEach(sj::add);
+            tmp += " " + sj.toString();
+        }
+        stringRepresentation = tmp;
     }
 
     public static MnemonicRepresentation fromString(String

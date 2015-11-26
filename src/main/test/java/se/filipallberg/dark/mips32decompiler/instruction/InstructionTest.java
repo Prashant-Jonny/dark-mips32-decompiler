@@ -49,7 +49,8 @@ public class InstructionTest {
         Instruction instruction = Instruction.fromInteger(numericalRepresentation);
 
         /* Check that the format is okay */
-        assertThat(instruction.getFormat(), is(equalTo(format)));
+        assertThat("" + numericalRepresentation, instruction.getFormat(), is(equalTo
+                (format)));
 
         /* Check that the numerical representation is intact */
         assertThat(instruction.toNumericalRepresentation(), is(equalTo

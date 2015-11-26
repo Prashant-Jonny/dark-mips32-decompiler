@@ -59,13 +59,13 @@ public enum ITypeInstruction {
      * Trap if less than immediate. If register rs is less than
      * the sign-extended value imm, I::raise a Trap Exception.
      */
-    TLTI(0x00, 0x10, I::rs, I::imm),
+    TLTI(0x01, 0x10, I::rs, I::imm),
 
     /**
      * Unsigned trap if less than immediate. If register rs is less than
      * the sign-extended value imm, I::raise a Trap Exception.
      */
-    TLTIU(0x00, 0x11, I::rs, I::imm),
+    TLTIU(0x01, 0x11, I::rs, I::imm),
 
     /**
      * Trap if not equal immediate. If register rs is equal to the
@@ -362,19 +362,19 @@ public enum ITypeInstruction {
         }
 
         static String imm(int[] decomposition) {
-            return Integer.toString(decomposition[3]);
+            return Short.toString((short) decomposition[3]);
         }
 
         static String label(int[] decomposition) {
-            return Integer.toString(decomposition[3]);
+            return Integer.toString((short) decomposition[3]);
         }
 
         static String addr(int[] decomposition) {
-            return Integer.toString(decomposition[3]);
+            return Short.toString((short) decomposition[3]);
         }
 
         static String offset(int[] decomposition) {
-            return Integer.toString(decomposition[3]);
+            return Short.toString((short) decomposition[3]);
         }
     }
 }
