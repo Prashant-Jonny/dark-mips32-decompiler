@@ -1,10 +1,12 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.ITypeInstruction;
 
+import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
+import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
-import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
+import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
 
@@ -13,173 +15,173 @@ public enum ITypeInstruction {
      * Addition immediate (with overflow). Put the sum of register rs and
      * the sign-extended immediate into register rt.
      */
-    ADDI(0x08, ITypeMnemonicPattern::RT_RS_IMM),
+    ADDI(0x08, I::rt, I::rs, I::imm),
 
     /**
      * Addition immediate (without overflow). Put the sum of register rs and
      * the sign-extended immediate into register rt.
      */
-    ADDIU(0x09, ITypeMnemonicPattern::RT_RS_IMM),
+    ADDIU(0x09, I::rt, I::rs, I::imm),
 
 
     /**
      * Put the logical AND of register rs and the zero-extended immediate
      * into register rt.
      */
-    ANDI(0xc, ITypeMnemonicPattern::RT_RS_IMM),
+    ANDI(0xc, I::rt, I::rs, I::imm),
 
     /**
      * Put the logical OR of register rs and the zero-extended immediate
      * register into rt.
      */
-    ORI(0xd, ITypeMnemonicPattern::RT_RS_IMM),
+    ORI(0xd, I::rt, I::rs, I::imm),
 
     /**
      * Put the logical XOR of register rs and the zero.extended immediate
      * into register rt.
      */
-    XORI(0xe, ITypeMnemonicPattern::RT_RS_IMM),
+    XORI(0xe, I::rt, I::rs, I::imm),
 
     /**
      * Load upper immediate. Load the lower halfword of the immediate imm
      * into the upper halfword of register rt. The lower bits of the
      * register are set to 0.
      */
-    LUI(0xf, ITypeMnemonicPattern::RT_IMM),
+    LUI(0xf, I::rt, I::imm),
 
     /**
      * Trap if equal immediate. If register rs is equal to
-     * the sign-extended value imm, raise a Trap Exception.
+     * the sign-extended value imm, I::raise a Trap Exception.
      */
-    TEQI(0x01, 0xc, ITypeMnemonicPattern::RS_IMM),
+    TEQI(0x01, 0xc, I::rs, I::imm),
 
     /**
      * Trap if less than immediate. If register rs is less than
-     * the sign-extended value imm, raise a Trap Exception.
+     * the sign-extended value imm, I::raise a Trap Exception.
      */
-    TLTI(0x00, 0x10, ITypeMnemonicPattern::RS_IMM),
+    TLTI(0x00, 0x10, I::rs, I::imm),
 
     /**
      * Unsigned trap if less than immediate. If register rs is less than
-     * the sign-extended value imm, raise a Trap Exception.
+     * the sign-extended value imm, I::raise a Trap Exception.
      */
-    TLTIU(0x00, 0x11, ITypeMnemonicPattern::RS_IMM),
+    TLTIU(0x00, 0x11, I::rs, I::imm),
 
     /**
      * Trap if not equal immediate. If register rs is equal to the
-     * sign-extended value imm, raise a Trap exception.
+     * sign-extended value imm, I::raise a Trap exception.
      */
-    TNEI(0x01, 0xe, ITypeMnemonicPattern::RS_IMM),
+    TNEI(0x01, 0xe, I::rs, I::imm),
 
     /**
      * Trap if greater equal immediate. If register rs is greater than
-     * or equal to the sign-extended value imm, raise a Trap exception.
+     * or equal to the sign-extended value imm, I::raise a Trap exception.
      */
-    TGEI(0x01, 0x08, ITypeMnemonicPattern::RS_IMM),
+    TGEI(0x01, 0x08, I::rs, I::imm),
 
     /**
      * Unsigned trap if greater equal immediate. If register rs is greater
      * than
-     * or equal to the sign-extended value imm, raise a Trap exception.
+     * or equal to the sign-extended value imm, I::raise a Trap exception.
      */
-    TGEIU(0x01, 0x09, ITypeMnemonicPattern::RS_IMM),
+    TGEIU(0x01, 0x09, I::rs, I::imm),
 
     /**
      * Load byte. Load the byte at "address" into register rt. The byte is
      * sign-extended.
      */
-    LB(0x20, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LB(0x20, I::rt, I::offset, I::rs),
 
     /**
      * Load byte. Load the byte at "address" into register rt. The byte is
      * not sign-extended.
      */
-    LBU(0x24, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LBU(0x24, I::rt, I::offset, I::rs),
 
     /**
      * Load halfword. Load the 16-bit quantity (halfword) at "address" into
      * register rt. The halfword is sign-extended.
      */
-    LH(0x21, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LH(0x21, I::rt, I::offset, I::rs),
 
     /**
      * Load halfword. Load the 16-bit quantity (halfword) at "address" into
      * register rt. The halfword is not sign-extended.
      */
-    LHU(0x25, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LHU(0x25, I::rt, I::offset, I::rs),
 
     /**
      * Load word. Load the 32-bit quantity (word) at address into register rt.
      */
-    LW(0x23, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LW(0x23, I::rt, I::offset, I::rs),
 
     /**
      * Load word left. Load the left bytes from the word at the possibly
      * unaligned "address" into rt.
      */
-    LWL(0x22, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LWL(0x22, I::rt, I::offset, I::rs),
 
     /**
      * Load word right. Load the right bytes from the word at the possibly
      * unaligned "address" into rt.
      */
-    LWR(0x26, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LWR(0x26, I::rt, I::offset, I::rs),
 
     /**
      * Load linked. Load the 32-bit quantity (word) at "address" into register
      * rt and start an atomic read-modify-write operation. This operation
-     * is completed by a store conditional (sc) instruction, which will fail if
+     * is completed by a store conditional (sc) instruction, I::which will fail if
      * another processor writes into the block containing the loaded word.
      */
-    LL(0x30, ITypeMnemonicPattern::RT_OFFSET_RS),
+    LL(0x30, I::rt, I::offset, I::rs),
 
     /**
      * Store byte. Store the low byte from register rt at "address".
      */
-    SB(0x28, ITypeMnemonicPattern::RT_OFFSET_RS),
+    SB(0x28, I::rt, I::offset, I::rs),
 
     /**
      * Store halfword. Store the low halfword from register rt at "address".
      */
-    SH(0x29, ITypeMnemonicPattern::RT_OFFSET_RS),
+    SH(0x29, I::rt, I::offset, I::rs),
 
     /**
      * Store word. Store the word from register rt at "address".
      */
-    SW(0x2b, ITypeMnemonicPattern::RT_OFFSET_RS),
+    SW(0x2b, I::rt, I::offset, I::rs),
 
     /**
      * Store the left bytes from register rt at the possibly unaligned address.
      */
-    SWL(0x2a, ITypeMnemonicPattern::RT_ADDRESS),
+    SWL(0x2a, I::rt, I::addr),
 
     /**
      * Store the right bytes from register rt at the possibly unaligned address.
      */
-    SWR(0x2e, ITypeMnemonicPattern::RT_ADDRESS),
+    SWR(0x2e, I::rt, I::addr),
 
     /**
      * Store conditional.  Load the 32-bit quantity (word) in register rt into
      * memory at "address" and complete an atomic read-modify-write operation.
-     * If this atomic operation is successful, the memory word is modified and
+     * If this atomic operation is successful, I::the memory word is modified and
      * register rt is set to 1. If the atomic operation fails because another
      * processor wrote to a location in the block containing the addressed word,
      * this instruction does not modify memory and writes 0 into register rt.
      */
-    SC(0x38, ITypeMnemonicPattern::RT_OFFSET_RS),
+    SC(0x38, I::rt, I::offset, I::rs),
 
     /**
      * Branch on equal. Conditionally branch the number of instructions
      * specified by the offset if register rs equals rt.
      */
-    BEQ(0x04, ITypeMnemonicPattern::RS_RT_LABEL),
+    BEQ(0x04, I::rs, I::rt, I::label),
 
     /**
      * Branch on greater than equal zero. Conditionally branch the number
      * of instructions specified by the offset if register rs is greater
      * than or equal to 0.
      */
-    BGEZ(0x01, 0x01, ITypeMnemonicPattern::RS_LABEL),
+    BGEZ(0x01, 0x01, I::rs, I::label),
 
     /**
      * Branch on greater than equal zero and link.
@@ -187,76 +189,92 @@ public enum ITypeInstruction {
      * if register rs is greater than or equal to 0. Save the address of
      * the next instruction in register 31.
      */
-    BGEZAL(0x01, 0x11, ITypeMnemonicPattern::RS_LABEL),
+    BGEZAL(0x01, 0x11, I::rs, I::label),
 
     /**
      * Branch on greater than zero. Conditionally branch the number
      * of instructions specified by the offset if register rs is greater
      * than 0.
      */
-    BGTZ(0x07, 0x00, ITypeMnemonicPattern::RS_LABEL),
+    BGTZ(0x07, 0x00, I::rs, I::label),
 
     /**
      * Branch on less than equal zero. Conditionally branch the number
      * of instructions specified by the offset if register rs is less than
      * or equal to 0.
      */
-    BLEZ(0x06, 0x00, ITypeMnemonicPattern::RS_LABEL),
+    BLEZ(0x06, 0x00, I::rs, I::label),
 
     /**
      * Branch on less than zero. Conditionally branch the number
      * of instructions specified by the offset if register rs is less than 0.
      */
-    BLTZ(0x01, 0x00, ITypeMnemonicPattern::RS_LABEL),
+    BLTZ(0x01, 0x00, I::rs, I::label),
 
     /**
      * Conditionally branch the number of instructions specified by the offset
      * if register rs is not equal to rt.
      */
-    BNE(0x05, ITypeMnemonicPattern::RS_RT_LABEL),
+    BNE(0x05, I::rs, I::rt, I::label),
 
     /**
      * Set less than immediate. Set register rt to 1 if register rs is
-     * less than the sign-extended immediate, and to 0 otherwise.
+     * less than the sign-extended immediate, I::and to 0 otherwise.
      */
-    SLTI(0xa, ITypeMnemonicPattern::RT_RS_IMM),
+    SLTI(0xa, I::rt, I::rs, I::imm),
 
     /**
      * Set less than unsigned immediate. Set register rt to 1 if register rs is
-     * less than the sign-extended immediate, and to 0 otherwise.
+     * less than the sign-extended immediate, I::and to 0 otherwise.
      */
-    SLTIU(0xb, ITypeMnemonicPattern::RT_RS_IMM),
+    SLTIU(0xb, I::rt, I::rs, I::imm),
     ;
 
     /**
      * Map the unique identifier instruction identifier with its
-     * corresponding instruction.
+     * corresponding instruction. This only applies to those instructions
+     * that are not a trap or branch instruction.
      */
-    private static final Map<Opcode, ITypeInstruction> map
+    private static final Map<Opcode, ITypeInstruction> opcodeIdentifiable
             = new HashMap<>();
+
+    /**
+     * If the opcode is 0x01 the rt field has to be consulted.
+     */
+    private static final Map<Integer, ITypeInstruction>
+            rtIdentifiableMap = new HashMap<>();
+
     /**
      * Maintain a set of all I-type instruction opcodes so that
      * {@link Format}
-     * may map opcodes with the I-format.
+     * may opcodeIdentifiable opcodes with the I-format.
      */
     private static final Set<Opcode> opcodeSet = new HashSet<>();
     static {
         Arrays.stream(ITypeInstruction.values()).forEach(e -> {
-            map.put(e.opcode, e);
+            /** Ignore branch and trap instructions */
+            if (e.opcode.toNumericalRepresentation() != 0x01) {
+                opcodeIdentifiable.put(e.opcode, e);
+            } else {
+                rtIdentifiableMap.put(e.rt, e);
+            }
         });
 
-        ITypeInstruction.map.keySet().forEach(opcodeSet::add);
+        ITypeInstruction.opcodeIdentifiable.keySet().forEach(opcodeSet::add);
+        opcodeSet.add(Opcode.fromNumericalRepresentation(0x01)); // Branch
+        // and trap instructions.
     }
-
-    private final MnemonicPattern pattern;
-
+    
     /** All I-format instructions follow the same pattern */
     private final static int[] decomposedPattern = {6, 5, 5, 16};
 
     private final Opcode opcode;
+    private int rt;
+    private final List<BitField> list = new ArrayList<>();
+    private DecomposedRepresentation decomposedRepresentation;
 
-    ITypeInstruction(int opcode, MnemonicPattern pattern) {
-        this.pattern = pattern;
+    ITypeInstruction(int opcode, BitField... bitFields) {
+        list.addAll(Arrays.asList(bitFields));
         this.opcode = Opcode.fromNumericalRepresentation(opcode);
     }
 
@@ -265,10 +283,10 @@ public enum ITypeInstruction {
      * one instruction shares the same opcode. This is the case
      * when dealing with a trap or a branch instruction.
      */
-    ITypeInstruction(int opcode, int rt, MnemonicPattern
-            pattern) {
+    ITypeInstruction(int opcode, int rt, BitField... bitFields) {
+        list.addAll(Arrays.asList(bitFields));
         this.opcode = Opcode.fromNumericalRepresentation(opcode);
-        this.pattern = pattern;
+        this.rt = rt;
     }
 
     public static Set<Opcode> getOpcodeSet() {
@@ -286,23 +304,44 @@ public enum ITypeInstruction {
             throw new IllegalArgumentException(err);
         }
 
-        /** Get the correct R-type instruction */
-        DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(instruction, decomposedPattern);
+        /** Get the correct I-type instruction */
+        ITypeInstruction iTypeInstruction = identifyInstruction(instruction);
 
-        ITypeInstruction iTypeInstruction = map.get(Opcode
-                .fromInstruction(instruction));
-        String iname = getITypeMnemonicPattern(instruction);
+        MnemonicRepresentation m = composeMnemonic(iTypeInstruction);
 
-        return new Instruction(instruction,
+        return new Instruction(
+                instruction,
                 Format.I,
-                d,
-                iTypeInstruction.pattern.apply(iname, d));
+                iTypeInstruction.decomposedRepresentation,
+                m);
     }
 
-    private static String getITypeMnemonicPattern(int instruction) {
-        return map.get(Opcode.fromInstruction(instruction))
-                .name().toLowerCase();
+    private static MnemonicRepresentation composeMnemonic
+            (ITypeInstruction instruction) {
+        int[] decomposition = instruction.decomposedRepresentation.toIntArray();
+        List<String> strings = new ArrayList<>();
+        instruction.list.forEach(e -> {
+            strings.add(e.apply(decomposition));
+        });
+        // TODO: Deal with parantheses around address.
+        return new MnemonicRepresentation
+                (instruction.name().toLowerCase(),
+                        strings.toArray(new String[strings.size()]));
+    }
+
+    private static ITypeInstruction identifyInstruction(int instruction) {
+        DecomposedRepresentation d = DecomposedRepresentation.
+                fromNumber(instruction, decomposedPattern);
+        int[] decomposition = d.toIntArray();
+
+        ITypeInstruction i;
+        if (d.opcode() == 0x01) {
+            i = rtIdentifiableMap.get(decomposition[2]);
+        } else {
+            i = opcodeIdentifiable.get(Opcode.fromInstruction(instruction));
+        }
+        i.decomposedRepresentation = d;
+        return i;
     }
 
     /** Returns true if the instruction has the R-format */
@@ -313,12 +352,29 @@ public enum ITypeInstruction {
         return Format.fromOpcode(opcode) == Format.I;
     }
 
-    private static IDecomposition getInterpreter(int instruction) {
-        DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(
-                        instruction,
-                        decomposedPattern);
+    static class I {
+        static String rt(int[] decomposition) {
+            return Register.toString(decomposition[2]);
+        }
 
-        return IDecomposition.fromDecomposedRepresentation(d);
+        static String rs(int[] decomposition) {
+            return Register.toString(decomposition[1]);
+        }
+
+        static String imm(int[] decomposition) {
+            return Integer.toString(decomposition[3]);
+        }
+
+        static String label(int[] decomposition) {
+            return Integer.toString(decomposition[3]);
+        }
+
+        static String addr(int[] decomposition) {
+            return Integer.toString(decomposition[3]);
+        }
+
+        static String offset(int[] decomposition) {
+            return Integer.toString(decomposition[3]);
+        }
     }
 }

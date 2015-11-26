@@ -341,7 +341,6 @@ public enum RTypeInstruction {
     private final OpcodeFunctPair pair;
 
     /** Set this upon use in fromNumericalRepresentation */
-    private int instruction;
     private DecomposedRepresentation decomposedRepresentation;
 
     /** All R-format instructions follow the same pattern */
@@ -400,7 +399,6 @@ public enum RTypeInstruction {
         OpcodeFunctPair key = new OpcodeFunctPair(d.opcode(), funct);
 
         RTypeInstruction r = map.get(key);
-        r.instruction = instruction;
         r.decomposedRepresentation = d;
         return r;
     }
