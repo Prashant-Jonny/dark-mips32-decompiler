@@ -372,7 +372,8 @@ def create_invalid_test_cases(enum: str, instruction_type: str) -> str:
 
             variable_name = 'instruction'
             variable_initializer = " ".join([instruction_type, variable_name, '=',
-                                             instruction_type + '.' + assignments.iname.upper()])
+                                             instruction_type + '.' + 
+                                             assignments.iname.upper()])
 
             body_statement = [variable_initializer]
             body_statement.extend(assignments_output)
@@ -419,8 +420,6 @@ def create_invalid_test_title(r: Record, name: str) -> str:
                 break
 
     return title
-
-
 
 def create_valid_test_case(enum: str, instruction_type: str) -> str:
     """
@@ -488,8 +487,9 @@ def create_valid_test_case(enum: str, instruction_type: str) -> str:
     lines.append('}')
     return "\n".join(lines)
 
-def create_valid_test_cases(filename: str):
-    test_cases = []
+def create_test_cases_from_file(test_case_function, filename: str, 
+                                instruction_type: str):
+    test_cases = []    
 
     with open(filename, 'r') as f:
         enum_declarations_flag = False
@@ -509,7 +509,7 @@ def create_valid_test_cases(filename: str):
                     # Concatenate all the strings making up the current enum
                     enum = "".join(current_enum)
                     current_enum = []
-                    test_case = create_valid_test_case(enum, 'RTypeInstruction')
+                    test_case = test_case_function(enum, instruction_type)
                     if test_case != '': # Is the empty string if no conditions apply
                         test_cases.append(test_case)
                 else:
@@ -535,10 +535,17 @@ public void xShouldValidateIfABandCisYandIfHIsP() {
 #cwd = os.getcwd()
 #print(cwd)
 #print(os.path.dirname(os.path.realpath('RTypeInstruction.java')))
-#test_cases = create_valid_test_cases('/home/spock/Dropbox/github/dark-mips32-decompiler/src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/RTypeInstruction.java')
+rel_path = '../../../../../../../java/se/filipallberg/dark/mips32decompiler/instruction/type/'
 
-#for test_case in test_cases:
-#    print(test_case)
+classes_to_test = ['RTypeInstruction', 'ITypeInstruction', 'JTypeInstruction']
+class_rel_path = {x: x + '/' + x + '.java' for x in classes_to_test}
+
+for (name, path) in class_rel_path.items():
+    test_cases = create_test_cases_from_file(create_invalid_test_cases, rel_path + path, name)
+    test_cases.extend(create_test_cases_from_file(create_valid_test_case, rel_path + path, name))
+    for test_case in test_cases:
+        print(test_case)
+
 
 
 if __name__=="__main__":
