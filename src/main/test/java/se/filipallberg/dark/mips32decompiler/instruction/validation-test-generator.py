@@ -27,13 +27,13 @@ class InstructionTest:
     def add_field(self, field):
         self.fields.append(field)
 
-def get_name(enum: str) -> str:
+def get_instruction_name(enum: str) -> str:
     """
     Expects that the name of the enum starts at the first
     character of the supplied string. Will return the name
     of that particular enum.
 
-    >>> get_name("ADDU(0, 0x21,")
+    >>> get_instruction_name("ADDU(0, 0x21,")
     'ADDU'
 
     Comments and whitespace are ignored, this is important as
@@ -48,7 +48,7 @@ def get_name(enum: str) -> str:
     ... '               .checkThat(Int::shamt).is(0x00),'
     ... '        new MnemonicPattern<>('
     ... '               Str::iname, Str::rd,  Str::rs,  Str::rt)),')
-    >>> get_name(enum)
+    >>> get_instruction_name(enum)
     'AND'
 
     Parentheses in Javadoc are ignored
@@ -64,7 +64,7 @@ def get_name(enum: str) -> str:
     ... '                    andThat(Int::shamt).is(0x00).'
     ... '                    andThat(Int::funct).is(0x00),'
     ... '            new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),')
-    >>> get_name(enum)
+    >>> get_instruction_name(enum)
     'MFC0'
     """
     # The first character in the supplied string is the
@@ -122,7 +122,7 @@ def get_condition_constructor(enum: str) -> str:
 
     return enum[start_index:is_index+stop_index]
 
-def create_title(r: Record) -> str:
+def create_valid_test_title(r: Record) -> str:
     """
     Generates a title given the result from get_condition
 
@@ -132,7 +132,7 @@ def create_title(r: Record) -> str:
     >>> r.iname = 'MUL'
     >>> r.rd = '0x01'
     >>> r.shamt = '0x00'
-    >>> create_title(r)
+    >>> create_valid_test_title(r)
     'mulIsValidIfRdIs0x01AndShamtIs0x00'
 
     Similarily, we can test the function using the input generated
@@ -142,7 +142,7 @@ def create_title(r: Record) -> str:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> create_title(create_assignment_statements(enum))
+    >>> create_valid_test_title(create_assignment_statements(enum))
     'adduIsValidIfRdIs0x00AndShamtIs0x00'
     """
     title = r.iname.lower() + "IsValidIf"
@@ -216,7 +216,7 @@ def create_assignment_statements(enum: str) -> Record:
 
     r = Record()
 
-    r.iname = get_name(enum)
+    r.iname = get_instruction_name(enum)
     conditions = get_conditions(get_condition_constructor(enum))
 
     for condition in conditions:
@@ -316,6 +316,37 @@ def get_conditions(condition_constructor):
 
     return conditions
 
+def create_invalid_test_case(enum: str, instruction_type: str) -> str:
+    pass
+
+def create_invalid_test_title(r: Record, name: str) -> str:
+    """
+    Generates a title for a test when the value of the given field
+    name is something other than the expected value
+    
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+    >>> create_invalid_test_title(create_assignment_statements(enum), 'shamt')
+    'adduShouldNotValidateIfShamtIsNot0x00'
+    """
+    # Iterate over all the fields in r so that we can get the
+    # expected value
+    title = [r.iname.lower(), 'ShouldNotValidateIf', name.capitalize(), 'IsNot']
+    title = "".join(title)
+
+    for (field_name, expected_value) in sorted(vars(r).items()):
+        if (field_name is not 'iname'):
+            # Capitalize so we get CamelCase-output
+            if field_name == name:
+                title += expected_value
+                break
+
+    return title
+
+
 
 def create_valid_test_case(enum: str, instruction_type: str) -> str:
     """
@@ -359,7 +390,7 @@ def create_valid_test_case(enum: str, instruction_type: str) -> str:
         # The enum is not subject to any conditions. Do not test it
         return ''
 
-    title = create_title(assignments)
+    title = create_valid_test_title(assignments)
     test_declaration = 'public void ' + title + '() {'
 
     variable_name = 'instruction'
@@ -430,10 +461,10 @@ public void xShouldValidateIfABandCisYandIfHIsP() {
 #cwd = os.getcwd()
 #print(cwd)
 #print(os.path.dirname(os.path.realpath('RTypeInstruction.java')))
-test_cases = create_valid_test_cases('/home/spock/Dropbox/github/dark-mips32-decompiler/src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/RTypeInstruction.java')
+#test_cases = create_valid_test_cases('/home/spock/Dropbox/github/dark-mips32-decompiler/src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/RTypeInstruction.java')
 
-for test_case in test_cases:
-    print(test_case)
+#for test_case in test_cases:
+#    print(test_case)
 
 
 if __name__=="__main__":
