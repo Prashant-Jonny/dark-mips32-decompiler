@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
-from types import SimpleNamespace as Record
-import re
+#from types import SimpleNamespace as Record
+import types # Get access to SimpleNamespace
+import typing # Enable type hinting and type synonyms
+
+# Create a type synonym, letting us refer to
+# SimpleNamespace as Record. This could be
+# accomplished by
+#
+# from types import SimpleNamespace as Record
+#
+# but since we are already using the typing
+# module we might as well do this
+Record = types.SimpleNamespace
 
 # Want to be able to open a file and get back a list of all enum declarations
 # this means matching the [A-Z]\( pattern. Either the next match will mark
@@ -15,7 +26,7 @@ class InstructionTest:
     def add_field(self, field):
         self.fields.append(field)
 
-def get_name(enum):
+def get_name(enum: str) -> str:
     """
     Expects that the name of the enum starts at the first
     character of the supplied string. Will return the name
@@ -30,7 +41,7 @@ def get_name(enum):
     # in the string.
     return enum[:enum.find('(')]
 
-def get_condition_constructor(enum):
+def get_condition_constructor(enum: str) -> str:
     """
     Yanks out the conditional constructor from an enum
     declaration
@@ -55,13 +66,13 @@ def get_condition_constructor(enum):
     # that particular method call. Obviously, the method call
     # terminates on the closing parentheses
     is_index = enum.rindex('.is(')
-    
+
     # The +1 is there to include the closing parentheses as well
     stop_index = enum[is_index::].index(')') + 1
 
     return enum[start_index:is_index+stop_index]
 
-def generate_title(r):
+def generate_title(r: Record) -> str:
     """
     Generates a title given the result from get_condition
 
@@ -87,13 +98,40 @@ def generate_title(r):
     title = r.iname.lower() + "IsValidIf"
     conditions = []
 
-    for (k, v) in sorted(vars(r).items()):
-        if (k is not 'iname'):
-            field = k.capitalize()
-            expected_value = v
+    # Iterate over all the fields in r.
+    # Sort them so we can make assertions about the output
+    #
+    # the Record r specifies fieldnames as keys and their
+    # corresponding values specifies the expected value of the field.
+    for (field_name, expected_value) in sorted(vars(r).items()):
+        if (field_name is not 'iname'):
+            # Capitalize so we get CamelCase-output
+            field = field_name.capitalize()
+
             conditions.append(field + "Is" + expected_value)
 
     return title + "And".join(conditions)
+
+def generate_assignment_statements(r: Record) -> [str]:
+    """
+    Generate a series of assignment statements from a
+    record describing the names in the record and
+    their expected values.
+
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+    >>> generate_assignment_statements(get_condition(enum))
+    ['instruction.rd = 0x00', 'instruction.shamt = 0x00']
+    """
+    assignments = []
+    for (field_name, expected_value) in sorted(vars(r).items()):
+        if (field_name is not 'iname'):
+            assignments.append('instruction.' + field_name + ' = ' + expected_value)
+
+    return assignments
 
 def get_condition(enum):
     """
