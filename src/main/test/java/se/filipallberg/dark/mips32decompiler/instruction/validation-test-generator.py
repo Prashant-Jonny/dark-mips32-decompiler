@@ -495,7 +495,6 @@ def create_test_cases_from_file(test_case_function, filename: str,
         if test_case != '': # Is the empty string if no conditions apply
             test_cases.append(test_case)
 
-
     with open(filename, 'r') as f:
         enum_declarations_flag = False
         current_enum = []
@@ -532,12 +531,13 @@ def is_empty(string: str) -> bool:
 def create_test_classes():
     rel_path = '../../../../../../../java/se/filipallberg/dark/mips32decompiler/instruction/type/'
 
-    classes_to_test = ['RTypeInstruction', 'ITypeInstruction', 'JTypeInstruction']
+    classes_to_test = ['RTypeInstruction', 'ITypeInstruction']
     class_rel_path = {x: x + '/' + x + '.java' for x in classes_to_test}
     
     for (name, path) in class_rel_path.items():
         lines = []
-        class_declaration = 'public class ' + name + 'ValidationTest {'
+        class_name = name + 'ValidationTest'
+        class_declaration = 'public class ' + class_name + ' {'
         lines.append(class_declaration)
 
         test_cases = create_test_cases_from_file(create_invalid_test_cases, rel_path + path, name)
@@ -546,10 +546,14 @@ def create_test_classes():
         for test_case in test_cases:
             for line in test_case.split('\n'):
                 lines.append('    ' + line)
-            lines.append('\n')
+
+            # By appending an empty string we get one blank line
+            # we will get one blank line between each test
+            lines.append('')
 
         lines.append('}')
-        print("\n".join(lines))
+        with open(class_name + '.java', 'w') as f:
+            f.write("\n".join(lines))
 
 
 
