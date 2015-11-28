@@ -61,6 +61,40 @@ def get_condition_constructor(enum):
 
     return enum[start_index:is_index+stop_index]
 
+def generate_title(r):
+    """
+    Generates a title given the result from get_condition
+
+    The return value from the get_condition method is a namespace.
+    A self-reliant unit-test for this function then becomes:
+    >>> r = Record()
+    >>> r.iname = 'MUL'
+    >>> r.rd = '0x01'
+    >>> r.shamt = '0x00'
+    >>> generate_title(r)
+    'mulIsValidIfRdIs0x01AndShamtIs0x00'
+
+    Similarily, we can test the function using the input generated
+    from get_condition which should be valid
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+    >>> generate_title(get_condition(enum))
+    'adduIsValidIfRdIs0x00AndShamtIs0x00'
+    """
+    title = r.iname.lower() + "IsValidIf"
+    conditions = []
+
+    for (k, v) in sorted(vars(r).items()):
+        if (k is not 'iname'):
+            field = k.capitalize()
+            expected_value = v
+            conditions.append(field + "Is" + expected_value)
+
+    return title + "And".join(conditions)
+
 def get_condition(enum):
     """
     Expects to retrieve a string describing a particular enum
@@ -191,17 +225,6 @@ def get_conditions(condition_constructor):
     return conditions
 
 
-test_case = ("MFC1(0x11, 0x00, "
-                 "new Condition<RTypeInstruction, Integer>()"
-                     ".checkThat(Int::rt).is(0x00)."
-                     "checkThat(Int::rs).and(Int::shamt).and(Int::funct).is(0x00)"
-                     "andThat(Int::rd).is(0x00)."
-                     "andThat(Int::opcode).is(0x11),"
-                 "new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs))")
-#print(get_condition(cond))
-#print(get_condition(cond2))
-#print(generate_output(get_condition_set(test_case)))
-
 """@Test
 public void xShouldValidateIfABandCisYandIfHIsP() {
     RTypeInstruction r = RTypeInstruction.x
@@ -210,7 +233,14 @@ public void xShouldValidateIfABandCisYandIfHIsP() {
     assertThat(r.validate(), is(equalTo(true)));
 }"""
 
-#get_enums("ValidationTest.java")
+enum = ("ADDU(0, 0x21,"
+         "new Condition<RTypeInstruction, Integer>()"
+                 ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+         "new MnemonicPattern<>("
+                 "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+#print(generate_validation_test(get_condition(enum)))
+
+
 
 if __name__=="__main__":
     import doctest
