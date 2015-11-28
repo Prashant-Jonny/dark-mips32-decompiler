@@ -3,8 +3,6 @@ package se.filipallberg.dark.mips32decompiler.instruction;
 import org.junit.Test;
 import se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction.RTypeInstruction;
 
-import static junit.framework.TestCase.fail;
-
 public class ValidationTest {
     @Test (expected = PartiallyLegalInstructionException.class)
     public void mulShouldNotValidateIfShamtIsNonZero() {
@@ -25,5 +23,13 @@ public class ValidationTest {
 
         Instruction r = RTypeInstruction
                 .fromNumericalRepresentation(partiallyValidMulInstruction);
+
+    }
+
+    @Test (expected = PartiallyLegalInstructionException.class)
+    public void subShouldNotValidateIfShamtIsNonZero() {
+        RTypeInstruction r = RTypeInstruction.SUB;
+        r.shamt = 0x01;
+        r.validate();
     }
 }

@@ -439,7 +439,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     // TODO Verify that rs and shamt is 0
     JALR(0x00, 0x09, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat(Int::rs).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rs,  Str::rd)),
 
     /**
@@ -512,12 +512,13 @@ public enum RTypeInstruction implements InstructionType {
     /** Set this upon use in fromNumericalRepresentation */
     private DecomposedRepresentation decomposedRepresentation;
 
-    private int instruction;
-    private int rs;
-    private int rt;
-    private int rd;
-    private int shamt;
-    private int funct;
+    public int instruction;
+    public int opcode;
+    public int rs;
+    public int rt;
+    public int rd;
+    public int shamt;
+    public int funct;
 
     /**
      * All R-format instructions are decomposed into fields of the
@@ -548,9 +549,12 @@ public enum RTypeInstruction implements InstructionType {
     private MnemonicPattern<RTypeInstruction> pattern;
 
     RTypeInstruction(int opcode, int funct,
-                     Condition<RTypeInstruction, Integer> validationConditions,
+                     Condition<RTypeInstruction, Integer>
+                             validationConditions,
                      MnemonicPattern<RTypeInstruction> pattern) {
         this.pattern = pattern;
+        this.opcode = opcode;
+        this.funct = funct;
         pair = new OpcodeFunctPair(opcode, funct);
         this.validationConditions = validationConditions;
     }
@@ -632,6 +636,7 @@ public enum RTypeInstruction implements InstructionType {
 
         r.instruction = instruction;
         r.decomposedRepresentation = d;
+        r.opcode = decomposition[0];
         r.rs = decomposition[1];
         r.rt = decomposition[2];
         r.rd = decomposition[3];
@@ -664,6 +669,10 @@ public enum RTypeInstruction implements InstructionType {
         static String fs(RTypeInstruction r) {
             return Register.toString(r.rd);
         }
+    }
+
+    public int getShamt() {
+        return shamt;
     }
     
     private static class Int {
