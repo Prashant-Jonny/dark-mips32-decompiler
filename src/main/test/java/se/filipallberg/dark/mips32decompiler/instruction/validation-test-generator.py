@@ -160,6 +160,26 @@ def create_assignment_statements(enum: str) -> Record:
 
     return r
 
+def get_instruction_type(condition_constructor: str) -> str:
+    """ 
+    Gets the first parametrized type of the condition_constructor
+
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")  
+    >>> condition_constructor = get_condition_constructor(enum)
+    >>> # returns: ('new Condition<RTypeInstruction, '
+    >>> #           'Integer>().checkThat(Int::shamt).is(0x00)')
+    >>> get_instruction_type(condition_constructor)
+    'RTypeInstruction'
+    """
+    langle_index = condition_constructor.index('<')
+    delimiter_index = condition_constructor.index(',')
+    return condition_constructor[langle_index + 1:delimiter_index]
+
+
 def get_conditions(condition_constructor):
     """
     Get all of the conditions that the condition constructor specifies.
@@ -252,7 +272,7 @@ def get_conditions(condition_constructor):
     return conditions
 
 
-def create_test_case(enum: str) -> str:
+def create_valid_test_case(enum: str) -> str:
     """
     Creates a JUnitTestCase as a list of strings for
     each line from an enum. This creates a test
@@ -264,7 +284,7 @@ def create_test_case(enum: str) -> str:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> print(create_test_case(enum))
+    >>> print(create_valid_test_case(enum))
     @Test
     public void adduIsValidIfRdIs0x00AndShamtIs0x00() {
         RTypeInstruction instruction = RTypeInstruction.ADDU;
@@ -274,7 +294,7 @@ def create_test_case(enum: str) -> str:
     }
     """
     JUnit_test_marker = '@Test'
-    
+
     assignments = create_assignment_statements(enum)
     assignments_output = create_assignment_statements_output(assignments)
 
