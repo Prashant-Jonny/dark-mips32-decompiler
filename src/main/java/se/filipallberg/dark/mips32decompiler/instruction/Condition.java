@@ -1,4 +1,4 @@
-package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
+package se.filipallberg.dark.mips32decompiler.instruction;
 
 import java.util.*;
 import java.util.function.Function;
@@ -27,6 +27,10 @@ public class Condition<T, R> {
         currentConditions.clear();
 
         return this;
+    }
+
+    public Condition<T, R> and(Function<T, R> actual) {
+        return and("", actual);
     }
 
     public Condition<T, R> and(String info, Function<T, R> actual) {

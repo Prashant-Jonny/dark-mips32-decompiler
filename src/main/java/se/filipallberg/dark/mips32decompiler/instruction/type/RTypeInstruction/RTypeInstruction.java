@@ -1,5 +1,6 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction;
 
+import se.filipallberg.dark.mips32decompiler.instruction.Condition;
 import se.filipallberg.dark.mips32decompiler.instruction.PartiallyLegalInstructionException;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
@@ -456,13 +457,11 @@ public enum RTypeInstruction implements InstructionType {
     /** Do nothing */
     // TODO: Validate that all fields are 0
     NOP(0x00, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rt).is(0x00).
-                    andThat(Int::rs).is(0x00).
-                    andThat(Int::rd).is(0x00).
-                    andThat(Int::shamt).is(0x00).
-                    andThat(Int::funct).is(0x00)
+            .checkThat(Int::rt).and(Int::rs).
+                    and(Int::rd).and(Int::shamt).
+                    and(Int::funct).is(0x00)
             ,
-            new MnemonicPattern<>(Str::iname));
+            new MnemonicPattern<>(Str::iname))
     ;
 
 
@@ -646,35 +645,31 @@ public enum RTypeInstruction implements InstructionType {
     }
     
     private static class Str {
-        static String iname(RTypeInstruction r) {
-            return r.name().toLowerCase();
+        static String iname(RTypeInstruction instruction) {
+            return instruction.name().toLowerCase();
         }
 
-        static String rd(RTypeInstruction r) {
-            return Register.toString(r.rd);
+        static String rd(RTypeInstruction instruction) {
+            return Register.toString(instruction.rd);
         }
 
-        static String rs(RTypeInstruction r) {
-            return Register.toString(r.rs);
+        static String rs(RTypeInstruction instruction) {
+            return Register.toString(instruction.rs);
         }
 
-        static String rt(RTypeInstruction r) {
-            return Register.toString(r.rt);
+        static String rt(RTypeInstruction instruction) {
+            return Register.toString(instruction.rt);
         }
 
-        static String shamt(RTypeInstruction r) {
-            return Register.toString(r.shamt);
+        static String shamt(RTypeInstruction instruction) {
+            return Register.toString(instruction.shamt);
         }
 
-        static String fs(RTypeInstruction r) {
-            return Register.toString(r.rd);
+        static String fs(RTypeInstruction instruction) {
+            return Register.toString(instruction.rd);
         }
     }
 
-    public int getShamt() {
-        return shamt;
-    }
-    
     private static class Int {
         static Integer funct(RTypeInstruction r) {
             return r.funct;

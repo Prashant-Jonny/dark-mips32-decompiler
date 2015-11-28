@@ -47,7 +47,8 @@ public enum ITypeInstruction {
      * into the upper halfword of register rt. The lower bits of the
      * register are set to 0.
      */
-    LUI(0xf, I::rt, I::imm),
+    LUI(0xf, new Condition<ITypeInstruction, Integer>()
+            .checkThat(Int::rs).is(0x00), I::rt, I::imm),
 
     /**
      * Trap if equal immediate. If register rs is equal to
@@ -350,6 +351,32 @@ public enum ITypeInstruction {
         Opcode opcode = Opcode.fromNumericalRepresentation(op);
 
         return Format.fromOpcode(opcode) == Format.I;
+    }
+
+    private static class Str {
+        static String iname(ITypeInstruction instruction) {
+            return instruction.name().toLowerCase();
+        }
+
+        static String rd(ITypeInstruction instruction) {
+            return Register.toString(instruction.rd);
+        }
+
+        static String rs(ITypeInstruction instruction) {
+            return Register.toString(instruction.rs);
+        }
+
+        static String rt(ITypeInstruction instruction) {
+            return Register.toString(instruction.rt);
+        }
+
+        static String shamt(ITypeInstruction instruction) {
+            return Register.toString(instruction.shamt);
+        }
+
+        static String fs(ITypeInstruction instruction) {
+            return Register.toString(instruction.rd);
+        }
     }
 
     static class I {

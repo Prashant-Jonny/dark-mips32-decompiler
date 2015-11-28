@@ -69,7 +69,6 @@ def get_instruction_name(enum: str) -> str:
     for line in lines:
         if '(' in line:
             # We've found the start of the declaration
-            #x = line.strip()
             return line[:line.find('(')]
 
     return ''
@@ -491,6 +490,12 @@ def create_test_cases_from_file(test_case_function, filename: str,
                                 instruction_type: str):
     test_cases = []    
 
+    def add_test_case(enum, instruction_type):
+        test_case = test_case_function(enum, instruction_type)
+        if test_case != '': # Is the empty string if no conditions apply
+            test_cases.append(test_case)
+
+
     with open(filename, 'r') as f:
         enum_declarations_flag = False
         current_enum = []
@@ -509,14 +514,14 @@ def create_test_cases_from_file(test_case_function, filename: str,
                     # Concatenate all the strings making up the current enum
                     enum = "".join(current_enum)
                     current_enum = []
-                    test_case = test_case_function(enum, instruction_type)
-                    if test_case != '': # Is the empty string if no conditions apply
-                        test_cases.append(test_case)
+                    add_test_case(enum, instruction_type)
                 else:
                     current_enum.append(line)
 
             # Enum declarations end with a ; on a single line
-            if line.strip() == ';':
+            if line.strip() == ';':                
+                enum = "".join(current_enum)
+                add_test_case(enum, instruction_type)
                 break
 
     return test_cases
@@ -524,30 +529,31 @@ def create_test_cases_from_file(test_case_function, filename: str,
 def is_empty(string: str) -> bool:
     return not string.strip()
 
-"""@Test
-public void xShouldValidateIfABandCisYandIfHIsP() {
-    RTypeInstruction r = RTypeInstruction.x
-    r.a = r.b = r.c = Y;
-    r.H = P;
-    assertThat(r.validate(), is(equalTo(true)));
-}"""
+def create_test_classes():
+    rel_path = '../../../../../../../java/se/filipallberg/dark/mips32decompiler/instruction/type/'
 
-#cwd = os.getcwd()
-#print(cwd)
-#print(os.path.dirname(os.path.realpath('RTypeInstruction.java')))
-rel_path = '../../../../../../../java/se/filipallberg/dark/mips32decompiler/instruction/type/'
+    classes_to_test = ['RTypeInstruction', 'ITypeInstruction', 'JTypeInstruction']
+    class_rel_path = {x: x + '/' + x + '.java' for x in classes_to_test}
+    
+    for (name, path) in class_rel_path.items():
+        lines = []
+        class_declaration = 'public class ' + name + 'ValidationTest {'
+        lines.append(class_declaration)
 
-classes_to_test = ['RTypeInstruction', 'ITypeInstruction', 'JTypeInstruction']
-class_rel_path = {x: x + '/' + x + '.java' for x in classes_to_test}
+        test_cases = create_test_cases_from_file(create_invalid_test_cases, rel_path + path, name)
+        test_cases.extend(create_test_cases_from_file(create_valid_test_case, rel_path + path, name))
 
-for (name, path) in class_rel_path.items():
-    test_cases = create_test_cases_from_file(create_invalid_test_cases, rel_path + path, name)
-    test_cases.extend(create_test_cases_from_file(create_valid_test_case, rel_path + path, name))
-    for test_case in test_cases:
-        print(test_case)
+        for test_case in test_cases:
+            for line in test_case.split('\n'):
+                lines.append('    ' + line)
+            lines.append('\n')
+
+        lines.append('}')
+        print("\n".join(lines))
 
 
 
 if __name__=="__main__":
     import doctest
     doctest.testmod()
+    create_test_classes()
