@@ -301,7 +301,7 @@ def create_valid_test_case(enum: str) -> str:
     title = create_title(assignments)
     test_declaration = 'public void ' + title + '() {'
 
-    instruction_type = 'RTypeInstruction'
+    instruction_type = get_instruction_type(get_condition_constructor(enum))
     variable_name = 'instruction'
     variable_initializer = " ".join([instruction_type, variable_name, '=',
                                      instruction_type + '.' + assignments.iname.upper()])
