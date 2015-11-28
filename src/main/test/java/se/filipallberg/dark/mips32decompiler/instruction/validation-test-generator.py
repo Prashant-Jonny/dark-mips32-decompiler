@@ -74,18 +74,18 @@ def get_condition(enum):
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
     >>> get_condition(enum)
-    namespace(iname='ADDU', shamt=0)
+    namespace(iname='ADDU', rd='0x00', shamt='0x00')
     """
 
     r = Record()
 
     r.iname = get_name(enum)
-    condition = get_condition_constructor(enum)
+    conditions = get_conditions(get_condition_constructor(enum))
+    for condition in conditions:
+        expected_value = condition[-1]
+        [setattr(r, field, expected_value) for field in condition[:-1]]
 
-    r.shamt = 0
     return r
-
-
 
 def generate_test(instruction_enum):
     new_condition_marker = "new Condtion<RTypeInstruction, Integer>()"
@@ -99,7 +99,7 @@ def generate_output(condition_set):
     return assignments
 
 
-def get_condition_set(condition_constructor):
+def get_conditions(condition_constructor):
     """
     Get all of the conditions that the condition constructor specifies.
 
@@ -108,7 +108,7 @@ def get_condition_set(condition_constructor):
 
     >>> condition_constructor = ("new Condition<RTypeInstruction, Integer>()"
     ...                          ".checkThat(Int::shamt).and(Int::rd).is(0x00)")
-    >>> get_condition_set(condition_constructor)
+    >>> get_conditions(condition_constructor)
     [['shamt', 'rd', '0x00']]
 
     A more extensive example shows that the function supports parsing
@@ -118,7 +118,7 @@ def get_condition_set(condition_constructor):
     ... ".checkThat(Int::rt).is(0x00)."
     ... "checkThat(Int::rs).and(Int::shamt).and(Int::funct).is(0x00)"
     ... "andThat(Int::rd).is(0x11).")
-    >>> get_condition_set(test_case)
+    >>> get_conditions(test_case)
     [['rt', '0x00'], ['rs', 'shamt', 'funct', '0x00'], ['rd', '0x11']]
     """
     # By replacing all parentheses with whitespace, we can get a list
@@ -175,7 +175,7 @@ def get_condition_set(condition_constructor):
     # Iteratively, we compound all Int:: expressions until
     # an "is" method is called.
     prefix = "Int::"
-    conditionSet = []
+    conditions = []
     fields = []
     i = 0
     while i < len(args):
@@ -184,11 +184,11 @@ def get_condition_set(condition_constructor):
             fields.append(arg[len(prefix)::])
         if arg.startswith(".is"):
             fields.append(args[i+1])
-            conditionSet.append(fields)
+            conditions.append(fields)
             fields = []
         i += 1
 
-    return conditionSet
+    return conditions
 
 
 test_case = ("MFC1(0x11, 0x00, "
@@ -200,7 +200,7 @@ test_case = ("MFC1(0x11, 0x00, "
                  "new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs))")
 #print(get_condition(cond))
 #print(get_condition(cond2))
-print(generate_output(get_condition_set(test_case)))
+#print(generate_output(get_condition_set(test_case)))
 
 """@Test
 public void xShouldValidateIfABandCisYandIfHIsP() {
