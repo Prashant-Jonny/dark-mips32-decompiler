@@ -92,7 +92,7 @@ def generate_title(r: Record) -> str:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> generate_title(get_condition(enum))
+    >>> generate_title(get_assignment_statements(enum))
     'adduIsValidIfRdIs0x00AndShamtIs0x00'
     """
     title = r.iname.lower() + "IsValidIf"
@@ -112,7 +112,7 @@ def generate_title(r: Record) -> str:
 
     return title + "And".join(conditions)
 
-def generate_assignment_statements(r: Record) -> [str]:
+def generate_assignment_statement_output(r: Record) -> [str]:
     """
     Generate a series of assignment statements from a
     record describing the names in the record and
@@ -123,7 +123,7 @@ def generate_assignment_statements(r: Record) -> [str]:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> generate_assignment_statements(get_condition(enum))
+    >>> generate_assignment_statement_output(get_assignment_statements(enum))
     ['instruction.rd = 0x00', 'instruction.shamt = 0x00']
     """
     assignments = []
@@ -133,7 +133,7 @@ def generate_assignment_statements(r: Record) -> [str]:
 
     return assignments
 
-def get_condition(enum):
+def get_assignment_statements(enum: str) -> Record:
     """
     Expects to retrieve a string describing a particular enum
     with all of the arguments passed to its constructor.
@@ -145,7 +145,7 @@ def get_condition(enum):
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> get_condition(enum)
+    >>> get_assignment_statements(enum)
     namespace(iname='ADDU', rd='0x00', shamt='0x00')
     """
 
@@ -158,18 +158,6 @@ def get_condition(enum):
         [setattr(r, field, expected_value) for field in condition[:-1]]
 
     return r
-
-def generate_test(instruction_enum):
-    new_condition_marker = "new Condtion<RTypeInstruction, Integer>()"
-    end_of_condition_marker = "new MnemonicPattern<>"
-
-def generate_output(condition_set):
-    assignments = []
-    for condition in condition_set:
-        assignments.append(" = ".join(['instruction.' + x for x in condition[:-1]]))
-        assignments[-1] += " = " + condition[-1]
-    return assignments
-
 
 def get_conditions(condition_constructor):
     """
