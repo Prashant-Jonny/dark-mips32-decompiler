@@ -3,6 +3,7 @@
 import types # Get access to SimpleNamespace
 import typing # Enable type hinting and type synonyms
 import os # Get the current directory
+import copy
 
 # Create a type synonym, letting us refer to
 # SimpleNamespace as Record. This could be
@@ -13,19 +14,6 @@ import os # Get the current directory
 # but since we are already using the typing
 # module we might as well do this
 Record = types.SimpleNamespace
-
-# Want to be able to open a file and get back a list of all enum declarations
-# this means matching the [A-Z]\( pattern. Either the next match will mark
-# the completion of an enum or an empty ; on a single line marks the end
-# of all the declarations
-
-class InstructionTest:
-    def __init__(self, name):
-        self.name = name
-        self.fields = []
-
-    def add_field(self, field):
-        self.fields.append(field)
 
 def get_instruction_name(enum: str) -> str:
     """
@@ -84,7 +72,7 @@ def get_instruction_name(enum: str) -> str:
             #x = line.strip()
             return line[:line.find('(')]
 
-    return 'AND'
+    return ''
 
 def get_condition_constructor(enum: str) -> str:
     """
@@ -316,8 +304,94 @@ def get_conditions(condition_constructor):
 
     return conditions
 
-def create_invalid_test_case(enum: str, instruction_type: str) -> str:
-    pass
+def create_invalid_test_cases(enum: str, instruction_type: str) -> str:
+    """
+    Creates a JUnitTestCase as a list of strings for
+    each line from an enum. The created test checks that an exception
+    is thrown when one of the conditions is not met
+
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+    >>> print(create_invalid_test_cases(enum, 'RTypeInstruction'))
+    @Test (expected = PartiallyLegalInstructionException.class)
+    public void adduShouldNotValidateIfRdIsNot0x00() {
+        RTypeInstruction instruction = RTypeInstruction.ADDU;
+        instruction.rd = 1;
+        instruction.shamt = 0x00;
+        instruction.validate();
+    }
+    <BLANKLINE>
+    @Test (expected = PartiallyLegalInstructionException.class)
+    public void adduShouldNotValidateIfShamtIsNot0x00() {
+        RTypeInstruction instruction = RTypeInstruction.ADDU;
+        instruction.rd = 0x00;
+        instruction.shamt = 1;
+        instruction.validate();
+    }
+
+
+    If there are no conditions to satisfy the empty string is returned.
+    Whitespaces are ignored.
+
+    >>> enum = (
+    ... '    /**'
+    ... '     * Move conditional zero. Move register rs to register rd if'
+    ... '     * register rt is zero.'
+    ... '     */'
+    ... '    MOVZ(0x00, 0x10, new MnemonicPattern<>(Str::iname, '
+    ... '        Str::rd,  Str::rs,  Str::rt)),')
+    >>> create_invalid_test_cases(enum, 'RTypeInstruction')
+    ''
+    """
+    JUnit_test_marker = '@Test (expected = PartiallyLegalInstructionException.class)'
+
+    assignments = create_assignment_statements(enum)
+    tests = []
+    for (field_name, expected_value) in sorted(vars(assignments).items()):
+        if (field_name is not 'iname'):
+            # Create the title of our invalid test case that will set
+            # the field to the unexpected value
+            title = create_invalid_test_title(assignments, field_name)
+
+            # Duplicate the record
+            invalid_assignment = copy.copy(assignments)
+
+            # Set the assigned value to something other than the expected value
+            setattr(invalid_assignment, field_name, str(int(expected_value, 16) + 1))
+
+            assignments_output = create_assignment_statements_output(invalid_assignment)
+
+            if len(assignments_output) == 0:
+                # The enum is not subject to any conditions. Do not test it
+                return ''
+
+            test_declaration = 'public void ' + title + '() {'
+
+            variable_name = 'instruction'
+            variable_initializer = " ".join([instruction_type, variable_name, '=',
+                                             instruction_type + '.' + assignments.iname.upper()])
+
+            body_statement = [variable_initializer]
+            body_statement.extend(assignments_output)
+
+            # Indent the lines, add a trailing ;
+            indent = '    ' # 4 spaces
+
+            # Strings inside ('...', '...') are implicitly joined
+            body_statement.append(('instruction.validate()'))
+
+            body_statement = [indent + s + ';' for s in body_statement]
+
+            lines = [JUnit_test_marker, test_declaration]
+            lines.extend(body_statement)
+            lines.append('}')
+
+            tests.append("\n".join(lines))
+        
+    return "\n\n".join(tests)
 
 def create_invalid_test_title(r: Record, name: str) -> str:
     """
