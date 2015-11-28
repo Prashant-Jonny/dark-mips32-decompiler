@@ -2,6 +2,7 @@
 #from types import SimpleNamespace as Record
 import types # Get access to SimpleNamespace
 import typing # Enable type hinting and type synonyms
+import os # Get the current directory
 
 # Create a type synonym, letting us refer to
 # SimpleNamespace as Record. This could be
@@ -34,12 +35,56 @@ def get_name(enum: str) -> str:
 
     >>> get_name("ADDU(0, 0x21,")
     'ADDU'
+
+    Comments and whitespace are ignored, this is important as
+    all declarations are indented.
+    >>> enum = (''
+    ... '    /**'
+    ... '     * Put the logical AND of registers rs and rt into register rd.'
+    ... '     * Is only valid if shamt is 0'
+    ... '     */'
+    ... '    AND(0x00, 0x24,'
+    ... '        new Condition<RTypeInstruction, Integer>()'
+    ... '               .checkThat(Int::shamt).is(0x00),'
+    ... '        new MnemonicPattern<>('
+    ... '               Str::iname, Str::rd,  Str::rs,  Str::rt)),')
+    >>> get_name(enum)
+    'AND'
+
+    Parentheses in Javadoc are ignored
+    >>> enum = (''
+    ... '    /**'
+    ... '     * Move from coprocessor 0. Move register rd in a coprocessor (register'
+    ... '     * fs in the FPU) to CPU register rt. The floating-point unit is'
+    ... '     * coprocessor 1.'
+    ... '     */'
+    ... '    // TODO: Validate that rs, shamt, and funct is 0'
+    ... '    MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()'
+    ... '            .checkThat(Int::rs).is(0x00).'
+    ... '                    andThat(Int::shamt).is(0x00).'
+    ... '                    andThat(Int::funct).is(0x00),'
+    ... '            new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),')
+    >>> get_name(enum)
+    'MFC0'
     """
     # The first character in the supplied string is the
     # first character in the enum name. Then the end
     # of the name is marked by the first parentheses
     # in the string.
-    return enum[:enum.find('(')]
+    read_from_index = -2
+    if '*/' in enum:
+        # The enum is Javadoc'ed :) Ignore all characters above and
+        # including the comment end marker
+        read_from_index = enum.index('*/')
+
+    lines = enum[read_from_index+2:].split()
+    for line in lines:
+        if '(' in line:
+            # We've found the start of the declaration
+            #x = line.strip()
+            return line[:line.find('(')]
+
+    return 'AND'
 
 def get_condition_constructor(enum: str) -> str:
     """
@@ -58,6 +103,11 @@ def get_condition_constructor(enum: str) -> str:
     # Since we want to retrieve the substring describing the entire
     # construction of the conditional, all that remains is identifying
     # when the construction ends. 
+
+    # There are instructions that do not have conditions
+    if not 'new Condition' in enum:
+        return ''
+
     start_index = enum.index('new Condition')
 
     # We know that the builder-pattern
@@ -147,6 +197,21 @@ def create_assignment_statements(enum: str) -> Record:
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
     >>> create_assignment_statements(enum)
     namespace(iname='ADDU', rd='0x00', shamt='0x00')
+
+    >>> enum = (''
+    ... '    /**'
+    ... '     * Move from coprocessor 0. Move register rd in a coprocessor (register'
+    ... '     * fs in the FPU) to CPU register rt. The floating-point unit is'
+    ... '     * coprocessor 1.'
+    ... '     */'
+    ... '    // TODO: Validate that rs, shamt, and funct is 0'
+    ... '    MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()'
+    ... '            .checkThat(Int::rs).is(0x00).'
+    ... '                    andThat(Int::shamt).is(0x00).'
+    ... '                    andThat(Int::funct).is(0x00),'
+    ... '            new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),')
+    >>> create_assignment_statements(enum)
+    namespace(funct='0x00', iname='MFC0', rs='0x00', shamt='0x00')
     """
 
     r = Record()
@@ -159,26 +224,6 @@ def create_assignment_statements(enum: str) -> Record:
         [setattr(r, field, expected_value) for field in condition[:-1]]
 
     return r
-
-def get_instruction_type(condition_constructor: str) -> str:
-    """ 
-    Gets the first parametrized type of the condition_constructor
-
-    >>> enum = ("ADDU(0, 0x21,"
-    ...     "new Condition<RTypeInstruction, Integer>()"
-    ...             ".checkThat(Int::shamt).is(0x00),"
-    ...     "new MnemonicPattern<>("
-    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")  
-    >>> condition_constructor = get_condition_constructor(enum)
-    >>> # returns: ('new Condition<RTypeInstruction, '
-    >>> #           'Integer>().checkThat(Int::shamt).is(0x00)')
-    >>> get_instruction_type(condition_constructor)
-    'RTypeInstruction'
-    """
-    langle_index = condition_constructor.index('<')
-    delimiter_index = condition_constructor.index(',')
-    return condition_constructor[langle_index + 1:delimiter_index]
-
 
 def get_conditions(condition_constructor):
     """
@@ -272,7 +317,7 @@ def get_conditions(condition_constructor):
     return conditions
 
 
-def create_valid_test_case(enum: str) -> str:
+def create_valid_test_case(enum: str, instruction_type: str) -> str:
     """
     Creates a JUnitTestCase as a list of strings for
     each line from an enum. This creates a test
@@ -284,7 +329,7 @@ def create_valid_test_case(enum: str) -> str:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> print(create_valid_test_case(enum))
+    >>> print(create_valid_test_case(enum, 'RTypeInstruction'))
     @Test
     public void adduIsValidIfRdIs0x00AndShamtIs0x00() {
         RTypeInstruction instruction = RTypeInstruction.ADDU;
@@ -292,21 +337,36 @@ def create_valid_test_case(enum: str) -> str:
         instruction.shamt = 0x00;
         assertThat(instruction.validate(), is(equalTo(true)));
     }
+
+    If there are no conditions to satisfy the empty string is returned.
+    Whitespaces are ignored.
+
+    >>> enum = (
+    ... '    /**'
+    ... '     * Move conditional zero. Move register rs to register rd if'
+    ... '     * register rt is zero.'
+    ... '     */'
+    ... '    MOVZ(0x00, 0x10, new MnemonicPattern<>(Str::iname, '
+    ... '        Str::rd,  Str::rs,  Str::rt)),')
+    >>> create_valid_test_case(enum, 'RTypeInstruction')
+    ''
     """
     JUnit_test_marker = '@Test'
 
     assignments = create_assignment_statements(enum)
     assignments_output = create_assignment_statements_output(assignments)
+    if len(assignments_output) == 0:
+        # The enum is not subject to any conditions. Do not test it
+        return ''
 
     title = create_title(assignments)
     test_declaration = 'public void ' + title + '() {'
 
-    instruction_type = get_instruction_type(get_condition_constructor(enum))
     variable_name = 'instruction'
     variable_initializer = " ".join([instruction_type, variable_name, '=',
                                      instruction_type + '.' + assignments.iname.upper()])
 
-    body_statement = [variable_initializer]
+    body_statement = [variable_initializer]    
     body_statement.extend(assignments_output)
 
     # Indent the lines, add a trailing ;
@@ -318,11 +378,46 @@ def create_valid_test_case(enum: str) -> str:
 
     body_statement = [indent + s + ';' for s in body_statement]
 
-    
     lines = [JUnit_test_marker, test_declaration]
     lines.extend(body_statement)
     lines.append('}')
     return "\n".join(lines)
+
+def create_valid_test_cases(filename: str):
+    test_cases = []
+
+    with open(filename, 'r') as f:
+        enum_declarations_flag = False
+        current_enum = []
+        for line in f:
+            # Do nothing until the start of the enum is read
+            # We want to ignore imports and JavaDoc.
+            if line.strip().startswith('public enum'):
+                enum_declarations_flag = True
+
+            # We are parsing declarations at this point
+            if enum_declarations_flag:
+                # The enum declarations are seperated like paragraphs,
+                # i.e. there is a blank line between them. Store lines
+                # until a blank line is detected
+                if is_empty(line): # Detect empty line
+                    # Concatenate all the strings making up the current enum
+                    enum = "".join(current_enum)
+                    current_enum = []
+                    test_case = create_valid_test_case(enum, 'RTypeInstruction')
+                    if test_case != '': # Is the empty string if no conditions apply
+                        test_cases.append(test_case)
+                else:
+                    current_enum.append(line)
+
+            # Enum declarations end with a ; on a single line
+            if line.strip() == ';':
+                break
+
+    return test_cases
+
+def is_empty(string: str) -> bool:
+    return not string.strip()
 
 """@Test
 public void xShouldValidateIfABandCisYandIfHIsP() {
@@ -332,13 +427,13 @@ public void xShouldValidateIfABandCisYandIfHIsP() {
     assertThat(r.validate(), is(equalTo(true)));
 }"""
 
-enum = ("ADDU(0, 0x21,"
-         "new Condition<RTypeInstruction, Integer>()"
-                 ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
-         "new MnemonicPattern<>("
-                 "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-#print(generate_validation_test(get_condition(enum)))
+#cwd = os.getcwd()
+#print(cwd)
+#print(os.path.dirname(os.path.realpath('RTypeInstruction.java')))
+test_cases = create_valid_test_cases('/home/spock/Dropbox/github/dark-mips32-decompiler/src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/RTypeInstruction.java')
 
+for test_case in test_cases:
+    print(test_case)
 
 
 if __name__=="__main__":
