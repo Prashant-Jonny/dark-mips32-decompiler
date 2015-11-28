@@ -72,7 +72,7 @@ def get_condition_constructor(enum: str) -> str:
 
     return enum[start_index:is_index+stop_index]
 
-def generate_title(r: Record) -> str:
+def create_title(r: Record) -> str:
     """
     Generates a title given the result from get_condition
 
@@ -82,7 +82,7 @@ def generate_title(r: Record) -> str:
     >>> r.iname = 'MUL'
     >>> r.rd = '0x01'
     >>> r.shamt = '0x00'
-    >>> generate_title(r)
+    >>> create_title(r)
     'mulIsValidIfRdIs0x01AndShamtIs0x00'
 
     Similarily, we can test the function using the input generated
@@ -92,7 +92,7 @@ def generate_title(r: Record) -> str:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> generate_title(get_assignment_statements(enum))
+    >>> create_title(create_assignment_statements(enum))
     'adduIsValidIfRdIs0x00AndShamtIs0x00'
     """
     title = r.iname.lower() + "IsValidIf"
@@ -112,7 +112,7 @@ def generate_title(r: Record) -> str:
 
     return title + "And".join(conditions)
 
-def generate_assignment_statement_output(r: Record) -> [str]:
+def create_assignment_statements_output(r: Record) -> [str]:
     """
     Generate a series of assignment statements from a
     record describing the names in the record and
@@ -123,7 +123,7 @@ def generate_assignment_statement_output(r: Record) -> [str]:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> generate_assignment_statement_output(get_assignment_statements(enum))
+    >>> create_assignment_statements_output(create_assignment_statements(enum))
     ['instruction.rd = 0x00', 'instruction.shamt = 0x00']
     """
     assignments = []
@@ -133,7 +133,7 @@ def generate_assignment_statement_output(r: Record) -> [str]:
 
     return assignments
 
-def get_assignment_statements(enum: str) -> Record:
+def create_assignment_statements(enum: str) -> Record:
     """
     Expects to retrieve a string describing a particular enum
     with all of the arguments passed to its constructor.
@@ -145,7 +145,7 @@ def get_assignment_statements(enum: str) -> Record:
     ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
     ...     "new MnemonicPattern<>("
     ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
-    >>> get_assignment_statements(enum)
+    >>> create_assignment_statements(enum)
     namespace(iname='ADDU', rd='0x00', shamt='0x00')
     """
 
@@ -153,6 +153,7 @@ def get_assignment_statements(enum: str) -> Record:
 
     r.iname = get_name(enum)
     conditions = get_conditions(get_condition_constructor(enum))
+
     for condition in conditions:
         expected_value = condition[-1]
         [setattr(r, field, expected_value) for field in condition[:-1]]
@@ -174,11 +175,11 @@ def get_conditions(condition_constructor):
     A more extensive example shows that the function supports parsing
     of more complex expressions
 
-    >>> test_case = ("new Condition<RTypeInstruction, Integer>()"
+    >>> enum = ("new Condition<RTypeInstruction, Integer>()"
     ... ".checkThat(Int::rt).is(0x00)."
     ... "checkThat(Int::rs).and(Int::shamt).and(Int::funct).is(0x00)"
     ... "andThat(Int::rd).is(0x11).")
-    >>> get_conditions(test_case)
+    >>> get_conditions(enum)
     [['rt', '0x00'], ['rs', 'shamt', 'funct', '0x00'], ['rd', '0x11']]
     """
     # By replacing all parentheses with whitespace, we can get a list
@@ -250,6 +251,58 @@ def get_conditions(condition_constructor):
 
     return conditions
 
+
+def create_test_case(enum: str) -> str:
+    """
+    Creates a JUnitTestCase as a list of strings for
+    each line from an enum. This creates a test
+    that asserts that the enum is valid if it
+    meets all its conditions
+
+    >>> enum = ("ADDU(0, 0x21,"
+    ...     "new Condition<RTypeInstruction, Integer>()"
+    ...             ".checkThat(Int::shamt).and(Int::rd).is(0x00),"
+    ...     "new MnemonicPattern<>("
+    ...             "Str::iname, Str::rd,  Str::rs,  Str::rt))")
+    >>> print(create_test_case(enum))
+    @Test
+    public void adduIsValidIfRdIs0x00AndShamtIs0x00() {
+        RTypeInstruction instruction = RTypeInstruction.ADDU;
+        instruction.rd = 0x00;
+        instruction.shamt = 0x00;
+        assertThat(instruction.validate(), is(equalTo(true)));
+    }
+    """
+    JUnit_test_marker = '@Test'
+    
+    assignments = create_assignment_statements(enum)
+    assignments_output = create_assignment_statements_output(assignments)
+
+    title = create_title(assignments)
+    test_declaration = 'public void ' + title + '() {'
+
+    instruction_type = 'RTypeInstruction'
+    variable_name = 'instruction'
+    variable_initializer = " ".join([instruction_type, variable_name, '=',
+                                     instruction_type + '.' + assignments.iname.upper()])
+
+    body_statement = [variable_initializer]
+    body_statement.extend(assignments_output)
+
+    # Indent the lines, add a trailing ;
+    indent = '    ' # 4 spaces
+
+    # Strings inside ('...', '...') are implicitly joined
+    body_statement.append(('assertThat(instruction.validate(), '
+                           'is(equalTo(true)))'))
+
+    body_statement = [indent + s + ';' for s in body_statement]
+
+    
+    lines = [JUnit_test_marker, test_declaration]
+    lines.extend(body_statement)
+    lines.append('}')
+    return "\n".join(lines)
 
 """@Test
 public void xShouldValidateIfABandCisYandIfHIsP() {
