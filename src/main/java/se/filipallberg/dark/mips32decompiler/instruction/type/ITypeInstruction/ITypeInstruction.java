@@ -1,5 +1,7 @@
 package se.filipallberg.dark.mips32decompiler.instruction.type.ITypeInstruction;
 
+import se.filipallberg.dark.mips32decompiler.instruction.Condition;
+import se.filipallberg.dark.mips32decompiler.instruction.PartiallyLegalInstructionException;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
@@ -279,6 +281,15 @@ public enum ITypeInstruction {
         this.opcode = Opcode.fromNumericalRepresentation(opcode);
     }
 
+    private Condition<ITypeInstruction, Integer> condition;
+
+    ITypeInstruction(int opcode, Condition<ITypeInstruction,
+            Integer> condition, BitField... bitFields) {
+        list.addAll(Arrays.asList(bitFields));
+        this.opcode = Opcode.fromNumericalRepresentation(opcode);
+        this.condition = condition;
+    }
+
     /**
      * Sometimes the rt field must be consulted when more than
      * one instruction shares the same opcode. This is the case
@@ -307,7 +318,7 @@ public enum ITypeInstruction {
 
         /** Get the correct I-type instruction */
         ITypeInstruction iTypeInstruction = identifyInstruction(instruction);
-
+        iTypeInstruction.validate();
         MnemonicRepresentation m = composeMnemonic(iTypeInstruction);
 
         return new Instruction(
@@ -315,6 +326,21 @@ public enum ITypeInstruction {
                 Format.I,
                 iTypeInstruction.decomposedRepresentation,
                 m);
+    }
+
+    private int instruction;
+    public boolean validate() {
+        if (condition != null) {
+            if (!condition.evaluate(this)) {
+                StringJoiner sj = new StringJoiner("\n\t", "{(0x" +
+                        Integer.toHexString(instruction) + ") " +
+                        "Errors:\n\t", "}");
+
+                condition.getErrors().forEach(sj::add);
+                throw new PartiallyLegalInstructionException(sj.toString());
+            }
+        }
+        return true;
     }
 
     private static MnemonicRepresentation composeMnemonic
@@ -329,7 +355,7 @@ public enum ITypeInstruction {
                 (instruction.name().toLowerCase(),
                         strings.toArray(new String[strings.size()]));
     }
-
+    public int rs;
     private static ITypeInstruction identifyInstruction(int instruction) {
         DecomposedRepresentation d = DecomposedRepresentation.
                 fromNumber(instruction, decomposedPattern);
@@ -341,6 +367,8 @@ public enum ITypeInstruction {
         } else {
             i = opcodeIdentifiable.get(Opcode.fromInstruction(instruction));
         }
+        i.instruction = instruction;
+        i.rs = decomposition[1];
         i.decomposedRepresentation = d;
         return i;
     }
@@ -353,29 +381,9 @@ public enum ITypeInstruction {
         return Format.fromOpcode(opcode) == Format.I;
     }
 
-    private static class Str {
-        static String iname(ITypeInstruction instruction) {
-            return instruction.name().toLowerCase();
-        }
-
-        static String rd(ITypeInstruction instruction) {
-            return Register.toString(instruction.rd);
-        }
-
-        static String rs(ITypeInstruction instruction) {
-            return Register.toString(instruction.rs);
-        }
-
-        static String rt(ITypeInstruction instruction) {
-            return Register.toString(instruction.rt);
-        }
-
-        static String shamt(ITypeInstruction instruction) {
-            return Register.toString(instruction.shamt);
-        }
-
-        static String fs(ITypeInstruction instruction) {
-            return Register.toString(instruction.rd);
+    private static class Int {
+        static Integer rs(ITypeInstruction r) {
+            return r.rs;
         }
     }
 

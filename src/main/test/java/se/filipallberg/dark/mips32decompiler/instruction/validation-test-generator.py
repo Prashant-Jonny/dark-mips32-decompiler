@@ -438,7 +438,7 @@ def create_valid_test_case(enum: str, instruction_type: str) -> str:
         RTypeInstruction instruction = RTypeInstruction.ADDU;
         instruction.rd = 0x00;
         instruction.shamt = 0x00;
-        assertThat(instruction.validate(), is(equalTo(true)));
+        assertTrue(instruction.validate());
     }
 
     If there are no conditions to satisfy the empty string is returned.
@@ -476,8 +476,7 @@ def create_valid_test_case(enum: str, instruction_type: str) -> str:
     indent = '    ' # 4 spaces
 
     # Strings inside ('...', '...') are implicitly joined
-    body_statement.append(('assertThat(instruction.validate(), '
-                           'is(equalTo(true)))'))
+    body_statement.append(('assertTrue(instruction.validate())'))
 
     body_statement = [indent + s + ';' for s in body_statement]
 
@@ -532,6 +531,23 @@ def create_test_classes():
     rel_path = '../../../../../../../java/se/filipallberg/dark/mips32decompiler/instruction/type/'
 
     classes_to_test = ['RTypeInstruction', 'ITypeInstruction']
+    rtype_imports = ["package se.filipallberg.dark.mips32decompiler.instruction;",
+                     "",
+                     "import org.junit.Test;",
+                     "import se.filipallberg.dark.mips32decompiler.instruction.type.RTypeInstruction.RTypeInstruction;",
+                     "",
+                     "import static junit.framework.TestCase.assertTrue;",
+                     ""] # Creates empty line before class declaration
+    itype_imports = ["package se.filipallberg.dark.mips32decompiler.instruction;",
+                     "",
+                     "import org.junit.Test;",
+                     "import se.filipallberg.dark.mips32decompiler.instruction.type.ITypeInstruction.ITypeInstruction;",
+                     "",
+                     "import static org.junit.Assert.assertTrue;",
+                     ""] # Creates empty line before class declaration
+
+    imports = {'RTypeInstruction': rtype_imports, 'ITypeInstruction': itype_imports}
+
     class_rel_path = {x: x + '/' + x + '.java' for x in classes_to_test}
     
     for (name, path) in class_rel_path.items():
@@ -552,6 +568,7 @@ def create_test_classes():
             lines.append('')
 
         lines.append('}')
+        lines = imports[name] + lines
         with open(class_name + '.java', 'w') as f:
             f.write("\n".join(lines))
 

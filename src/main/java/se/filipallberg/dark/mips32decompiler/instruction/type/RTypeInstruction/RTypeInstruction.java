@@ -238,7 +238,6 @@ public enum RTypeInstruction implements InstructionType {
      * Subtract (with overflow). Put the difference of registers rs and rt
      * into register rd.
      */
-    // TODO: Validate that shamt is 0
     SUB(0x00, 0x22, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00),
             new MnemonicPattern<>(
@@ -248,14 +247,12 @@ public enum RTypeInstruction implements InstructionType {
      * Subtract (without overflow). Put the difference of registers rs and rt
      * into register rd.
      */
-    // TODO: Validate that shamt is 0
     SUBU(0x00, 0x23, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /** Put the logical XOR of registers rs and rt into register rd. */
-    // TODO: Validate that shamt is 0
     XOR(0x00, 0x26, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00),
             new MnemonicPattern<>(
@@ -265,7 +262,6 @@ public enum RTypeInstruction implements InstructionType {
      * Trap if equal. If register rs is equal to register rt, raise a
      * Trap exception.
      */
-    // TODO: Validate that shamt and rd is 0
     TEQ(0x00, 0x52, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
             new MnemonicPattern<>(
@@ -275,7 +271,6 @@ public enum RTypeInstruction implements InstructionType {
      * Trap if greater equal. If register rs is greater than or equal to
      * register rt, raise a Trap exception.
      */
-    // TODO: Validate that shamt and rd is 0
     TGE(0x00, 0x48, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
             new MnemonicPattern<>(
@@ -285,7 +280,6 @@ public enum RTypeInstruction implements InstructionType {
      * Unsigned trap if greater equal. If register rs is greater than or equal
      * to register rt, raise a Trap exception.
      */
-    // TODO: Validate that shamt and rd is 0
     TGEU(0x00, 0x49, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
             new MnemonicPattern<>(
@@ -295,7 +289,6 @@ public enum RTypeInstruction implements InstructionType {
      * Trap if less than. If register rs is less than register rt, raise a
      * Trap exception.
      */
-    // TODO: Validate that shamt and rd is 0
     TLT(0x00, 0x50, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
             new MnemonicPattern<>(
@@ -305,7 +298,6 @@ public enum RTypeInstruction implements InstructionType {
      * Trap if less than unsigned. If register rs is less than register rt,
      * raise a Trap exception.
      */
-    // TODO: Validate that shamt and rd is 0
     TLTU(0x00, 0x51, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
             new MnemonicPattern<>(
@@ -317,7 +309,6 @@ public enum RTypeInstruction implements InstructionType {
      * registers, hi and lo. This instruction moves the hi register
      * to rd.
      */
-    // TODO: Verify that rs and rt and shamt is 0
     MFHI(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x00).
                     andThat(Int::rt).is(0x00).
@@ -331,7 +322,6 @@ public enum RTypeInstruction implements InstructionType {
      * registers, hi and lo. This instruction moves values from the lo
      * register to rd.
      */
-    // TODO: Verify that rs and rt and shamt is 0
     MFLO(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x00).
                     andThat(Int::rt).is(0x00).
@@ -342,7 +332,6 @@ public enum RTypeInstruction implements InstructionType {
     /**
      * Move to hi, move register rs to the hi register.
      */
-    // TODO: Validate that rt, rd, and shamt = 0
     MTHI(0x00, 0x11, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rt).is(0x00).
                     andThat(Int::rd).is(0x00).
@@ -354,7 +343,6 @@ public enum RTypeInstruction implements InstructionType {
     /**
      * Move to lo, move register rs to the lo register.
      */
-    // TODO: Validate that rt, rd, and shamt = 0
     MTLO(0x00, 0x13, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rt).is(0x00).
                     andThat(Int::rd).is(0x00).
@@ -367,7 +355,6 @@ public enum RTypeInstruction implements InstructionType {
      * fs in the FPU) to CPU register rt. The floating-point unit is
      * coprocessor 1.
      */
-    // TODO: Validate that rs, shamt, and funct is 0
     MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x00).
                     andThat(Int::shamt).is(0x00).
@@ -379,7 +366,6 @@ public enum RTypeInstruction implements InstructionType {
      * fs in the FPU) to CPU register rt. The floating-point unit is
      * coprocessor 1. Note that fs occupies the rd field
      */
-    // TODO: Validate that rs, shamt and funct is 0
     MFC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x00).
                     andThat(Int::shamt).is(0x00).
@@ -390,7 +376,6 @@ public enum RTypeInstruction implements InstructionType {
      * Move to coprocessor 0, move CPU register rt to register
      * rd in a coprocessor
      */
-    // TODO: Validate that rs = 4 and that shamt and funct is 0
     MTC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x04).
                     andThat(Int::shamt).is(0x00).
@@ -403,7 +388,6 @@ public enum RTypeInstruction implements InstructionType {
      * the MTC and MTF operations share the same opcode and funct
      * field. The rs field distinguishes them.
      */
-    // TODO: Validate that rs = 4 and funct and shamt = 0
     MTC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).is(0x04).
                     andThat(Int::shamt).is(0x00).
@@ -438,7 +422,6 @@ public enum RTypeInstruction implements InstructionType {
      * Unconditionally jump to the instruction whose address is in register
      * rs. Save the address of the next instruction in register rd.
      */
-    // TODO Verify that rs and shamt is 0
     JALR(0x00, 0x09, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rs).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rs,  Str::rd)),
@@ -447,7 +430,6 @@ public enum RTypeInstruction implements InstructionType {
      * Unconditionally jump to the instruction whose address is in
      * register rs.
      */
-    // TODO: Validate that rt, rd, and shamt is 0
     JR(0x00, 0x08, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rt).is(0x00).
                     andThat(Int::rd).is(0x00).
@@ -455,7 +437,6 @@ public enum RTypeInstruction implements InstructionType {
             new MnemonicPattern<>(Str::iname, Str::rs)),
 
     /** Do nothing */
-    // TODO: Validate that all fields are 0
     NOP(0x00, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat(Int::rt).and(Int::rs).
                     and(Int::rd).and(Int::shamt).
@@ -565,7 +546,7 @@ public enum RTypeInstruction implements InstructionType {
         pair = new OpcodeFunctPair(opcode, funct);
     }
 
-    public void validate() {
+    public boolean validate() {
         if (validationConditions != null) {
             if (!validationConditions.evaluate(this)) {
                 StringJoiner sj = new StringJoiner("\n\t", "{(0x" +
@@ -576,6 +557,7 @@ public enum RTypeInstruction implements InstructionType {
                 throw new PartiallyLegalInstructionException(sj.toString());
             }
         }
+        return true;
     }
 
     public static Set<Opcode> getOpcodeSet() {
