@@ -25,7 +25,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     ADD(0x00, 0x20,
             new Condition<RTypeInstruction, Integer>()
-                    .checkThat(Int::shamt).is(0x00),
+                    .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
@@ -35,7 +35,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     ADDU(0, 0x21,
             new Condition<RTypeInstruction, Integer>()
-                    .checkThat(Int::shamt).is(0x00),
+                    .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
@@ -45,7 +45,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     AND(0x00, 0x24,
             new Condition<RTypeInstruction, Integer>()
-                    .checkThat(Int::shamt).is(0x00),
+                    .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
@@ -57,8 +57,8 @@ public enum RTypeInstruction implements InstructionType {
      */
     CLO(0x1c, 0x21,
             new Condition<RTypeInstruction, Integer>()
-                    .checkThat(Int::shamt).is(0x00).
-                    andThat(Int::rt).is(0x00),
+                    .checkThat("shamt", Int::shamt).
+                    and("rt", Int::rt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rd, Str::rs)),
 
@@ -69,8 +69,8 @@ public enum RTypeInstruction implements InstructionType {
      */
     CLZ(0x1c, 0x20,
             new Condition<RTypeInstruction, Integer>()
-                    .checkThat(Int::shamt).is(0x00).
-                    andThat(Int::rt).is(0x00),
+                    .checkThat("shamt", Int::shamt).
+                    and("rt", Int::rt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rd, Str::rs)),
     
@@ -79,7 +79,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if rd and shamt is 0.
      */
     DIV(0x00, 0x1a, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -88,7 +88,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if rd and shamt is 0.
      */
     DIVU(0x00, 0x1b, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -98,7 +98,7 @@ public enum RTypeInstruction implements InstructionType {
      * register hi. Is only valid if rd and shamt is 0
      */
     MULT(0x00, 0x18, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -109,7 +109,7 @@ public enum RTypeInstruction implements InstructionType {
      * register hi. Is only valid if rd and shamt is 0.
      */
     MULTU(0x00, 0x19, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -130,7 +130,7 @@ public enum RTypeInstruction implements InstructionType {
      * are both zero
      */
     MADD(0x1c, 0, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -141,7 +141,7 @@ public enum RTypeInstruction implements InstructionType {
      * are both zero
      */
     MADDU(0x1c, 1, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -152,7 +152,7 @@ public enum RTypeInstruction implements InstructionType {
      * and shamt are 0. Is only valid if rd and shamt are both 0.
      */
     MSUB(0x1c, 4, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -163,7 +163,7 @@ public enum RTypeInstruction implements InstructionType {
      * and shamt are 0.
      */
     MSUBU(0x1c, 5, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
     
@@ -172,7 +172,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if shamt is 0.
      */
     NOR(0x00, 0x27, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rd, Str::rs, Str::rt)),
 
     /**
@@ -180,7 +180,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if shamt is 0.
      */
     OR(0x00, 0x25, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rd, Str::rs, Str::rt)),
 
     /**
@@ -196,7 +196,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if shamt is 0.
      */
     SLLV(0x00, 4, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd, Str::rt, Str::rs)),
 
@@ -214,7 +214,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if shamt is 0.
      */
     SRAV(0x00, 7, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rt,  Str::rs)),
 
@@ -231,7 +231,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if shamt is 0.
      */
     SRLV(0x00, 0x06, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt,  Str::rs)),
 
     /**
@@ -239,7 +239,7 @@ public enum RTypeInstruction implements InstructionType {
      * into register rd.
      */
     SUB(0x00, 0x22, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
@@ -248,13 +248,13 @@ public enum RTypeInstruction implements InstructionType {
      * into register rd.
      */
     SUBU(0x00, 0x23, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
     /** Put the logical XOR of registers rs and rt into register rd. */
     XOR(0x00, 0x26, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd,  Str::rs,  Str::rt)),
 
@@ -263,7 +263,7 @@ public enum RTypeInstruction implements InstructionType {
      * Trap exception.
      */
     TEQ(0x00, 0x52, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00).andThat("rd", Int::rd).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs,  Str::rt)),
 
@@ -272,7 +272,7 @@ public enum RTypeInstruction implements InstructionType {
      * register rt, raise a Trap exception.
      */
     TGE(0x00, 0x48, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00).andThat("rd", Int::rd).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs,  Str::rt)),
 
@@ -281,7 +281,7 @@ public enum RTypeInstruction implements InstructionType {
      * to register rt, raise a Trap exception.
      */
     TGEU(0x00, 0x49, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00).andThat("rd", Int::rd).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs,  Str::rt)),
 
@@ -290,7 +290,7 @@ public enum RTypeInstruction implements InstructionType {
      * Trap exception.
      */
     TLT(0x00, 0x50, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00).andThat("rd", Int::rd).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs,  Str::rt)),
 
@@ -299,7 +299,7 @@ public enum RTypeInstruction implements InstructionType {
      * raise a Trap exception.
      */
     TLTU(0x00, 0x51, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::shamt).is(0x00).andThat(Int::rd).is(0x00),
+            .checkThat("shamt", Int::shamt).is(0x00).andThat("rd", Int::rd).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs,  Str::rt)),
 
@@ -310,9 +310,9 @@ public enum RTypeInstruction implements InstructionType {
      * to rd.
      */
     MFHI(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x00).
-                    andThat(Int::rt).is(0x00).
-                    andThat(Int::shamt).is(0x00),
+            .checkThat("rs", Int::rs).is(0x00).
+                    andThat("rt", Int::rt).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd)),
 
@@ -323,9 +323,9 @@ public enum RTypeInstruction implements InstructionType {
      * register to rd.
      */
     MFLO(0x00, 0x10, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x00).
-                    andThat(Int::rt).is(0x00).
-                    andThat(Int::shamt).is(0x00),
+            .checkThat("rs", Int::rs).is(0x00).
+                    andThat("rt", Int::rt).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rd)),
 
@@ -333,9 +333,9 @@ public enum RTypeInstruction implements InstructionType {
      * Move to hi, move register rs to the hi register.
      */
     MTHI(0x00, 0x11, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rt).is(0x00).
-                    andThat(Int::rd).is(0x00).
-                    andThat(Int::shamt).is(0x00),
+            .checkThat("rt", Int::rt).is(0x00).
+                    andThat("rd", Int::rd).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs)),
 
@@ -344,9 +344,9 @@ public enum RTypeInstruction implements InstructionType {
      * Move to lo, move register rs to the lo register.
      */
     MTLO(0x00, 0x13, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rt).is(0x00).
-                    andThat(Int::rd).is(0x00).
-                    andThat(Int::shamt).is(0x00),
+            .checkThat("rt", Int::rt).is(0x00).
+                    andThat("rd", Int::rd).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(
                     Str::iname, Str::rs)),
 
@@ -356,9 +356,9 @@ public enum RTypeInstruction implements InstructionType {
      * coprocessor 1.
      */
     MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x00).
-                    andThat(Int::shamt).is(0x00).
-                    andThat(Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00).
+                    andThat("funct", Int::funct).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),
 
     /**
@@ -367,9 +367,9 @@ public enum RTypeInstruction implements InstructionType {
      * coprocessor 1. Note that fs occupies the rd field
      */
     MFC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x00).
-                    andThat(Int::shamt).is(0x00).
-                    andThat(Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00).
+                    andThat("funct", Int::funct).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
@@ -377,9 +377,9 @@ public enum RTypeInstruction implements InstructionType {
      * rd in a coprocessor
      */
     MTC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x04).
-                    andThat(Int::shamt).is(0x00).
-                    andThat(Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).is(0x04).
+                    andThat("shamt", Int::shamt).is(0x00).
+                    andThat("funct", Int::funct).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt)),
 
     /**
@@ -389,9 +389,9 @@ public enum RTypeInstruction implements InstructionType {
      * field. The rs field distinguishes them.
      */
     MTC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).is(0x04).
-                    andThat(Int::shamt).is(0x00).
-                    andThat(Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).is(0x04).
+                    andThat("shamt", Int::shamt).is(0x00).
+                    andThat("funct", Int::funct).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
@@ -423,7 +423,7 @@ public enum RTypeInstruction implements InstructionType {
      * rs. Save the address of the next instruction in register rd.
      */
     JALR(0x00, 0x09, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rs).and("shamt", Int::shamt).is(0x00),
+            .checkThat("rs", Int::rs).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rs,  Str::rd)),
 
     /**
@@ -431,16 +431,16 @@ public enum RTypeInstruction implements InstructionType {
      * register rs.
      */
     JR(0x00, 0x08, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rt).is(0x00).
-                    andThat(Int::rd).is(0x00).
-                    andThat(Int::shamt).is(0x00),
+            .checkThat("rt", Int::rt).is(0x00).
+                    andThat("rd", Int::rd).is(0x00).
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rs)),
 
     /** Do nothing */
     NOP(0x00, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat(Int::rt).and(Int::rs).
-                    and(Int::rd).and(Int::shamt).
-                    and(Int::funct).is(0x00)
+            .checkThat("rt", Int::rt).and("rs", Int::rs).
+                    and("rd", Int::rd).and("shamt", Int::shamt).
+                    and("funct", Int::funct).is(0x00)
             ,
             new MnemonicPattern<>(Str::iname))
     ;
@@ -516,14 +516,14 @@ public enum RTypeInstruction implements InstructionType {
      *
      * <code>
      * Condition c = new Condition<RTypeInstruction, Integer>()
-     * .checkThat(Int::rd).is(0x00).andThat(Int::shamt).is(0x00)
+     * .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00)
      * </code>
      *
      * Then, when we call {@code c.evaluate(this)} in a non-static
      * method we will call each specified method (here
-     * {@code Int:rd} and {@code Int::shamt}) with the {@code this}
-     * reference and check that the return value of {@code Int::rd} is
-     * 0x00, and similarily that {@code Int::shamt} returns 0x00.
+     * {@code Int:rd} and {@code "shamt", Int::shamt}) with the {@code this}
+     * reference and check that the return value of {@code "rd", Int::rd} is
+     * 0x00, and similarily that {@code "shamt", Int::shamt} returns 0x00.
      */
     private Condition<RTypeInstruction, Integer> validationConditions;
     private MnemonicPattern<RTypeInstruction> pattern;

@@ -18,15 +18,29 @@ Summarizingly, we found that we want to be able to
 The first two items are trivial, the first is the result of a
 bit-shift operation and as alluded to previously the Format is always
 inferrable from the Opcode, which means that we can either let each
-opcode know its associated format or similarily associmuate formats with
-sets of opcodes elsewhere. The specific approach will be covered
+opcode know its associated format or similarily associate formats
+with sets of opcodes elsewhere. The specific approach will be covered
 later, as will the reason it was chosen.
 
 The subset of the MIPS32-instruction set that we have
 implemented,\footnote{Floating point operations and a few others have
-  been omitted} is made up of a large number of operations so we would
+  been omitted.} is made up of a large number of operations so we would
 like to design our system in such a manner that all of this
 \emph{knowledge} pertaining to a particular instruction, viz. how to
 validate it and represent it, be stored in a single place.
+
+We want to express this as succinctly as possible, to make it as
+legible as possible in one place all the defining characteristics
+of an instruction.
+
+Regardless of the instruction type we can express an instruction
+as a tuple,
+
+\begin{equation*}
+(\langle \textit{identifying characteristics} \rangle, \langle
+  \textit{validation requirements} \rangle, \langle \textit{mnemonic
+    representation} \rangle)
+\end{equation*}
+
 
 
