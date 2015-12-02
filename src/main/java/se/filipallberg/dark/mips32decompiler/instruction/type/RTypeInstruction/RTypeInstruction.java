@@ -545,7 +545,7 @@ public enum RTypeInstruction implements InstructionType {
         if (validationConditions != null) {
             if (!validationConditions.evaluate(this)) {
                 StringJoiner sj = new StringJoiner(" ");
-                sj.add("Errors:");
+                
                 validationConditions.getErrors().forEach(sj::add);
                 throw new PartiallyLegalInstructionException(
                         instruction,

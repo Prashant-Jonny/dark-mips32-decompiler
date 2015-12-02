@@ -4,10 +4,13 @@ import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepres
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 
+import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class PartiallyLegalInstructionException extends RuntimeException {
     private final String message;
+
+    private String[] partialOutput;
     public PartiallyLegalInstructionException(String message) {
         super(message);
         this.message = message;
@@ -18,18 +21,25 @@ public class PartiallyLegalInstructionException extends RuntimeException {
                                               DecomposedRepresentation d,
                                               MnemonicRepresentation m,
                                               String violatedConditions) {
+        partialOutput = new String[] {Instruction.asPaddedHexString
+                (instruction),
+                format.toString(),
+                d.asDecimalString(),
+                d.asHexadecimalString(),
+                m.toString(),
+                violatedConditions};
+
         StringJoiner sj = new StringJoiner(" ");
-        sj.add("0x" + Integer.toHexString(instruction));
-        sj.add(format.toString());
-        sj.add(d.asDecimalString());
-        sj.add(d.asHexadecimalString());
-        sj.add(m.toString());
-        sj.add(violatedConditions);
+        Arrays.stream(partialOutput).forEach(sj::add);
         message = sj.toString();
     }
 
     @Override
     public String getMessage() {
         return message;
+    }
+
+    public String[] getPartialOutput() {
+        return partialOutput;
     }
 }

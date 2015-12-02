@@ -344,8 +344,6 @@ public enum ITypeInstruction {
         if (condition != null) {
             if (!condition.evaluate(this)) {
                 StringJoiner sj = new StringJoiner(" ");
-                sj.add("Errors:");
-
                 condition.getErrors().forEach(sj::add);
                 throw new PartiallyLegalInstructionException(
                         instruction,

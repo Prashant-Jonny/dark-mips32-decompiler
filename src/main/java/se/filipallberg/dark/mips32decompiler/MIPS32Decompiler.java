@@ -29,8 +29,44 @@ public class MIPS32Decompiler {
             return;
         }
 
-        Iterable<String> i = parse(new FileInputStream(args[0]));
-        i.iterator().forEachRemaining(System.out::println);
+        outputTable(args[0]);
+    }
+
+    public static void outputTable(String filename)
+            throws IOException {
+        String instruction = "Instruction";
+        String format = "Fmt";
+        String decomposition = "Decomposition";
+        String hex = "Decomp hex";
+        String decompiled = "Source";
+        String errors = "Errors";
+        Object[] header = {instruction, format, decomposition, hex,
+                decompiled, errors};
+
+        System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n", header);
+
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+
+        String line;
+        while (isNotNull(line = br.readLine())) {
+
+            try {
+                Instruction i;
+                i = Instruction.fromInteger(numberFromString(line));
+                Object[] row = {
+                        Instruction.asPaddedHexString(i.toNumericalRepresentation()),
+                        i.getFormat(), i.asDecimalString(), i
+                        .asHexadecimalString(),
+                        i.mnemonic(), ""};
+                System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n",
+                        row);
+            } catch (PartiallyLegalInstructionException e) {
+                Object[] row = e.getPartialOutput();
+                System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n",
+                        row);
+            }
+
+        }
     }
 
     public static Iterable<String> parse(InputStream is) throws

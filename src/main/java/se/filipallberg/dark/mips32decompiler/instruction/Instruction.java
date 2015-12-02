@@ -16,7 +16,7 @@ public class Instruction {
     private final Format format;
     private final DecomposedRepresentation decomposedRepresentation;
     private final MnemonicRepresentation mnemonicRepresentation;
-    
+
     public Instruction(int instruction,
                         Format format,
                         DecomposedRepresentation decomposedRepresentation,
@@ -33,6 +33,7 @@ public class Instruction {
 
         /* Opcodes map uniquely to a format, get the associated format */
         Format format = Format.fromOpcode(op);
+
         if (format == Format.R) {
             return RTypeInstruction.fromNumericalRepresentation(instruction);
         } else if (format == Format.I) {
@@ -40,6 +41,7 @@ public class Instruction {
         } else if (format == Format.J) {
             return JTypeInstruction.fromNumericalRepresentation(instruction);
         }
+
         throw new IllegalArgumentException(
                 "The instruction: " + instruction + " with opcode: " +
                         Opcode.toNumericalRepresentation(instruction) +
@@ -69,6 +71,20 @@ public class Instruction {
 
     @Override
     public String toString() {
+        String[] representations = {
+                asPaddedHexString(instruction),
+                format.toString(),
+                asDecimalString(),
+                asHexadecimalString(),
+                mnemonic(),
+
+        };
+        StringJoiner sj = new StringJoiner(" ");
+        Arrays.stream(representations).forEach(sj::add);
+        return sj.toString();
+    }
+
+    public static String asPaddedHexString(int instruction) {
         // Pad the string with leading zeroes. Target length is 10
         // characters (including 0x). So for instance, the number
         // 0x3e00008
@@ -77,22 +93,12 @@ public class Instruction {
 
         // Creates a hexadecimal string without the 0x prefix, target
         // length is 8 characters.
+
         String hexString = Integer.toHexString(instruction);
 
         while (hexString.length() < 8) {
             hexString = "0" + hexString;
         }
-        String formattedHexString = "0x" + hexString;
-
-        String[] representations = {
-                formattedHexString,
-                format.toString(),
-                asDecimalString(),
-                asHexadecimalString(),
-                mnemonic()
-        };
-        StringJoiner sj = new StringJoiner(" ");
-        Arrays.stream(representations).forEach(sj::add);
-        return sj.toString();
+        return "0x" + hexString;
     }
 }
