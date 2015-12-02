@@ -88,7 +88,7 @@ public enum RTypeInstruction implements InstructionType {
      * Is only valid if rd and shamt is 0.
      */
     DIVU(0x00, 0x1b, new Condition<RTypeInstruction, Integer>()
-            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -98,7 +98,7 @@ public enum RTypeInstruction implements InstructionType {
      * register hi. Is only valid if rd and shamt is 0
      */
     MULT(0x00, 0x18, new Condition<RTypeInstruction, Integer>()
-            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
@@ -130,12 +130,13 @@ public enum RTypeInstruction implements InstructionType {
      * are both zero
      */
     MADD(0x1c, 0, new Condition<RTypeInstruction, Integer>()
-            .checkThat("rd", Int::rd).is(0x00).andThat("shamt", Int::shamt).is(0x00),
+            .checkThat("rd", Int::rd).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>
                     (Str::iname, Str::rs, Str::rt)),
 
     /**
-     * Unsigned multiply add. Multiply registers rs and rt (5 and 5 bits, respectively)
+     * Unsigned multiply add. Multiply registers rs and rt (5 and 5
+     * bits, respectively)
      * and add the resulting 64-bit product to the 64-bit value in the
      * concatenated registers lo and hi. Is only valid if rd and shamt
      * are both zero
@@ -356,9 +357,7 @@ public enum RTypeInstruction implements InstructionType {
      * coprocessor 1.
      */
     MFC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat("rs", Int::rs).is(0x00).
-                    andThat("shamt", Int::shamt).is(0x00).
-                    andThat("funct", Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::rd)),
 
     /**
@@ -367,9 +366,7 @@ public enum RTypeInstruction implements InstructionType {
      * coprocessor 1. Note that fs occupies the rd field
      */
     MFC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
-            .checkThat("rs", Int::rs).is(0x00).
-                    andThat("shamt", Int::shamt).is(0x00).
-                    andThat("funct", Int::funct).is(0x00),
+            .checkThat("rs", Int::rs).and("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
@@ -378,8 +375,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     MTC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat("rs", Int::rs).is(0x04).
-                    andThat("shamt", Int::shamt).is(0x00).
-                    andThat("funct", Int::funct).is(0x00),
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt)),
 
     /**
@@ -390,8 +386,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     MTC1(0x11, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat("rs", Int::rs).is(0x04).
-                    andThat("shamt", Int::shamt).is(0x00).
-                    andThat("funct", Int::funct).is(0x00),
+                    andThat("shamt", Int::shamt).is(0x00),
             new MnemonicPattern<>(Str::iname, Str::rt,  Str::fs)),
 
     /**
@@ -439,8 +434,7 @@ public enum RTypeInstruction implements InstructionType {
     /** Do nothing */
     NOP(0x00, 0x00, new Condition<RTypeInstruction, Integer>()
             .checkThat("rt", Int::rt).and("rs", Int::rs).
-                    and("rd", Int::rd).and("shamt", Int::shamt).
-                    and("funct", Int::funct).is(0x00)
+                    and("rd", Int::rd).and("shamt", Int::shamt).is(0x00)
             ,
             new MnemonicPattern<>(Str::iname))
     ;

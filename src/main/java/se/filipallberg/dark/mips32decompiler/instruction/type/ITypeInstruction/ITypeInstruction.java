@@ -12,6 +12,7 @@ import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Register;
 
 import java.util.*;
+import java.util.function.Function;
 
 public enum ITypeInstruction {
     /**
@@ -97,42 +98,48 @@ public enum ITypeInstruction {
      * Load byte. Load the byte at "address" into register rt. The byte is
      * sign-extended.
      */
-    LB(0x20, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LB(0x20, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load byte. Load the byte at "address" into register rt. The byte is
      * not sign-extended.
      */
-    LBU(0x24, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LBU(0x24, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load halfword. Load the 16-bit quantity (halfword) at "address" into
      * register rt. The halfword is sign-extended.
      */
-    LH(0x21, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LH(0x21, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load halfword. Load the 16-bit quantity (halfword) at "address" into
      * register rt. The halfword is not sign-extended.
      */
-    LHU(0x25, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LHU(0x25, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load word. Load the 32-bit quantity (word) at address into register rt.
      */
-    LW(0x23, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LW(0x23, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load word left. Load the left bytes from the word at the possibly
      * unaligned "address" into rt.
      */
-    LWL(0x22, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LWL(0x22, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Load word right. Load the right bytes from the word at the possibly
      * unaligned "address" into rt.
      */
-    LWR(0x26, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LWR(0x26, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Load linked. Load the 32-bit quantity (word) at "address" into register
@@ -140,32 +147,34 @@ public enum ITypeInstruction {
      * is completed by a store conditional (sc) instruction, Str::which will fail if
      * another processor writes into the block containing the loaded word.
      */
-    LL(0x30, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    LL(0x30, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Store byte. Store the low byte from register rt at "address".
      */
-    SB(0x28, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    SB(0x28, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Store halfword. Store the low halfword from register rt at "address".
      */
-    SH(0x29, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    SH(0x29, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Store word. Store the word from register rt at "address".
      */
-    SW(0x2b, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    SW(0x2b, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Store the left bytes from register rt at the possibly unaligned address.
      */
-    SWL(0x2a, new MnemonicPattern<>(Str::iname, Str::rt, Str::addr)),
+    SWL(0x2a, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Store the right bytes from register rt at the possibly unaligned address.
      */
-    SWR(0x2e, new MnemonicPattern<>(Str::iname, Str::rt, Str::addr)),
+    SWR(0x2e, new OffsetMnemonicPattern<>(Str::iname, Str::rt,
+            Str::offset, Str::rs)),
 
     /**
      * Store conditional.  Load the 32-bit quantity (word) in register rt into
@@ -175,7 +184,7 @@ public enum ITypeInstruction {
      * processor wrote to a location in the block containing the addressed word,
      * this instruction does not modify memory and writes 0 into register rt.
      */
-    SC(0x38, new MnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
+    SC(0x38, new OffsetMnemonicPattern<>(Str::iname, Str::rt, Str::offset, Str::rs)),
 
     /**
      * Branch on equal. Conditionally branch the number of instructions
@@ -416,6 +425,45 @@ public enum ITypeInstruction {
 
         static String offset(ITypeInstruction instruction) {
             return Short.toString((short) instruction.offset);
+        }
+    }
+
+    private static class OffsetMnemonicPattern<T> extends
+            MnemonicPattern<T> {
+        Function<T, String> iname;
+        Function<T, String> rt;
+        Function<T, String> offset;
+        Function<T, String> rs;
+
+        /**
+         * Expects to be called with the parameters
+         * Str::iname, Str::rt, Str::offset, Str::rs
+         */
+        public OffsetMnemonicPattern(Function<T, String> iname,
+                                     Function<T, String>... params) {
+            super(iname, params);
+            assert(params.length == 3);
+            this.iname = iname;
+            rt = params[0];
+            offset = params[1];
+            rs = params[2];
+        }
+
+        /**
+         * Yields output on the form <iname, rt, offset(rs)>
+         */
+        @Override
+        public MnemonicRepresentation compose(T e) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(iname.apply(e)).append(" ")
+                    .append(rt.apply(e))
+                    .append(", ")
+                    .append(offset.apply(e))
+                    .append("(")
+                    .append(rs.apply(e))
+                    .append(")");
+
+            return MnemonicRepresentation.fromString(sb.toString());
         }
     }
 }

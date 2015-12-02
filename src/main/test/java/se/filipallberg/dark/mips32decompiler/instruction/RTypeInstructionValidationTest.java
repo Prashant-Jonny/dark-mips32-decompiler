@@ -437,15 +437,6 @@ public class RTypeInstructionValidationTest {
         instruction.shamt = 1;
         instruction.validate();
     }
-
-    @Test (expected = PartiallyLegalInstructionException.class)
-    public void mfc0ShouldNotValidateIfFunctIsNot0x00() {
-        RTypeInstruction instruction = RTypeInstruction.MFC0;
-        instruction.funct = 1;
-        instruction.rs = 0x00;
-        instruction.shamt = 0x00;
-        instruction.validate();
-    }
     
     @Test (expected = PartiallyLegalInstructionException.class)
     public void mfc0ShouldNotValidateIfRsIsNot0x00() {
@@ -466,15 +457,6 @@ public class RTypeInstructionValidationTest {
     }
 
     @Test (expected = PartiallyLegalInstructionException.class)
-    public void mfc1ShouldNotValidateIfFunctIsNot0x00() {
-        RTypeInstruction instruction = RTypeInstruction.MFC1;
-        instruction.funct = 1;
-        instruction.rs = 0x00;
-        instruction.shamt = 0x00;
-        instruction.validate();
-    }
-    
-    @Test (expected = PartiallyLegalInstructionException.class)
     public void mfc1ShouldNotValidateIfRsIsNot0x00() {
         RTypeInstruction instruction = RTypeInstruction.MFC1;
         instruction.funct = 0x00;
@@ -489,15 +471,6 @@ public class RTypeInstructionValidationTest {
         instruction.funct = 0x00;
         instruction.rs = 0x00;
         instruction.shamt = 1;
-        instruction.validate();
-    }
-
-    @Test (expected = PartiallyLegalInstructionException.class)
-    public void mtc0ShouldNotValidateIfFunctIsNot0x00() {
-        RTypeInstruction instruction = RTypeInstruction.MTC0;
-        instruction.funct = 1;
-        instruction.rs = 0x04;
-        instruction.shamt = 0x00;
         instruction.validate();
     }
     
@@ -516,15 +489,6 @@ public class RTypeInstructionValidationTest {
         instruction.funct = 0x00;
         instruction.rs = 0x04;
         instruction.shamt = 1;
-        instruction.validate();
-    }
-
-    @Test (expected = PartiallyLegalInstructionException.class)
-    public void mtc1ShouldNotValidateIfFunctIsNot0x00() {
-        RTypeInstruction instruction = RTypeInstruction.MTC1;
-        instruction.funct = 1;
-        instruction.rs = 0x04;
-        instruction.shamt = 0x00;
         instruction.validate();
     }
     
@@ -586,17 +550,6 @@ public class RTypeInstructionValidationTest {
         instruction.rd = 0x00;
         instruction.rt = 0x00;
         instruction.shamt = 1;
-        instruction.validate();
-    }
-
-    @Test (expected = PartiallyLegalInstructionException.class)
-    public void nopShouldNotValidateIfFunctIsNot0x00() {
-        RTypeInstruction instruction = RTypeInstruction.NOP;
-        instruction.funct = 1;
-        instruction.rd = 0x00;
-        instruction.rs = 0x00;
-        instruction.rt = 0x00;
-        instruction.shamt = 0x00;
         instruction.validate();
     }
     

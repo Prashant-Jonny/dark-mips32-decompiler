@@ -42,5 +42,29 @@ as a tuple,
     representation} \rangle)
 \end{equation*}
 
+For the R-type instructions we have that the identifying
+characteristics is always expressed as a pair $(\textit{opcode},
+\textit{funct})$, and that an I-type instruction is either identified
+solely by its \opcode or by the pair $(\textit{opcode}, \textit{rt})$
+in the case where \tt{opcode=0x01}, and J-type instructions are always
+identified solely by their opcode.
 
+Certain instructions must fulfill various conditions to be completely
+valid. For an example, the instruction \texttt{MTC0} is identified by
+$(\textit{opcode=0x10}, \textit{funct=0x00})$. To be valid, \tt{rs}
+needs to be \tt{0x04}, while \tt{shamt} has to be \tt{0x00}.
 
+Furthermore, its associated mnemonic pattern is \pattern{iname, rd, rt}.
+
+Encoding this knowledge at a single point is done in an enum declaration,
+
+\begin{minted}[bgcolor=mintedbackground]{java}
+/**
+ * Move to coprocessor 0, move CPU register rt to register
+ * rd in a coprocessor
+ */
+MTC0(0x10, 0x00, new Condition<RTypeInstruction, Integer>()
+        .checkThat("rs", Int::rs).is(0x04).
+                andThat("shamt", Int::shamt).is(0x00),
+        new MnemonicPattern<>(Str::iname, Str::rd,  Str::rt)),
+\end{minted}
