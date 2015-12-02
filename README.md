@@ -1,1 +1,3 @@
-# dark-mips32-decompiler [![Build Status](https://travis-ci.org/leksak/dark-mips32-decompiler.svg?branch=master)](https://travis-ci.org/leksak/dark-mips32-decompiler)This is by far the worst code I have ever written
+# dark-mips32-decompiler [![Build Status](https://travis-ci.org/leksak/dark-mips32-decompiler.svg?branch=master)](https://travis-ci.org/leksak/dark-mips32-decompiler)
+
+This is by far the worst code I have ever written
