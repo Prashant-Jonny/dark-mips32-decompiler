@@ -4,6 +4,9 @@
 % the \includegraphics directive
 \usepackage{graphicx}
 
+% Specify date format
+\usepackage[yyyymmdd]{datetime}
+
 % Allows forceful placement of figures
 % using the [H] option for figures.
 \usepackage{float}
@@ -17,6 +20,9 @@
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+
+% Used for nice page headings.
+\usepackage{fancyhdr}
 
 % Allows us to define our own macros
 \usepackage{letltxmacro}
@@ -36,8 +42,48 @@
 
 \usepackage{xcolor}
 \definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
+\usepackage{xspace}
+
+\renewcommand\dateseparator{-}
+
+\newcommand{\department}{Department of Computing Science}
+\newcommand{\uni}{Ume\aa\ University}
+
+\newcommand{\me}{Filip Allberg (\texttt{filip@cs.umu.se})}
+\newcommand{\name}{MIPS32-decompiler}
+\title{\name}
+\author{\me}
+\newcommand{\coursename}{Computer Organization and Architecture\xspace}
+\newcommand{\coursecode}{5DV118}
+\newcommand{\instructor}{Stephen Hegner, Thomas Johansson}
+
+\pagestyle{fancy}
 
 \begin{document}
+
+\raggedbottom
+
+\date{}
+\begin{titlepage}
+\maketitle
+
+\fancyfoot{}
+
+\thispagestyle{fancy}
+\headheight 35pt
+
+\lhead{\small \department \\
+\uni} % These two are also defined in config.sty
+
+\rhead{\small \today} %date
+
+
+\cfoot{\coursename \coursecode HT15, 7.5 hp\\
+Supervisor(s): \instructor}
+
+\end{titlepage}
+
+\tableofcontents
 
 \section{Introduction}
 
@@ -125,9 +171,9 @@ Specifically,
 will be covered. We will augment this list later on.
 \subsubsection{Example: Decomposing \texttt{mul}}\label{section:mul-example}
 
-Consider the 32-bit number \texttt{0x71014802}. It is \emph{decomposed}
-into fields of varying lengths depending on the \emph{format} of the
-instruction.
+Consider the 32-bit number \texttt{0x71014802}. It is
+\emph{decomposed} into fields of varying lengths depending on the
+\emph{format} of the instruction.
 
 For all numbers in the MIPS32 instruction set the leftmost six bits
 always represent the opcode for the instruction. The opcode alone is
@@ -171,7 +217,7 @@ consulted. Pairing the opcode, \texttt{0x1c} and the value in the
   \label{fig:mul-decomposed}
 \end{figure}
 
-From Fig. \ref{fig:r-decomposed} the registers \texttt{rs},
+From Fig.~\ref{fig:r-decomposed} the registers \texttt{rs},
 \texttt{rt} and \texttt{rd} were determined to have the addresses 8,
 1, and 9, respectively. In MIPS registers are named, following the
 convention shown in Table. \ref{table:mips-register-naming-convention}
@@ -207,6 +253,7 @@ representation} of the instruction to be
 \begin{center}
   \texttt{mul \$t1, \$t0, \$at}
 \end{center}
+
 \section{Problem statement}\label{section:problem-statement}
 
 In this assignment the core functionality which is exposed is
