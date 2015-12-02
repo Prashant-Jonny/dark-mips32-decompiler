@@ -1,6 +1,7 @@
 package se.filipallberg.dark.mips32decompiler;
 
 import se.filipallberg.dark.mips32decompiler.instruction.Instruction;
+import se.filipallberg.dark.mips32decompiler.instruction.PartiallyLegalInstructionException;
 
 import java.io.*;
 import java.util.*;
@@ -28,23 +29,27 @@ public class MIPS32Decompiler {
             return;
         }
 
-        Iterator<Instruction> i = parse(new FileInputStream(args[0]));
-        i.forEachRemaining(System.out::println);
+        Iterable<String> i = parse(new FileInputStream(args[0]));
+        i.iterator().forEachRemaining(System.out::println);
     }
 
-    public static Iterator<Instruction> parse(InputStream is) throws
+    public static Iterable<String> parse(InputStream is) throws
             IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-        List<Instruction> instructions = new ArrayList<>();
+        List<String> disassembledCode = new ArrayList<>();
         String line;
         while (isNotNull(line = br.readLine())) {
-            Instruction instruction;
-            instruction = Instruction.fromInteger(numberFromString(line));
-            instructions.add(instruction);
+            try {
+                Instruction instruction;
+                instruction = Instruction.fromInteger(numberFromString(line));
+                disassembledCode.add(instruction.toString());
+            } catch (PartiallyLegalInstructionException e) {
+                disassembledCode.add(e.getMessage());
+            }
         }
 
-        return instructions.iterator();
+        return disassembledCode;
     }
 
     private static int numberFromString(String s) {

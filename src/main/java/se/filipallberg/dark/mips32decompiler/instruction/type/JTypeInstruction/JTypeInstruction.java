@@ -50,7 +50,7 @@ public enum JTypeInstruction {
 
         /** Get the correct J-type instruction */
         DecomposedRepresentation d =
-                DecomposedRepresentation.fromNumber(instruction);
+                DecomposedRepresentation.fromNumber(instruction, 6, 26);
         String iname = map.get(opcode).name().toLowerCase();
 
         return new Instruction(instruction,
@@ -61,7 +61,7 @@ public enum JTypeInstruction {
 
     private static MnemonicRepresentation J(String iname,
                                             DecomposedRepresentation d) {
-        String target = Integer.toString(d.toIntArray()[1]);
+        String target = "0x" + Integer.toHexString(d.toIntArray()[1]);
         return MnemonicRepresentation.fromString(iname + " " + target);
     }
 }

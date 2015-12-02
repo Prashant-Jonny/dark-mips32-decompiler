@@ -69,8 +69,23 @@ public class Instruction {
 
     @Override
     public String toString() {
+        // Pad the string with leading zeroes. Target length is 10
+        // characters (including 0x). So for instance, the number
+        // 0x3e00008
+        // should be written as
+        // 0x03e00008
+
+        // Creates a hexadecimal string without the 0x prefix, target
+        // length is 8 characters.
+        String hexString = Integer.toHexString(instruction);
+
+        while (hexString.length() < 8) {
+            hexString = "0" + hexString;
+        }
+        String formattedHexString = "0x" + hexString;
+
         String[] representations = {
-                "0x" + Integer.toHexString(instruction),
+                formattedHexString,
                 format.toString(),
                 asDecimalString(),
                 asHexadecimalString(),

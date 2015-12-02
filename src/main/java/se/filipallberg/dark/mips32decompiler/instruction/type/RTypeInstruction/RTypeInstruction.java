@@ -521,6 +521,7 @@ public enum RTypeInstruction implements InstructionType {
      */
     private Condition<RTypeInstruction, Integer> validationConditions;
     private MnemonicPattern<RTypeInstruction> pattern;
+    private MnemonicRepresentation mnemonicRepresentation;
 
     RTypeInstruction(int opcode, int funct,
                      Condition<RTypeInstruction, Integer>
@@ -543,12 +544,17 @@ public enum RTypeInstruction implements InstructionType {
     public boolean validate() {
         if (validationConditions != null) {
             if (!validationConditions.evaluate(this)) {
-                StringJoiner sj = new StringJoiner("\n\t", "{(0x" +
-                        Integer.toHexString(instruction) + ") " +
-                        "Errors:\n\t", "}");
-
+                StringJoiner sj = new StringJoiner(" ");
+                sj.add("Errors:");
                 validationConditions.getErrors().forEach(sj::add);
-                throw new PartiallyLegalInstructionException(sj.toString());
+                throw new PartiallyLegalInstructionException(
+                        instruction,
+                        getFormat(instruction),
+                        DecomposedRepresentation.fromNumber(instruction,
+                                decomposedPattern),
+                        pattern.compose(this),
+                        sj.toString()
+                );
             }
         }
         return true;
@@ -573,14 +579,12 @@ public enum RTypeInstruction implements InstructionType {
         RTypeInstruction rTypeInstruction = identifyInstruction
                 (instruction);
 
-        MnemonicRepresentation m = rTypeInstruction.pattern.compose(rTypeInstruction);
         rTypeInstruction.validate();
-
         return new Instruction(
                 instruction,
                 Format.R,
                 rTypeInstruction.decomposedRepresentation,
-                m);
+                rTypeInstruction.mnemonicRepresentation);
     }
 
     private static RTypeInstruction identifyInstruction(int instruction) {
@@ -617,6 +621,8 @@ public enum RTypeInstruction implements InstructionType {
         r.rd = decomposition[3];
         r.shamt = decomposition[4];
         r.funct = decomposition[5];
+        r.mnemonicRepresentation = r.pattern.compose(r);
+
         return r;
     }
     
@@ -647,10 +653,6 @@ public enum RTypeInstruction implements InstructionType {
     }
 
     private static class Int {
-        static Integer funct(RTypeInstruction r) {
-            return r.funct;
-        }
-
         static Integer rd(RTypeInstruction r) {
             return r.rd;
         }
@@ -669,11 +671,15 @@ public enum RTypeInstruction implements InstructionType {
     }
 
 
-    /** Returns true if the instruction has the R-format */
-    private static boolean hasCorrectFormat(int instruction) {
+    public static Format getFormat(int instruction) {
         int op = Opcode.toNumericalRepresentation(instruction);
         Opcode opcode = Opcode.fromNumericalRepresentation(op);
 
-        return Format.fromOpcode(opcode) == Format.R;
+        return Format.fromOpcode(opcode);
+    }
+
+    /** Returns true if the instruction has the R-format */
+    private static boolean hasCorrectFormat(int instruction) {
+        return getFormat(instruction) == Format.R;
     }
 }

@@ -4,7 +4,6 @@ import se.filipallberg.dark.mips32decompiler.instruction.Condition;
 import se.filipallberg.dark.mips32decompiler.instruction.PartiallyLegalInstructionException;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicPattern;
 import se.filipallberg.dark.mips32decompiler.instruction.mnemonic.MnemonicRepresentation;
-import se.filipallberg.dark.mips32decompiler.instruction.type.BitField;
 import se.filipallberg.dark.mips32decompiler.instruction.util.DecomposedRepresentation;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Format;
 import se.filipallberg.dark.mips32decompiler.instruction.util.Opcode;
@@ -53,9 +52,8 @@ public enum ITypeInstruction {
      * register are set to 0.
      */
     LUI(0xf, new Condition<ITypeInstruction, Integer>()
-            .checkThat("rs", Int::rs).is(0x00), new MnemonicPattern<>
-            (Str::rt,
-            Str::imm)),
+            .checkThat("rs", Int::rs).is(0x00),
+            new MnemonicPattern<>(Str::iname, Str::rt, Str::imm)),
 
     /**
      * Trap if equal immediate. If register rs is equal to
@@ -287,6 +285,7 @@ public enum ITypeInstruction {
     private final Opcode opcode;
     private DecomposedRepresentation decomposedRepresentation;
     private MnemonicPattern<ITypeInstruction> mnemonicPattern;
+    private MnemonicRepresentation mnemonicRepresentation;
 
     ITypeInstruction(int opcode, MnemonicPattern<ITypeInstruction> mnemonicPattern) {
         this.mnemonicPattern = mnemonicPattern;
@@ -332,26 +331,29 @@ public enum ITypeInstruction {
         /** Get the correct I-type instruction */
         ITypeInstruction iTypeInstruction = identifyInstruction(instruction);
         iTypeInstruction.validate();
-        MnemonicRepresentation m = iTypeInstruction.mnemonicPattern.compose
-                (iTypeInstruction);
 
         return new Instruction(
                 instruction,
                 Format.I,
                 iTypeInstruction.decomposedRepresentation,
-                m);
+                iTypeInstruction.mnemonicRepresentation);
     }
 
     private int instruction;
     public boolean validate() {
         if (condition != null) {
             if (!condition.evaluate(this)) {
-                StringJoiner sj = new StringJoiner("\n\t", "{(0x" +
-                        Integer.toHexString(instruction) + ") " +
-                        "Errors:\n\t", "}");
+                StringJoiner sj = new StringJoiner(" ");
+                sj.add("Errors:");
 
                 condition.getErrors().forEach(sj::add);
-                throw new PartiallyLegalInstructionException(sj.toString());
+                throw new PartiallyLegalInstructionException(
+                        instruction,
+                        Format.fromOpcode(opcode),
+                        DecomposedRepresentation.fromNumber(instruction,
+                                decomposedPattern),
+                        mnemonicPattern.compose(this),
+                        sj.toString());
             }
         }
         return true;
@@ -359,7 +361,6 @@ public enum ITypeInstruction {
 
     public int rs;
     public int offset;
-    public int addr;
     public int label;
     public int rt;
     public int imm;
@@ -379,7 +380,7 @@ public enum ITypeInstruction {
         i.rs = decomposition[1];
         i.rt = decomposition[2];
         i.imm = i.label = i.offset = decomposition[3];
-
+        i.mnemonicRepresentation = i.mnemonicPattern.compose(i);
         i.decomposedRepresentation = d;
         return i;
     }
@@ -417,10 +418,6 @@ public enum ITypeInstruction {
 
         static String label(ITypeInstruction instruction) {
             return Short.toString((short) instruction.label);
-        }
-
-        static String addr(ITypeInstruction instruction) {
-            return Short.toString((short) instruction.addr);
         }
 
         static String offset(ITypeInstruction instruction) {
@@ -462,7 +459,6 @@ public enum ITypeInstruction {
                     .append("(")
                     .append(rs.apply(e))
                     .append(")");
-
             return MnemonicRepresentation.fromString(sb.toString());
         }
     }
