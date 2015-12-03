@@ -10,63 +10,76 @@ public class MIPS32Decompiler {
     private static StringJoiner sj = new StringJoiner(" ");
 
     public static void main(String[] args) throws IOException {
-        if (args.length == 0 || args.length > 2) {
+        if (args.length == 0 || "-h".equals(args[0])) {
             System.err.println("Usage: MIPS32Decompiler [OPTION] " +
-                    "<number|file>");
+                    "<number|file>...");
             System.err.println("OPTIONS:");
             System.err.println("    -n Specifies that input should be read from ");
             System.err.println("       from the command-line. The following ");
-            System.err.println("       argument may either be a number in hexadecimal form");
+            System.err.println("       argument(s) may either be a " +
+                    "number in hexadecimal form");
             System.err.println("       or decimal form. Hexadecimal numbers must be");
             System.err.println("       preceeded by the 0x prefix.");
-            System.err.println("If no option is passed, the argument passed is");
+            System.err.println("    -h Shows this help message.");
+            System.err.println("If no option is passed, the argument(s) " +
+                    "passed is");
             System.err.println("assumed to be path to a filename");
-        }
-
-        if ("-n".equals(args[0])) {
-            int instruction = numberFromString(args[1]);
-            System.out.println(Instruction.fromInteger(instruction));
             return;
         }
 
-        outputTable(args[0]);
+        List<Integer> numbers = new ArrayList<>();
+        if ("-n".equals(args[0])) {
+            for (int i = 1; i < args.length; i++) {
+                numbers.add(numberFromString(args[i]));
+            }
+            outputTable(numbers);
+        } else {
+            for (String arg : args) {
+                BufferedReader br = new BufferedReader(new FileReader
+                        (arg));
+
+                String line;
+                while (isNotNull(line = br.readLine())) {
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    numbers.add(numberFromString(line));
+                }
+                outputTable(numbers);
+            }
+        }
     }
 
-    public static void outputTable(String filename)
+    public static void outputTable(List<Integer> numbers)
             throws IOException {
         String instruction = "Instruction";
         String format = "Fmt";
         String decomposition = "Decomposition";
         String hex = "Decomp hex";
         String decompiled = "Source";
-        String errors = "Errors";
         Object[] header = {instruction, format, decomposition, hex,
-                decompiled, errors};
+                decompiled};
 
-        System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n", header);
+        System.out.format("%-15s %-2s %-15s %-22s %-18s\n", header);
 
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-
-        String line;
-        while (isNotNull(line = br.readLine())) {
-
+        numbers.forEach(e -> {
             try {
                 Instruction i;
-                i = Instruction.fromInteger(numberFromString(line));
+                i = Instruction.fromInteger(e);
                 Object[] row = {
                         Instruction.asPaddedHexString(i.toNumericalRepresentation()),
                         i.getFormat(), i.asDecimalString(), i
                         .asHexadecimalString(),
-                        i.mnemonic(), ""};
-                System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n",
-                        row);
-            } catch (PartiallyLegalInstructionException e) {
-                Object[] row = e.getPartialOutput();
-                System.out.format("%-15s %-2s %-15s %-22s %-18s %-15s\n",
-                        row);
-            }
+                        i.mnemonic()};
+                System.out.format("%-15s %-2s %-15s %-22s %-18s\n", row);
+            } catch (PartiallyLegalInstructionException exception) {
+                Object[] row = exception.getPartialOutput();
 
-        }
+                System.out.format("%-15s %-2s %-15s %-22s %-18s\n", row);
+                System.out.format("  Errors: %-15s\n", row[row.length -
+                        1]);
+            }
+        });
     }
 
     public static Iterable<String> parse(InputStream is) throws
@@ -76,6 +89,7 @@ public class MIPS32Decompiler {
         List<String> disassembledCode = new ArrayList<>();
         String line;
         while (isNotNull(line = br.readLine())) {
+            if (line.isEmpty()) { continue; }
             try {
                 Instruction instruction;
                 instruction = Instruction.fromInteger(numberFromString(line));

@@ -3,7 +3,7 @@
 % Enables the inclusion of images using
 % the \includegraphics directive
 \usepackage{graphicx}
-
+\usepackage{float}
 % Specify date format
 \usepackage[yyyymmdd]{datetime}
 
@@ -17,12 +17,12 @@
 \usepackage{parskip}
 \usepackage{minted}
 \usepackage{amsmath}
-
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 
 % Used for nice page headings.
 \usepackage{fancyhdr}
+\usepackage{lastpage}
 
 % Allows us to define our own macros
 \usepackage{letltxmacro}
@@ -43,7 +43,26 @@
 \usepackage{xcolor}
 \definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
 \usepackage{xspace}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true, % Colours links instead of ugly boxes
+  urlcolor = blue, % Colour for external hyperlinks
+  linkcolor = blue, % Colour of internal links
+  citecolor = red % Colour of citations
+}
 
+
+\definecolor{inlinecode}{rgb}{0.85,0.85,0.85}
+
+% Enclose your code snippets with \hlc{code} to
+% monospace the text and highlight it
+\usepackage{soul}
+\newcommand{\hlc}[2][inlinecode]{{\sethlcolor{#1} \texttt{\hl{#2}}}}
+
+\usepackage{listings}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{geometry}
 \renewcommand\dateseparator{-}
 
 \newcommand{\department}{Department of Computing Science}
@@ -82,6 +101,13 @@
 Supervisor(s): \instructor}
 
 \end{titlepage}
+
+
+% Header settings
+\fancyhead[LE,RO]{\thepage(\pageref{LastPage})}
+\fancyheadoffset[LE,RO]{12mm}
+\fancyhead[LO,RE]{\coursename: \title \\ \me}
+\fancyfoot[L,R,C]{}
 
 \tableofcontents
 
@@ -124,7 +150,7 @@ decompiler is capable of comprehending.
 According to Aho et al.  a \emph{compiler} is a program that
 can read a program in one language --- the \emph{source} language --
 and translates it into an equivalent program in another language --
-the \emph{target} language; see Fig. \ref{fig:compiler}.
+the \emph{target} language; see Fig.~\ref{fig:compiler}.
 
 \begin{figure}[H]
   \centering
@@ -318,14 +344,14 @@ instruction, and outputting it according to some \emph{pattern}.
 
 We will now address these issues in more detail, and create a running
 tally of functionality that we would like to express within our
-system. Afterwards we will define a fascimilie of a domain-specific
+system. Afterwards we will define a facsimile of a domain-specific
 language (DSL) that will encode the items we touch upon here.
 
 \subsection{Identifying the instruction}\label{section:identification}
 
 Recall from our earlier example where we decompiled a \tt{mul}
 instruction that the \opcode is always sufficient to identify
-the format of the instruction it is not always sufficent to
+the format of the instruction it is not always sufficient to
 identify an instruction uniquely.
 
 We find that all J-type instructions and for some, but not all, I-type
@@ -418,7 +444,8 @@ The source code may be downloaded at the following two addresses,
 \url{git@github.com:leksak/dark-mips32-decompiler.git}
 \end{center}
 
-Or viewed in the following folder \hlc{~eeemil/edu/datakom}.
+Or viewed in the following folder
+\hlc{{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}filip/edu/dark-mips32-decompiler} on the institution's network.
 
 For the duration of this report the directory created by cloning
 the repository is referred to as the \emph{root directory}.
@@ -458,24 +485,233 @@ the \hlc{index.html} in the aforementioned folder.
 
 In figure~\ref{fig:tests} the output yielded by the tests is shown.
 
-\FloatBarrier
-\begin{figure}[H]
+\begin{landscape}
+\thispagestyle{plain}
+\cfoot{}
+\begin{figure}[htpb]
 \centering
-\includegraphics[scale=0.2]{img/tests.png}
+\includegraphics[scale=0.4]{img/tests.png}
 \caption{Test results}
 \label{fig:tests}
 \end{figure}
-\FloatBarrier
+\end{landscape}
+
 
 On the aforementioned page, \hlc{index.html}, you may navigate through
 the different packages and view the results for specific tests.
+
+\subsection{Usage}
+
+The program supplies two means of interfacing with it, by calling
+the program with 0 arguments or the \hlc{-h} flag we can get the
+user guide supplied with the software
+
+\begin{minted}[bgcolor=mintedbackground]{bash}
+$ java -jar build/libs/MIPS32Decompiler.jar -h
+Usage: MIPS32Decompiler [OPTION] <number|file>...
+OPTIONS:
+    -n Specifies that input should be read from 
+       from the command-line. The following 
+       argument(s) may either be a number in hexadecimal form
+       or decimal form. Hexadecimal numbers must be
+       preceded by the 0x prefix.
+    -h Shows this help message.
+If no option is passed, the argument(s) passed is
+assumed to be path to a filename
+\end{minted}
+
+\subsubsection{Decompiling source code from files}
+
+The default setting is that the software interprets its given input
+arguments as a filenames, relative to the directory from which you
+execute the \tt{.jar} file. In the root directory of the project three
+example files are included.
+
+\tt{sample-program.txt} showcases the tabulated output for several
+instructions, as well as how error messages for partially legal
+instructions are written out.
+
+\tt{sample-decimal.txt} showcases that the program is capable
+of handling instructions in base 10. The file ends with
+a trailing blank line, which is not a problem for the software.
+
+\tt{sample-mingled.txt} demonstrates that the program does not expect
+the file to be written consistently in either base 10 or base 16 but
+evaluates this on a per-line basis. A number is interpreted
+to be in base 16 if it is prefixed by \tt{0x}. The two numbers
+are separated by a blank-line which does not pose an issue.
+
+We can inspect the contents of these files using \hlc{cat}
+as shown in Listing.~\ref{listing:sample-input-files}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[basicstyle=\small, 
+    language=bash, 
+    caption=Sample input files,
+    label=listing:sample-input-files,
+    backgroundcolor=\color{mintedbackground}]
+$ cat sample-decimal.txt 
+599654392
+
+$ cat sample-mingled.txt 
+599654392
+
+0xafbf0004
+$ cat sample-program.txt 
+0x23bdfff8
+0xafbf0004
+0xafa40000
+0x28880001
+0x11000003
+0x20020001
+0x23bd0008
+0x03e00008
+0x2084ffff
+0x0c100000
+0x8fa40000
+0x8fbf0004
+0x23bd0008
+0x70821002
+0x03e00008
+0x00012122
+\end{lstlisting}
+\end{minipage}
+
+Similarly we may observe the output of our decompiler in
+Listing.~\ref{listing:tabularized-output}, where the
+files are passed as a series of arguments.
+
+\begin{landscape}
+\begin{minipage}{\linewidth}
+\thispagestyle{empty}
+\begin{lstlisting}[ 
+    language=bash, 
+    caption=Tabularized output,
+    breaklines=false,
+    label=listing:tabularized-output,
+    backgroundcolor=\color{mintedbackground}][htpb]
+$ java -jar build/libs/MIPS32Decompiler.jar \
+sample-mingled.txt sample-decimal.txt sample-program.txt
+Instruction     Fmt Decomposition   Decomp hex             Source            
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0xafbf0004      I  [43 29 31 4]    [0x2b 0x1d 0x1f 4]     sw $ra, 4($sp)    
+Instruction     Fmt Decomposition   Decomp hex             Source            
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0xafbf0004      I  [43 29 31 4]    [0x2b 0x1d 0x1f 4]     sw $ra, 4($sp)    
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+Instruction     Fmt Decomposition   Decomp hex             Source            
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0xafbf0004      I  [43 29 31 4]    [0x2b 0x1d 0x1f 4]     sw $ra, 4($sp)    
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0xafbf0004      I  [43 29 31 4]    [0x2b 0x1d 0x1f 4]     sw $ra, 4($sp)    
+0xafa40000      I  [43 29 4 0]     [0x2b 0x1d 4 0]        sw $a0, 0($sp)    
+0x28880001      I  [10 4 8 1]      [0xa 4 8 1]            slti $t0, $a0, 1  
+0x11000003      I  [4 8 0 3]       [4 8 0 3]              beq $t0, $zero, 3 
+0x20020001      I  [8 0 2 1]       [8 0 2 1]              addi $v0, $zero, 1
+0x23bd0008      I  [8 29 29 8]     [8 0x1d 0x1d 8]        addi $sp, $sp, 8  
+0x03e00008      R  [0 31 0 0 0 8]  [0 0x1f 0 0 0 8]       jr $ra            
+0x2084ffff      I  [8 4 4 65535]   [8 4 4 0xffff]         addi $a0, $a0, -1 
+0x0c100000      J  [3 1048576]     [3 0x100000]           jal 0x100000      
+0x8fa40000      I  [35 29 4 0]     [0x23 0x1d 4 0]        lw $a0, 0($sp)    
+0x8fbf0004      I  [35 29 31 4]    [0x23 0x1d 0x1f 4]     lw $ra, 4($sp)    
+0x23bd0008      I  [8 29 29 8]     [8 0x1d 0x1d 8]        addi $sp, $sp, 8  
+0x70821002      R  [28 4 2 2 0 2]  [0x1c 4 2 2 0 2]       mul $v0, $a0, $v0 
+0x03e00008      R  [0 31 0 0 0 8]  [0 0x1f 0 0 0 8]       jr $ra            
+0x00012122      R  [0 0 1 4 4 34]  [0 0 1 4 4 0x22]       sub $a0, $zero, $at
+  Errors: shamt: Got: 4 Expected: 0
+\end{lstlisting}
+\end{minipage}
+\end{landscape}
+
+The table headers, see Listing.~\ref{listing:table-headers}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[basicstyle=\small, 
+    language=bash, 
+    caption=Table headers,
+    label=listing:table-headers,
+    backgroundcolor=\color{mintedbackground}]
+Instruction     Fmt Decomposition   Decomp hex             Source
+\end{lstlisting}
+\end{minipage}
+
+are written out before each file decompilation, refer to
+Listing.~\ref{listing:tabularized-output} to see that this is true
+when multiple input files are specified.
+
+\subsubsection{Decompiling input numbers}
+
+Additionally, the software provides a secondary means of use, through
+the \hlc{-n} flag which stands for \emph{number} so that the arguments
+immediately following the invocation of the program are interpreted
+as if they were contents in a file. Notice in 
+Listing.~\ref{listing:parsing-numbers-from-input-arguments} that it does not matter
+whether or not the number is in base 10 or base 16 (as long as numbers in
+base 16 are prefixed by \tt{0x}).
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[basicstyle=\small, 
+    language=bash, 
+    caption=Parsing numbers from input arguments using the \texttt{-n} flag,
+    label=listing:parsing-numbers-from-input-arguments,
+  backgroundcolor=\color{mintedbackground}]
+$ java -jar build/libs/MIPS32Decompiler.jar -n \
+> 599654392 0xafbf0004
+Instruction     Fmt Decomposition   Decomp hex             Source            
+0x23bdfff8      I  [8 29 29 65528] [8 0x1d 0x1d 0xfff8]   addi $sp, $sp, -8 
+0xafbf0004      I  [43 29 31 4]    [0x2b 0x1d 0x1f 4]     sw $ra, 4($sp)    
+\end{lstlisting}
+\end{minipage}
+
+Lastly, note that the software handles partially valid instructions,
+i.e. instructions that may be correctly identified but validates some
+condition. For instance, the number \tt{0x00012122} corresponds to the
+\tt{sub} instruction. The number decomposes into bitfields according
+to the format of the instruction (viz. the R-format), and the opcode
+and funct field hold the correct values to identify the instruction as
+a \tt{sub} instruction \emph{but} the \tt{shamt} field is not set to
+4, which it has to be according to the instruction specification.
+
+When an instruction is partially legal the violating fields are outputted
+on the following line, see Listing.~\ref{listing:partially-valid-instructions}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[basicstyle=\small, 
+    language=bash, 
+    caption=Error print-outs for partially valid instructions,
+    label=listing:partially-valid-instructions,
+  backgroundcolor=\color{mintedbackground}]
+$ java -jar build/libs/MIPS32Decompiler.jar -n 0x00012122
+Instruction     Fmt Decomposition   Decomp hex             Source            
+0x00012122      R  [0 0 1 4 4 34]  [0 0 1 4 4 0x22]       sub $a0, $zero, $at
+  Errors: shamt: Got: 4 Expected: 0
+\end{lstlisting}
+\end{minipage}
+
+If there are multiple conditions that are violated, they are all
+specified in the error column, see Listing.~\ref{listing:multiple-errors}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[basicstyle=\small, 
+    language=bash, 
+    caption=Multiple errors,
+    breaklines=false,
+    label=listing:multiple-errors,
+  backgroundcolor=\color{mintedbackground}]
+java -jar build/libs/MIPS32Decompiler.jar -n 34603008
+Instruction     Fmt Decomposition   Decomp hex          Source
+0x02100000      R  [0 16 16 0 0 0] [0 0x10 0x10 0 0 0]    nop
+  Errors: rt: Got: 16 Expected: 0 rs: Got: 16 Expected: 0
+\end{lstlisting}
+\end{minipage}
 
 \section{Domain-specific language}
 
 In the previous section.~\ref{section:problem-statement} we described
 the \emph{core} issues that our solution needs to address. 
 
-Summarizingly, we found that we want to be able to
+Summarizing, we found that we want to be able to
 
 \begin{itemize}
 \item Get the six left-most bits from a 32-bit integer,
@@ -489,8 +725,8 @@ Summarizingly, we found that we want to be able to
 
 The first two items are trivial, the first is the result of a
 bit-shift operation and as alluded to previously the Format is always
-inferrable from the Opcode, which means that we can either let each
-opcode know its associated format or similarily associate formats
+inferable from the Opcode, which means that we can either let each
+opcode know its associated format or similarly associate formats
 with sets of opcodes elsewhere. The specific approach will be covered
 later, as will the reason it was chosen.
 
@@ -529,7 +765,7 @@ needs to be \tt{0x04}, while \tt{shamt} has to be \tt{0x00}.
 Furthermore, its associated mnemonic pattern is \pattern{iname, rd, rt}.
 
 This knowledge is encoded at a single point, in this specific case
-in the \h{RTypeInstruction} enum, instructions in other formats are
+in the \hlc{RTypeInstruction} enum, instructions in other formats are
 specified in other classes in a similar fashion.
 
 \begin{minted}[bgcolor=mintedbackground]{java}
@@ -553,13 +789,61 @@ new Condition<RTypeInstruction, Integer>()
                 andThat("shamt", Int::shamt).is(0x00)
 \end{minted}
 
-The string arguments to \h{checkThat} as well as \h{andThat} are used
-to create sensible error output when the validation fails, in the same
-manner as JUnit assertion commands treat a leading string argument.
+The string arguments to \hlc{checkThat} as well as \hlc{andThat} are
+used to create sensible error output when the validation fails, in the
+same manner as JUnit assertion commands treat a leading string
+argument.
 
-The method references, \h{Int::rs} and \h{Int::shamt} are references
-to methods that are able to retrieve those specified values as
-integers from our instruction.
+The method references, \hlc{Int::rs} and \hlc{Int::shamt} are
+references to methods that are able to retrieve those specified values
+as integers from our instruction.
 
+It is this object that is used to generate the error information for
+partially valid instructions shown in
+Listing.~\ref{listing:multiple-errors} and
+Listing.~\ref{listing:partially-valid-instructions}.
+
+Lastly the mnemonic pattern specifies in which order to output string
+representations of the various bitfields with accordance to the
+specification. It comma-separates its arguments, after the first two
+(which are delimited by a single space).
+
+The rest of the software is just plumbing. The \mij{Instruction} class
+contains a \mij{Map} from \opcodem to for instance, to the
+\mij{RTypeInstruction} enum which can continue decomposing the number,
+identifying the instruction and populating an \mij{Instruction}
+instance with the proper attributes so that it may be pretty-printed
+later.
+
+\section{Closing remarks}
+
+By far, this is the most vile piece of software I have written.  The
+take-away from the experience is to not try and wrangle the tools at
+one's disposal to much. Java was ill-suited to model the problem as I
+chose to model it. 
+
+Instead a more object-oriented approach would have been more
+appropriate, despite the fact that everything about this exercise is
+devoid of any internal state.
+
+One nice property of the DSL specification is that tests could be
+automatically generated, but essentially these tests exercise the same
+code-path. However, it did catch some errors.
+
+Henceforth, it will be valuable to think about sequences of method
+calls that may expose flaws in the design as opposed to testing single
+routines. Also, I will move away from the \mij{static} keyword just to
+appease the language.
+
+Lastly, I am not entirely content with the content in this report.  It
+is hard to write about that which one does not know without any
+certainty. I tried to sketch out my intent early on which forced the
+design into a mould that just wouldn't quite fit.
+
+Writing out all the instruction specifications was however a breeze,
+so in that respect the design works. Furthermore, collecting all the
+information about an instruction in one place feels safe and easily
+debug-able. It is also very easy to reference the material against
+the MIPS32-instruction set specification.
 
 \end{document}
