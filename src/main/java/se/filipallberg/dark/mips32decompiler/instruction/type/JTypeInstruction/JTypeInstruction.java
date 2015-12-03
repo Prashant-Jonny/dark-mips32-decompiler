@@ -14,7 +14,7 @@ public enum JTypeInstruction {
 
     /**
      * Unconditionally jump to the instruction at target. Save the address
-     * of the next instruction in register $ra.
+     * of the next instruction in register ra.
      */
     JAL(0x03),
     ;

@@ -64,7 +64,7 @@
 \usepackage{caption}
 \usepackage{geometry}
 
-\usepackage[backend=biber,bibencoding=ascii,style=authoryear,sorting=none]{biblatex}
+\usepackage[bibencoding=ascii,style=authoryear,sorting=none]{biblatex}
 \addbibresource{references.bib}
 
 \renewcommand\dateseparator{-}
@@ -469,6 +469,12 @@ Whilst there execute the following command to compile the program:
 $ gradle jar
 \end{minted}
 
+You will require Gradle 2.9, which is available for
+\href{http://gradle.org/gradle-download/}{download here}, or
+executable through
+\hlc{{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}filip/bin/gradle}
+on the institution's network.
+
 In the \hlc{build/libs} directory you will now find a file named
 \hlc{MIPS32Decompiler.jar} which you can run using \hlc{java -jar
   MIPS32Decompiler.jar} given that you have Java 8 shown when running
@@ -868,7 +874,9 @@ the MIPS32-instruction set specification.
 
 \section{Supported instructions}
 
-
+Please refer to the File.~\ref{code:RTypeInstruction},
+File.~\ref{code:ITypeInstruction}, File.~\ref{code:JTypeInstruction}
+to view all supported instructions.
 
 \begin{landscape}
 \section{\texttt{validation-test-generator}}\label{code:validation-test-generator}
@@ -882,7 +890,330 @@ the MIPS32-instruction set specification.
 \end{multicols}
 \end{landscape}
 
-\input{javalistings.tex}
+%\input{javalistings.tex}
+
+    \begin{landscape}
+    \section{\texttt{RTypeInstructionValidationTest}}\label{code:RTypeInstructionValidationTest}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/RTypeInstructionValidationTest.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{InstructionTest}}\label{code:InstructionTest}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/InstructionTest.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{ValidationTest}}\label{code:ValidationTest}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/ValidationTest.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{ITypeInstructionValidationTest}}\label{code:ITypeInstructionValidationTest}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/ITypeInstructionValidationTest.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{MIPS32DecompilerTest}}\label{code:MIPS32DecompilerTest}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/MIPS32DecompilerTest.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Instruction}}\label{code:Instruction}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/Instruction.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Register}}\label{code:Register}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/util/Register.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Opcode}}\label{code:Opcode}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/util/Opcode.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{DecomposedRepresentation}}\label{code:DecomposedRepresentation}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/util/DecomposedRepresentation.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Format}}\label{code:Format}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/util/Format.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Condition}}\label{code:Condition}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/Condition.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{PartiallyLegalInstructionException}}\label{code:PartiallyLegalInstructionException}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/PartiallyLegalInstructionException.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Field}}\label{code:Field}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/Field.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{OpcodeFunctPair}}\label{code:OpcodeFunctPair}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/OpcodeFunctPair.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{RTypeInstruction}}\label{code:RTypeInstruction}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/RTypeInstruction/RTypeInstruction.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{JTypeInstruction}}\label{code:JTypeInstruction}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/JTypeInstruction/JTypeInstruction.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{InstructionType}}\label{code:InstructionType}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/InstructionType.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{BitField}}\label{code:BitField}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/BitField.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{ITypeInstruction}}\label{code:ITypeInstruction}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/type/ITypeInstruction/ITypeInstruction.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{MnemonicRepresentation}}\label{code:MnemonicRepresentation}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/mnemonic/MnemonicRepresentation.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{MnemonicPattern}}\label{code:MnemonicPattern}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/instruction/mnemonic/MnemonicPattern.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{MIPS32Decompiler}}\label{code:MIPS32Decompiler}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/dark/mips32decompiler/MIPS32Decompiler.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
+    \begin{landscape}
+    \section{\texttt{Bit}}\label{code:Bit}
+    \begin{multicols}{2} % <-- Intended for longer programs
+    \inputminted[mathescape,
+        linenos,
+        numbersep=5pt,
+        frame=none,
+        framesep=2mm,
+        fontsize=\footnotesize]{java}{../src/main/java/se/filipallberg/util/Bit.java}
+    \end{multicols}
+    \end{landscape}
+    
+
+
 
 \end{appendix}
 
