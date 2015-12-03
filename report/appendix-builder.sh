@@ -23,6 +23,6 @@ include_file () {
 # Export the include_file() function.
 export -f include_file
 
-find ../src -name "*.java" | awk '{print system("/usr/bin/env bash -c include_file "$0"")}' > javalistings.tex
+find ../src -name "*.java" | awk '{print system("/usr/bin/env bash -c include_file "$0"")}' | sed 's/0//' > javalistings.tex
 
 

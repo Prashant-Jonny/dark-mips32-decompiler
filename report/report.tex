@@ -60,9 +60,13 @@
 \newcommand{\hlc}[2][inlinecode]{{\sethlcolor{#1} \texttt{\hl{#2}}}}
 
 \usepackage{listings}
-\usepackage{pdflscape}
+\usepackage{pdflscape, multicols}
 \usepackage{caption}
 \usepackage{geometry}
+
+\usepackage[backend=biber,bibencoding=ascii,style=authoryear,sorting=none]{biblatex}
+\addbibresource{references.bib}
+
 \renewcommand\dateseparator{-}
 
 \newcommand{\department}{Department of Computing Science}
@@ -144,10 +148,10 @@ the software.
 
 The appendix contains an overview of all those instructions that the
 decompiler is capable of comprehending.
+
 \subsection{Terminology}
 
-% TODO: cite
-According to Aho et al.  a \emph{compiler} is a program that
+According to Aho et al.\cite{Aho:2006:CPT:1177220} a \emph{compiler} is a program that
 can read a program in one language --- the \emph{source} language --
 and translates it into an equivalent program in another language --
 the \emph{target} language; see Fig.~\ref{fig:compiler}.
@@ -827,8 +831,17 @@ appropriate, despite the fact that everything about this exercise is
 devoid of any internal state.
 
 One nice property of the DSL specification is that tests could be
-automatically generated, but essentially these tests exercise the same
-code-path. However, it did catch some errors.
+automatically generated, see
+code.~\ref{code:validation-test-generator},
+Fig.~\eqref{fig:is-it-worth-the-time} but essentially these tests
+exercise the same code-path. However, it did catch some errors.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\textwidth]{img/is_it_worth_the_time.png}
+  \caption{Test generation (Artwork by xkcd)}
+  \label{fig:is-it-worth-the-time}
+\end{figure}
 
 Henceforth, it will be valuable to think about sequences of method
 calls that may expose flaws in the design as opposed to testing single
@@ -845,5 +858,32 @@ so in that respect the design works. Furthermore, collecting all the
 information about an instruction in one place feels safe and easily
 debug-able. It is also very easy to reference the material against
 the MIPS32-instruction set specification.
+
+\printbibliography
+
+\begin{appendix}
+
+\pagestyle{empty}
+\newgeometry{left = 3cm, bottom = 3cm}
+
+\section{Supported instructions}
+
+
+
+\begin{landscape}
+\section{\texttt{validation-test-generator}}\label{code:validation-test-generator}
+\begin{multicols}{2} % <-- Intended for longer programs
+\inputminted[mathescape,
+             linenos,
+             numbersep=5pt,
+             frame=none,
+             framesep=2mm,
+             fontsize=\footnotesize]{python}{../src/main/test/java/se/filipallberg/dark/mips32decompiler/instruction/validation-test-generator.py}
+\end{multicols}
+\end{landscape}
+
+\input{javalistings.tex}
+
+\end{appendix}
 
 \end{document}
