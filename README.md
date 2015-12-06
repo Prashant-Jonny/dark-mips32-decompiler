@@ -235,3 +235,4 @@ Instruction     Fmt Decomposition   Decomp hex          Source
 0x02100000      R  [0 16 16 0 0 0] [0 0x10 0x10 0 0 0]    nop
   Errors: rt: Got: 16 Expected: 0 rs: Got: 16 Expected: 0
 ```
+
