@@ -2,7 +2,7 @@
 
 This is by far the worst code I have ever written!
 
-Assignment 1 for [Computer Organization and Architecture}(http://www8.cs.umu.se/~hegner/Courses/TDBC06/H15/index.html).
+Assignment 1 for [Computer Organization and Architecture](http://www8.cs.umu.se/~hegner/Courses/TDBC06/H15/index.html).
 
 # Compilation and usage
 
