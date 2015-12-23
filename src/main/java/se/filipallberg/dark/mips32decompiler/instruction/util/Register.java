@@ -53,8 +53,8 @@ public class Register {
         put(25, "t9");
         put(26, 27, "k");
         put(28, "gp");
-        put(29, "sp");
-        put(30, "fp/s8"); // TODO: Ask lab supervisor about this one.
+        put(29, "sp"); // Stack pointer
+        put(30, "fp"); // Frame pointer
         put(31, "ra");
     }
 }

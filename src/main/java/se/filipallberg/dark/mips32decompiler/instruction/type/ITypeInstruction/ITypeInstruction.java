@@ -65,13 +65,13 @@ public enum ITypeInstruction {
      * Trap if less than immediate. If register rs is less than
      * the sign-extended value imm, Str::raise a Trap Exception.
      */
-    TLTI(0x01, 0x10, new MnemonicPattern<>(Str::iname, Str::rs, Str::imm)),
+    TLTI(0x01, 0xa, new MnemonicPattern<>(Str::iname, Str::rs, Str::imm)),
 
     /**
      * Unsigned trap if less than immediate. If register rs is less than
      * the sign-extended value imm, Str::raise a Trap Exception.
      */
-    TLTIU(0x01, 0x11, new MnemonicPattern<>(Str::iname, Str::rs, Str::imm)),
+    TLTIU(0x01, 0xb, new MnemonicPattern<>(Str::iname, Str::rs, Str::imm)),
 
     /**
      * Trap if not equal immediate. If register rs is equal to the
@@ -218,6 +218,8 @@ public enum ITypeInstruction {
      * or equal to 0.
      */
     BLEZ(0x06, 0x00, new MnemonicPattern<>(Str::iname, Str::rs, Str::label)),
+
+    BLTZAL(0x01, 0x10, new MnemonicPattern<>(Str::iname, Str::rs, Str::label)),
 
     /**
      * Branch on less than zero. Conditionally branch the number

@@ -49,3 +49,4 @@ build
 *.pdf
 _minted-report
 .#*
+*.bcf
